@@ -40,27 +40,14 @@
 
 	// Clamp and roll
 	prob2defend = clamp(prob2defend, 5, 95)
-
-	var/attacker_dualwielding = user.dual_wielding_check()
-	var/defender_dualwielding = dual_wielding_check()
-
 	if(src.client?.prefs.showrolls)
-		var/text = "Roll to parry... [prob2defend]%"
-		if(attacker_dualwielding)
-			if(defender_dualwielding)
-				text += " Our dual wielding cancels out!"
-			else	//If we're defending against or as a dual wielder, we roll disadv. But if we're both dual wielding it cancels out.
-				text += " Twice! Disadvantage!"
-		to_chat(src, span_info("[text]"))
+		to_chat(src, "<span class='info'>Roll to parry... [prob2defend]%</span>")
 
 	// Check if parry is successful
 	if(!prob(prob2defend))
-		to_chat(src, span_warning("The enemy defeated my parry!"))
+		to_chat(src, "<span class='warning'>The enemy defeated my parry!</span>")
 		return FALSE
-	if(attacker_dualwielding && !defender_dualwielding) // 2 times if dualwielding
-		if(!prob(prob2defend))
-			to_chat(src, span_warning("The enemy defeated my parry!"))
-			return FALSE
+
 
 	// Calculate additional drain for heavy weapons
 	var/obj/item/master = intenty.get_master_item()

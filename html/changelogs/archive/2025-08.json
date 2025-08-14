@@ -300,6 +300,11 @@
         ]
     },
     "2025-08-13": {
+        "Wabberspace": [
+            {
+                "rscadd": "Added Beastish to hollow-kin/demihumens."
+            }
+        ],
         "wgtjunior743": [
             {
                 "balance": " Malum Masterwork stat gives more influence"
@@ -319,6 +324,11 @@
             },
             {
                 "bugfix": "fixed sacks being uncraftable"
+            }
+        ],
+        "Wrench-1": [
+            {
+                "image": "modified the Adept's Cowl icon and onmob sprites."
             }
         ]
     }

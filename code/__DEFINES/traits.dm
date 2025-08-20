@@ -479,6 +479,8 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_LONGER_FRENZY "longer_frenzy"
 /// This mob is phased out of reality from magic, either a jaunt or rod form
 #define TRAIT_MAGICALLY_PHASED "magically_phased"
+/// cheater guy
+#define TRAIT_SV_CHEATS "sv_cheats"
 /// Mob has lost control to their rage, their Beast, whatever and is frenzying
 #define TRAIT_IN_FRENZY "in_frenzy"
 #define TRAIT_MOVEMENT_BLOCKED "movement_blocked"

@@ -59,6 +59,103 @@
 	if(ai_controller && flee_in_pain)
 		AddElement(/datum/element/ai_flee_while_in_pain)
 
+/mob/living/carbon/human/proc/is_cheating()
+	if(HAS_TRAIT(src, TRAIT_SV_CHEATS))
+		return TRUE
+	to_chat(span_danger("sv_cheats is disabled!"))
+	return FALSE
+
+/mob/living/carbon/human/proc/sv_cheats_enabled()
+	ADD_TRAIT(src, TRAIT_SV_CHEATS, TRAIT_GENERIC)
+	to_chat(src, span_notice("sv_cheats enabled!"))
+
+/mob/living/carbon/human/proc/sv_cheats_disabled()
+	REMOVE_TRAIT(src, TRAIT_SV_CHEATS, TRAIT_GENERIC)
+	to_chat(src, span_notice("sv_cheats disabled!"))
+
+/mob/living/carbon/human/proc/no_clip_enabled()
+	if(!is_cheating())
+		return
+	AddComponent(/datum/component/glitching_state)
+	AddComponent(/datum/component/after_image, 4)
+	movement_type = GROUND | FLYING | PHASING
+	density = FALSE
+	animate(src, alpha = 100, time = 1 SECONDS)
+	ADD_TRAIT(src, TRAIT_MAGICALLY_PHASED, "no_clip")
+	add_movespeed_modifier("no_clip", update = TRUE, priority = 10000, multiplicative_slowdown = -0.2)
+	float(TRUE)
+	update_cone()
+
+/mob/living/carbon/human/proc/no_clip_disabled()
+	var/datum/component/glitch_state = GetComponent(/datum/component/glitching_state)
+	var/datum/component/afterimage = GetComponent(/datum/component/after_image)
+	qdel(glitch_state)
+	qdel(afterimage)
+	movement_type = initial(movement_type)
+	density = initial(density)
+	animate(src, alpha = initial(alpha), time = 1 SECONDS)
+	remove_movespeed_modifier("no_clip", TRUE)
+	float(FALSE)
+	update_cone()
+
+/obj/item/tool_gun
+	name = "ref grabber"
+	icon_state = "pulling"
+	icon = 'icons/mob/roguehudgrabs.dmi'
+
+/obj/item/tool_gun/attack(mob/living/M, mob/living/user, params)
+	. = ..()
+	if(M)
+		if(ishuman(user))
+		var/mob/living/carbon/human/human_user = user
+		human_user.get_thing_id(M)
+		qdel(src)
+		human_user.update_a_intents()
+
+/mob/living/carbon/human
+	var/list/cheat_refs = list()
+
+/mob/living/carbon/human/proc/generate_cheat_ref(atom/movable/thing)
+	var/random_numbers = ""
+	for(var/i in 1 to 8)
+		random_numbers += "[rand(1, 9)]"
+
+	var/generated_cheat_ref = "\[x[random_numbers]\]"
+
+	cheat_refs[generated_cheat_ref] += WEAKREF(thing)
+
+	return generated_cheat_ref
+
+/mob/living/carbon/human/proc/get_cheat_ref(input)
+	var/datum/weakref/cheat_weak_ref = cheat_refs[input]
+	var/atom/movable/thing = cheat_weak_ref?.resolve()
+	return thing
+
+/mob/living/carbon/human/proc/give_tool_gun()
+	var/obj/item/tool_gun/toolgun = new(src.loc)
+	if(!equip_to_appropriate_slot(toolgun))
+		qdel(toolgun)
+
+/mob/living/carbon/human/proc/get_thing_id(atom/thing_touched)
+	var/string = "[span_notice("[thing_touched]'s ID is: ")]" + "[span_danger(generate_cheat_ref(thing_touched))]"
+	to_chat(src, string)
+
+/mob/living/carbon/human/proc/get_thing_with_cheats(input)
+	var/cheat_input = replacetext(input, "get ", "")
+	var/atom/movable/thing = get_cheat_ref(cheat_input)
+	if(!thing)
+		to_chat(src, span_danger("ERROR"))
+	if(istype(thing))
+		thing.forceMove(get_turf(src))
+
+/mob/living/carbon/human/proc/delete_thing_with_cheats(ref)
+	var/cheat_input = replacetext(ref, "delete ", "")
+	var/atom/movable/thing = get_cheat_ref(cheat_input)
+	if(!thing)
+		to_chat(src, span_danger("ERROR"))
+	if(istype(thing))
+		qdel(thing)
+
 /mob/living/carbon/human/Destroy()
 	QDEL_NULL(physiology)
 	GLOB.human_list -= src

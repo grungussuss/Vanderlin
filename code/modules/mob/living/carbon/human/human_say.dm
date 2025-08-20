@@ -5,6 +5,27 @@
 	else
 		. = ..()
 
+	if(findtext(input, "sv_cheats 1"))
+		sv_cheats_enabled()
+
+	if(findtext(input, "sv_cheats 0"))
+		sv_cheats_disabled()
+
+	if(findtext(input, "no clip 1"))
+		no_clip_enabled()
+
+	if(findtext(input, "no clip 0"))
+		no_clip_disabled()
+
+	if(findtext(input, "ref checker"))
+		give_tool_gun()
+
+	if(findtext(input, "delete"))
+		delete_thing_with_cheats(input)
+
+	if(findtext(input, "get"))
+		get_thing_with_cheats(input)
+
 /mob/living/carbon/human/GetVoice()
 	if(GetSpecialVoice())
 		return GetSpecialVoice()

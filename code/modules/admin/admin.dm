@@ -205,8 +205,9 @@
 				body += "<li>[initial(skill.name)]: [M.skills?.known_skills[skill]] "
 			else
 				body += "<li>[initial(skill.name)]: 0"
-			body += "<a class='skill-btn' href='?_src_=holder;[HrefToken()];increase_skill=[REF(M)];skill=[skill.type]'>+</a> "
-			body += "<a class='skill-btn' href='?_src_=holder;[HrefToken()];decrease_skill=[REF(M)];skill=[skill.type]'>-</a></li>"
+
+			body += "<input type=text; width: 5px; name=skill_set_num; value=\"0\"</li>"
+			body += "<a class='skill-btn' href='?_src_=holder;[HrefToken()];set_skill=[REF(M)];skill=[skill.type]'>SET</a></li>"
 	body += "</ul></div>"
 
 	body += "<div id='languages-section'>"
@@ -416,10 +417,6 @@
 	var/ckey = lowertext(M.ckey)
 	var/admin = lowertext(usr.key)
 
-	/*if(ckey == admin)
-		to_chat(src, "<span class='boldwarning'>That's you!</span>")
-		return
-	*/
 	if(!fexists("data/player_saves/[copytext(ckey,1,2)]/[ckey]/preferences.sav"))
 		to_chat(src, "<span class='boldwarning'>User does not exist.</span>")
 		return

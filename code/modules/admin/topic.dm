@@ -757,6 +757,13 @@
 		log_admin("[key_name_admin(usr)] decreased [key_name_admin(M)]'s [initial(skill.name)] skill.")
 		show_player_panel_next(M, "skills")
 
+	else if(href_list["set_skill"])
+		var/mob/M = locate(href_list["set_skill"])
+		var/datum/skill/skill = href_list["skill"]
+		M.set_skillrank(text2path(skill), -1)
+		log_admin("[key_name_admin(usr)] set [key_name_admin(M)]'s [initial(skill.name)] skill to [href_list["skill_set_num"]].")
+		show_player_panel_next(M, "skills")
+
 	else if(href_list["add_language"])
 		var/mob/M = locate(href_list["add_language"])
 		var/datum/language/lang = text2path(href_list["language"])

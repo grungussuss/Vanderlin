@@ -123,7 +123,9 @@
 #define RANDOMIZE_HAIR_ALL (RANDOMIZE_HAIR_FEATURES | RANDOMIZE_HAIR_COLORS)
 
 //Age ranges
+#ifndef ADULT_SERVER
 #define AGE_CHILD			"Youngling"
+#endif
 #define AGE_ADULT			"Adult"
 #define AGE_MIDDLEAGED		"Middle-Aged"
 #define AGE_OLD				"Old"

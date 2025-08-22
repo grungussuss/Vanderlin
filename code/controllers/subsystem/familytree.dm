@@ -68,8 +68,10 @@ SUBSYSTEM_DEF(familytree)
 /datum/controller/subsystem/familytree/proc/GetAgeValue(age_string)
 	// Convert age string to numeric value for comparison
 	switch(age_string)
+		#ifndef ADULT_SERVER
 		if(AGE_CHILD)
 			return 0
+		#endif
 		if(AGE_ADULT)
 			return 1
 		if(AGE_MIDDLEAGED)
@@ -104,10 +106,15 @@ SUBSYSTEM_DEF(familytree)
 /datum/controller/subsystem/familytree/proc/CanBeParentOf(parent_age, child_age)
 	// Parent must be at least one age category higher than child
 	// Exception: Adults can have Youngling children
+	#ifndef ADULT_SERVER
 	if(parent_age == AGE_ADULT && child_age == AGE_CHILD)
 		return TRUE
 	if(parent_age == AGE_MIDDLEAGED && (child_age == AGE_CHILD || child_age == AGE_ADULT))
 		return TRUE
+	#else
+	if(parent_age == AGE_MIDDLEAGED && child_age == AGE_ADULT)
+		return TRUE
+	#endif
 	if(parent_age == AGE_OLD && child_age != AGE_OLD && child_age != AGE_IMMORTAL)
 		return TRUE
 	if(parent_age == AGE_IMMORTAL && child_age != AGE_IMMORTAL)
@@ -131,8 +138,10 @@ SUBSYSTEM_DEF(familytree)
 
 /datum/controller/subsystem/familytree/proc/DetermineAppropriateRole(datum/heritage/house, mob/living/carbon/human/person, adopted = FALSE)
 	// For children, always make them children
+	#ifndef ADULT_SERVER
 	if(person.age == AGE_CHILD)
 		return "child"
+	#endif
 
 	// Look for potential parents (older members who could be parents)
 	var/list/potential_parents = list()
@@ -163,18 +172,24 @@ SUBSYSTEM_DEF(familytree)
 			AssignToHouse(H)
 
 		if(FAMILY_NEWLYWED)
+			#ifndef ADULT_SERVER
 			if(H.age == AGE_CHILD)
 				AssignToHouse(H)
 				return
 			else
 				AssignNewlyWed(H)
+			#else
+				AssignNewlyWed(H)
+			#endif
 
 		if(FAMILY_FULL)
 			if(H.virginity)
 				return
+			#ifndef ADULT_SERVER
 			if(H.age == AGE_CHILD)
 				AssignToHouse(H)
 				return
+			#endif
 			AssignToFamily(H)
 
 /datum/controller/subsystem/familytree/proc/AddRoyal(mob/living/carbon/human/H, status)
@@ -439,12 +454,14 @@ SUBSYSTEM_DEF(familytree)
 		// Check if there's a potential spouse
 		var/has_single_adult = FALSE
 		for(var/datum/family_member/member in house.members)
+			#ifndef ADULT_SERVER
 			if(member.person && member.person.age != AGE_CHILD && !member.spouses.len)
 				// Check setspouse compatibility
 				if(H.setspouse && member.person.real_name == H.setspouse)
 					eligible_houses.Insert(1, house) // High priority
 					has_single_adult = TRUE
 					break
+
 				else if(!H.setspouse)
 
 					if(!member.person.setspouse || member.person.setspouse == H.real_name)
@@ -456,6 +473,27 @@ SUBSYSTEM_DEF(familytree)
 							eligible_houses += house
 							has_single_adult = TRUE
 							break
+			#else
+			if(member.person && !member.spouses.len)
+				// Check setspouse compatibility
+				if(H.setspouse && member.person.real_name == H.setspouse)
+					eligible_houses.Insert(1, house) // High priority
+					has_single_adult = TRUE
+					break
+
+				else if(!H.setspouse)
+
+					if(!member.person.setspouse || member.person.setspouse == H.real_name)
+						// Pronouns matching according to Gender Preference
+						var/ok_gender_H = H.pronouns_match(H, member.person)
+						var/ok_gender_M = member.person.pronouns_match(member.person, H)
+
+						if(ok_gender_H && ok_gender_M)
+							eligible_houses += house
+							has_single_adult = TRUE
+							break
+			#endif
+
 
 
 		if(!has_single_adult && !house.housename)

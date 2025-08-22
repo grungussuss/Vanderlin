@@ -1,3 +1,5 @@
+#ifndef ADULT_SERVER
+
 /datum/migrant_role/urchinbrain
 	name = "Urchin Leader"
 	greet_text = "Without you, your friends would be dead in a ditch. You're the boss, that's why you've got a nice hat. \
@@ -100,3 +102,5 @@
 		/datum/migrant_role/urchinbrain = 1,
 	)
 	greet_text = "You're tired of eating gruel, time for something completely different."
+
+#endif

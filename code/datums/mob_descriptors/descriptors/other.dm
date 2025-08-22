@@ -15,7 +15,9 @@
 			return "old"
 		if(AGE_MIDDLEAGED)
 			return "middle-aged"
+		#ifndef ADULT_SERVER
 		if(AGE_CHILD)
 			return "young"
+		#endif
 	//ADULT and IMMORTAL
 	return "of adult age"

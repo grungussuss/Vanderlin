@@ -658,6 +658,15 @@
                 "admin": "admins are notified when a monarch or priest disconnects"
             },
             {
+                "rscadd": "amount lost from dying on a psycross decreased from 2 to 0"
+            },
+            {
+                "rscadd": "amount lost from dying in a cell decreased from 2 to 0"
+            },
+            {
+                "rscadd": "amount lost from dying reduced from 1 to 0"
+            },
+            {
                 "bugfix": "copy outfit works again"
             },
             {
@@ -692,9 +701,25 @@
                 "balance": "lower maniac's role restrictions(mostly youngling roles since they do get debuffed)"
             }
         ],
+        "CheffieGithub": [
+            {
+                "bugfix": "Fix cleric and templar miracle progression."
+            },
+            {
+                "balance": "You cannot excommunicate followers of the inhumen."
+            }
+        ],
         "Wouju": [
             {
                 "code_imp": "woodcutter and footman war axe can now be found in the polearms file"
+            }
+        ],
+        "dwasint": [
+            {
+                "rscadd": "apiaries are now craftable"
+            },
+            {
+                "rscadd": "seed merchants can now rarely bring queen bees with them"
             }
         ]
     }

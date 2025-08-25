@@ -722,5 +722,12 @@
                 "rscadd": "seed merchants can now rarely bring queen bees with them"
             }
         ]
+    },
+    "2025-08-25": {
+        "Diegoflores31": [
+            {
+                "bugfix": "fixes goldface"
+            }
+        ]
     }
 }

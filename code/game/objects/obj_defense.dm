@@ -25,7 +25,7 @@
 
 ///returns the damage value of the attack after processing the obj's various armor protections
 /obj/proc/run_obj_armor(damage_amount, damage_type, damage_flag = 0, attack_dir, armor_penetration = 0)
-	if(damage_flag == "blunt" && damage_amount < damage_deflection)
+	if((damage_flag in MELEE_TYPES) && damage_amount < damage_deflection)
 		return 0
 	if(damage_type != BRUTE && damage_type != BURN)
 		return 0
@@ -105,7 +105,7 @@
 		if(M.obj_damage)
 			. = attack_generic(M, M.obj_damage, M.melee_damage_type, M.damage_type, play_soundeffect, M.armor_penetration)
 		else
-			. = attack_generic(M, rand(M.melee_damage_lower,M.melee_damage_upper), M.melee_damage_type, "melee", play_soundeffect, M.armor_penetration)
+			. = attack_generic(M, rand(M.melee_damage_lower,M.melee_damage_upper), M.melee_damage_type, "blunt", play_soundeffect, M.armor_penetration)
 		if(. && !play_soundeffect)
 			playsound(src, 'sound/blank.ogg', 100, TRUE)
 
@@ -176,6 +176,9 @@ GLOBAL_DATUM_INIT(acid_overlay, /mutable_appearance, mutable_appearance('icons/e
 /obj/proc/burn()
 	if(resistance_flags & ON_FIRE)
 		SSfire_burning.processing -= src
+	for(var/mob/living/carbon/human/H in view(2, src))
+		if(H.has_flaw(/datum/charflaw/addiction/pyromaniac))
+			H.sate_addiction()
 	deconstruct(FALSE)
 
 ///Called when the obj is no longer on fire.

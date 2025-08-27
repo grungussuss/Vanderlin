@@ -7,7 +7,7 @@ GLOBAL_LIST_EMPTY(letters_sent)
 	icon_state = "mail"
 	density = FALSE
 	blade_dulling = DULLING_BASH
-	pixel_y = 32
+	SET_BASE_PIXEL(0, 32)
 	var/coin_loaded = FALSE
 	var/ournum
 	var/mailtag
@@ -80,6 +80,7 @@ GLOBAL_LIST_EMPTY(letters_sent)
 			visible_message("<span class='warning'>[user] sends something.</span>")
 			playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 			SStreasury.give_money_treasury(coin_loaded, "Mail Income")
+			record_round_statistic(STATS_TAXES_COLLECTED, coin_loaded)
 			coin_loaded = FALSE
 			update_appearance(UPDATE_OVERLAYS)
 			return
@@ -108,6 +109,7 @@ GLOBAL_LIST_EMPTY(letters_sent)
 		visible_message("<span class='warning'>[user] sends something.</span>")
 		playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 		SStreasury.give_money_treasury(coin_loaded, "Mail")
+		record_round_statistic(STATS_TAXES_COLLECTED, coin_loaded)
 		coin_loaded = FALSE
 		update_appearance(UPDATE_OVERLAYS)
 
@@ -253,12 +255,10 @@ GLOBAL_LIST_EMPTY(letters_sent)
 	return ..()
 
 /obj/structure/fake_machine/mail/r
-	pixel_y = 0
-	pixel_x = 32
+	SET_BASE_PIXEL(32, 0)
 
 /obj/structure/fake_machine/mail/l
-	pixel_y = 0
-	pixel_x = -32
+	SET_BASE_PIXEL(-32, 0)
 
 /obj/structure/fake_machine/mail/update_overlays()
 	. = ..()
@@ -300,7 +300,7 @@ GLOBAL_LIST_EMPTY(letters_sent)
 	name = "MASTER OF MAILS"
 	icon = 'icons/roguetown/misc/machines.dmi'
 	icon_state = "mailspecial"
-	pixel_y = 32
+	SET_BASE_PIXEL(0, 32)
 	max_integrity = 0
 	density = FALSE
 	blade_dulling = DULLING_BASH

@@ -1190,6 +1190,7 @@ GLOBAL_LIST_EMPTY(respawncounts)
 	if(inactivity > duration)
 		return inactivity
 	return FALSE
+
 /// Send resources to the client.
 /// Sends both game resources and browser assets.
 /client/proc/send_resources()

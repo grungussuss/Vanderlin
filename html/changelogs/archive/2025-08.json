@@ -978,5 +978,12 @@
                 "code_imp": "tweaked cooking repeatable crafting code. Now it checks if the item is a food snack item before attempting to apply freshness and food quality"
             }
         ]
+    },
+    "2025-08-29": {
+        "Wouju": [
+            {
+                "bugfix": "Fixed essence harvester menu. You also need to use the jar to now remove nodes from it."
+            }
+        ]
     }
 }

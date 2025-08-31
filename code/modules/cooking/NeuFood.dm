@@ -117,27 +117,37 @@
 	name = "wooden spoon"
 	desc = "Traditional utensil for shoveling soup into your mouth, or to churn butter with."
 	icon_state = "spoon"
+	smeltresult = /obj/item/fertilizer/ash
 
 /obj/item/kitchen/spoon/iron
 	name = "iron spoon"
 	icon_state = "spoon_iron"
+	melting_material = /datum/material/iron
+	melt_amount = 20
 
 /obj/item/kitchen/spoon/pewter
 	name = "pewter spoon"
 	icon_state = "spoon_iron"
+	melting_material = /datum/material/tin
+	melt_amount = 20
 
 /obj/item/kitchen/fork
 	name = "wooden fork"
 	desc = "Traditional utensil for stabbing your food in order to shove it into your mouth."
 	icon_state = "fork"
+	smeltresult = /obj/item/fertilizer/ash
 
 /obj/item/kitchen/fork/iron
 	name = "iron fork"
 	icon_state = "fork_iron"
+	melting_material = /datum/material/iron
+	melt_amount = 20
 
 /obj/item/kitchen/fork/pewter
 	name = "pewter fork"
 	icon_state = "fork_iron"
+	melting_material = /datum/material/tin
+	melt_amount = 20
 
 /// DEPRECIATED. USE /obj/item/plate instead.
 /obj/item/kitchen/platter
@@ -201,16 +211,21 @@
 	drinksounds = list('sound/items/drink_cup (1).ogg','sound/items/drink_cup (2).ogg','sound/items/drink_cup (3).ogg','sound/items/drink_cup (4).ogg','sound/items/drink_cup (5).ogg')
 	fillsounds = list('sound/items/fillcup.ogg')
 	metalizer_result = /obj/item/reagent_containers/glass/bowl/iron
+	smeltresult = /obj/item/fertilizer/ash
 
 /obj/item/reagent_containers/glass/bowl/iron
 	icon_state = "bowl_iron"
 	fill_icon_state = "bowl"
 	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	melting_material = /datum/material/iron
+	melt_amount = 20
 
 /obj/item/reagent_containers/glass/bowl/pewter
 	icon_state = "bowl_iron"
 	fill_icon_state = "bowl"
 	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	melting_material = /datum/material/tin
+	melt_amount = 20
 
 /obj/item/reagent_containers/glass/bowl/clay
 	desc = "Made from fired clay."

@@ -1,0 +1,41 @@
+{
+    "2025-09-01": {
+        "Just-Sim": [
+            {
+                "sound": "Ambience music can now be muted with ChangeMusicPower"
+            }
+        ],
+        "CheffieGithub": [
+            {
+                "bugfix": "Fixed void corruption tick interval, it will not spread to the whole town in minutes anymore."
+            },
+            {
+                "bugfix": "Fixed void corruption never getting removed(?) Because it overrode the duration tick."
+            },
+            {
+                "bugfix": "Fixed void corruption not having an alert icon."
+            }
+        ],
+        "Wouju": [
+            {
+                "qol": "replaced ounces with ligulae, no more dividing by 3 for reagent containers"
+            },
+            {
+                "rscadd": "Iron melting point reduced, it can now be smelted inside furnaces"
+            },
+            {
+                "rscadd": "More items are meltable now, spoons and forks for example"
+            }
+        ],
+        "wgtjunior743": [
+            {
+                "rscdel": "Void Corruption from the Red Dragon"
+            }
+        ],
+        "lmenvs": [
+            {
+                "bugfix": "fixed a bug where praying swear words to Psydon caused divine punishment"
+            }
+        ]
+    }
+}

@@ -48,5 +48,22 @@
                 "bugfix": "fixed a bug where praying swear words to Psydon caused divine punishment"
             }
         ]
+    },
+    "2025-09-03": {
+        "flleeppyy": [
+            {
+                "code_imp": "added PLX_announce topic for Plexora"
+            }
+        ],
+        "7erracotta": [
+            {
+                "rscadd": "Added new weapons with smithing recipes."
+            }
+        ],
+        "wgtjunior743": [
+            {
+                "bugfix": "Assassins beggar and servants are not foreigners anymore."
+            }
+        ]
     }
 }

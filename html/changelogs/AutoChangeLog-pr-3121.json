@@ -1,0 +1,1 @@
+{"author":"grungussuss","delete-after":true,"changes":[{"bugfix":"key lock/unlocks show the key afterimage like they were supposed to"},{"bugfix":"lying down will no longer forever displace you by 6 pixels down"},{"bugfix":"biting people with an item in hand will no longer play the item_attack_animation"}]}

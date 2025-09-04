@@ -83,6 +83,10 @@
 	icon_state = "silverplaque"
 	sellprice = 30
 
+/obj/item/storage/belt/leather/plaquesilver/Initialize(mapload)
+	. = ..()
+	enchant(/datum/enchantment/silver)
+
 /obj/item/storage/belt/leather/steel
 	name = "steel belt"
 	desc = "A belt with a steel plate on its front."

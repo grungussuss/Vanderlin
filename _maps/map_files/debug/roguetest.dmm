@@ -1141,6 +1141,10 @@
 	},
 /turf/open/floor/grass/yel,
 /area/rogue/outdoors)
+"eN" = (
+/obj/structure/redstone/dust,
+/turf/open/floor/churchbrick,
+/area/rogue/indoors/town/manor)
 "eO" = (
 /obj/machinery/anvil,
 /turf/open/floor/cobble,
@@ -1568,6 +1572,7 @@
 	pixel_y = 16;
 	pixel_x = -9
 	},
+/obj/structure/redstone/dust,
 /turf/open/floor/wood,
 /area/rogue/indoors/town/manor)
 "nG" = (
@@ -2193,6 +2198,10 @@
 /obj/structure/bridge_stakes,
 /turf/open/floor/grass/yel,
 /area/rogue/outdoors)
+"xP" = (
+/obj/structure/redstone/dust,
+/turf/open/floor/wood,
+/area/rogue/indoors/town/manor)
 "yr" = (
 /obj/machinery/light/fueled/torchholder/l,
 /turf/open/floor/dirt/road,
@@ -2767,6 +2776,7 @@
 /obj/effect/landmark/start/lord{
 	dir = 8
 	},
+/obj/structure/redstone/dust,
 /turf/open/floor/churchbrick,
 /area/rogue/indoors/town/manor)
 "Ix" = (
@@ -3043,6 +3053,10 @@
 /obj/structure/sprinkler,
 /turf/open/floor/grass/yel,
 /area/rogue/outdoors)
+"QG" = (
+/obj/structure/redstone/pressure_plate,
+/turf/open/floor/churchbrick,
+/area/rogue/indoors/town/manor)
 "QN" = (
 /turf/open/floor/grass/yel,
 /area/rogue/outdoors)
@@ -15166,10 +15180,10 @@ tL
 QN
 jN
 oe
-Rq
-MJ
-MJ
-MJ
+xP
+eN
+eN
+eN
 jf
 Wr
 ew
@@ -15426,7 +15440,7 @@ Vu
 nC
 kJ
 Iu
-MJ
+eN
 Qq
 ew
 XL
@@ -15680,7 +15694,7 @@ QN
 Wr
 uc
 DL
-Rq
+xP
 MJ
 MJ
 Ra
@@ -15937,7 +15951,7 @@ Wr
 Wr
 jN
 jN
-MJ
+QG
 Ht
 Ta
 jN

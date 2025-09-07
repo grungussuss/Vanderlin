@@ -354,10 +354,12 @@
 	beltl = text2path(outfit_data["beltl"])
 	beltr = text2path(outfit_data["beltr"])
 	shoes = text2path(outfit_data["shoes"])
-	var/scabbard_data1 = outfit_data["scabbards"][1]
+	var/list/scabbard_data = list()
+	scabbard_data += outfit_data["scabbards"]
+	var/scabbard_data1 = scabbard_data[1]
 	if(scabbard_data1)
 		LAZYADD(scabbards, scabbard_data1)
-	var/scabbard_data2 = outfit_data["scabbards"][2]
+	var/scabbard_data2 = outfit_data[2]
 	if(scabbard_data2)
 		LAZYADD(scabbards, scabbard_data2)
 	return TRUE

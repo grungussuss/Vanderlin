@@ -1,31 +1,31 @@
 /datum/action/cooldown/blink
 	name = "Blink"
 	desc = "Teleport to a tile in an instant."
-	sound = 'sound/magic/churn.ogg'
 
-	charge_required = FALSE
 	cooldown_time = 2 SECONDS
-	has_visual_effects = FALSE
 
-/datum/action/cooldown/blink/is_valid_target(atom/cast_on)
+/datum/action/cooldown/blink/Activate(atom/target)
 	. = ..()
-	if(!.)
-		return
-	return
 
-/datum/action/cooldown/blink/cast(mob/living/cast_on)
-	. = ..()
-	cast_on.blind_eyes(3)
-	cast_on.visible_message(span_warning("[owner] points at [cast_on]'s eyes!"), span_warning("My eyes are covered in darkness!"))
+	//sound = 'sound/magic/blade_burst.ogg'
 
-/datum/action/cooldown/blink
-	charge_sound = 'sound/magic/holycharging.ogg'
+GLOBAL_VAR_INIT(filter_x_amount, 2)
+GLOBAL_VAR_INIT(filter_y_amount, 2)
 
-	spell_type = SPELL_MIRACLE
-	antimagic_flags = MAGIC_RESISTANCE_HOLY
-	associated_skill = /datum/skill/magic/holy
-	required_items = list(/obj/item/clothing/neck/psycross/noc)
+/mob/living/proc/spell_blink_effect(duration = 1 SECONDS)
+	if(duration < 1 SECONDS)
+		CRASH("called with duration less than 1 SECONDS")
+	add_filter("spell_blink", 10, displacement_map_filter('icons/tg_logo.png', "spell_blink", size = 0))
+	//add_filter("spell_blink_blur", 11, motion_blur_filter(GLOB.filter_x_amount, GLOB.filter_y_amount))
 
-	invocation = "Noc blinds thee of thy sins!"
-	invocation_type = INVOCATION_SHOUT
+	animate(get_filter("spell_blink"), time = 1 SECONDS, size = 10)
+	animate(time = duration)
+	animate(time = 1 SECONDS, size = 0)
+	addtimer(CALLBACK(src, TYPE_PROC_REF(/atom/movable, remove_filter), "spell_blink"), 2 SECONDS + duration)
+	//addtimer(CALLBACK(src, TYPE_PROC_REF(/atom/movable, remove_filter), "spell_blink_blur"), 2 SECONDS + duration)
+
+	animate(src, time = 2 SECONDS, alpha = 0, ANIMATION_PARALLEL)
+	animate(time = duration - 1)
+	animate(time = 1 SECONDS, alpha = initial(alpha))
+
 

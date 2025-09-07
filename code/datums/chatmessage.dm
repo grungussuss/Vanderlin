@@ -7,7 +7,7 @@
 /// The number of z-layer 'slices' usable by the chat message layering
 #define CHAT_LAYER_MAX_Z (CHAT_LAYER_MAX - CHAT_LAYER) / CHAT_LAYER_Z_STEP
 
-#define CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER (CHAT_SPELLING_DELAY - 0.0004 SECONDS * (EXCLAIMED_MULTIPLER - 1))
+#define CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER (CHAT_SPELLING_DELAY - 0.00003 SECONDS * (EXCLAIMED_MULTIPLER - 1))
 
 #define EXCLAIMED_MULTIPLER (exclaimed ? 3 : 1)
 
@@ -84,14 +84,13 @@
 
 	remaining_letters = string_to_chars_list(_text)
 
-	if((length(text) > 1) && ((text[length(text)] == "!") && (text[length(text) - 1] == "!")))
+	if((length(_text) > 1) && ((_text[length(_text)] == "!") && (_text[length(_text) - 1] == "!")))
 		exclaimed = TRUE
 
 	// We dim italicized text to make it more distinguishable from regular text
 	tgt_color = extra_classes.Find("italics") ? target.chat_color_darkened : target.chat_color
 
-	INVOKE_ASYNC(src, PROC_REF(generate_image), text, target, owner, language, extra_classes, lifespan)
-
+	INVOKE_ASYNC(src, PROC_REF(generate_image), _text, target, owner, language, extra_classes, lifespan)
 
 /datum/chatmessage/Destroy()
 	if (owned_by)
@@ -136,8 +135,8 @@
 
 	// Clip message
 	var/maxlen = owned_by.prefs.max_chat_length
-	if (length_char(text) > maxlen)
-		text = copytext_char(text, 1, maxlen + 1) + "..." // BYOND index moment
+	if (length_char(_text) > maxlen)
+		_text = copytext_char(_text, 1, maxlen + 1) + "..." // BYOND index moment
 
 	// Calculate target color if not already present
 	if(ishuman(target))
@@ -156,11 +155,11 @@
 
 	// Get rid of any URL schemes that might cause BYOND to automatically wrap something in an anchor tag
 	var/static/regex/url_scheme = new(@"[A-Za-z][A-Za-z0-9+-\.]*:\/\/", "g")
-	text = replacetext(text, url_scheme, "")
+	_text = replacetext(_text, url_scheme, "")
 
 	// Reject whitespace
 	var/static/regex/whitespace = new(@"^\s*$")
-	if (whitespace.Find(text))
+	if (whitespace.Find(_text))
 		qdel(src)
 		return
 
@@ -180,14 +179,14 @@
 			LAZYSET(language_icons, language, language_icon)
 		LAZYADD(prefixes, "\icon[language_icon]")
 
-	text = "[prefixes?.Join("&nbsp;")][text]"
+	_text = "[prefixes?.Join("&nbsp;")][_text]"
 
 	// Approximate text height
 	// Note we have to replace HTML encoded metacharacters otherwise MeasureText will return a zero height
 	// BYOND Bug #2563917
 	// Construct text
 	var/static/regex/html_metachars = new(@"&[A-Za-z]{1,7};", "g")
-	var/complete_text = turn_to_styled(text)
+	var/complete_text = turn_to_styled(_text)
 
 	var/mheight
 	WXH_TO_HEIGHT(owned_by.MeasureText(complete_text, null, CHAT_MESSAGE_WIDTH), mheight)
@@ -245,6 +244,27 @@
 /datum/chatmessage/proc/turn_to_styled(string)
 	return {"<span style='font-size:[font_size]pt;font-family:"Pterra";color:[tgt_color];text-shadow:0 0 5px #000,0 0 5px #000,0 0 5px #000,0 0 5px #000;' class='center maptext [_extra_classes != null ? _extra_classes.Join(" ") : ""]' style='color: [tgt_color]'>[string]</span>"} //AAAAAAAAAAAAAAA
 
+/datum/chatmessage/proc/parse_text_preserving_entities(text)
+	var/list/result = list()
+	var/static/regex/html_entity = new(@"&[#a-zA-Z0-9]+;", "g")
+	var/last_index = 1
+
+	while(html_entity.Find(text))
+		// Add text before the entity
+		if(html_entity.index > last_index)
+			result += string_to_chars_list(copytext(text, last_index, html_entity.index))
+
+		// Add the entity as a single unit
+		result += html_entity.match
+
+		last_index = html_entity.index + length(html_entity.match)
+
+	// Add any remaining text
+	if(last_index <= length(text))
+		result += string_to_chars_list(copytext(text, last_index))
+
+	return result
+
 /datum/chatmessage/proc/spelling_extra_delays(character)
 	if(character in CHAT_SPELLING_EXCEPTIONS)
 		return null
@@ -258,7 +278,9 @@
 	var/delay = CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER
 	var/direction = 1
 
-	animate(message, time = 0, tag = "runechat[src]") // set the tag for the loop
+	animate(message, time = 0, tag = "runechat_spell[src]") // set the tag for the loop
+	animate(message, time = 0, tag = "runechat_move[src]")
+	animate(message_loc, time = 0, tag = "runechat_source_shake[src]")
 
 	for(var/letter as anything in remaining_letters)
 		if(premature_end)
@@ -268,20 +290,19 @@
 			current_string += letter
 			continue
 
-		add_string(letter, direction, (extra_delay ? FALSE : TRUE))
+		add_string(letter, direction, (extra_delay ? FALSE : TRUE), delay)
 		direction *= -1
-		sleep(CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER + extra_delay)
 		delay += CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER + extra_delay
 
 	animate(
-		message,
 		time = CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER,
 		pixel_w = 0,
 		pixel_z = 0,
+		tag = "runechat_spell[src]",
 	)
 	addtimer(CALLBACK(src, PROC_REF(end_of_life)), delay + 2 SECONDS)
 
-/datum/chatmessage/proc/add_string(string = "", direction = 1, audible = TRUE)
+/datum/chatmessage/proc/add_string(string = "", direction = 1, audible = TRUE, delay = 0.01)
 	if(QDELETED(src))
 		return
 	if(premature_end)
@@ -289,9 +310,9 @@
 
 	_add_string(arglist(args))
 
-/datum/chatmessage/proc/_add_string(string = "", direction = 1, audible = TRUE)
+/datum/chatmessage/proc/_add_string(string = "", direction = 1, audible = TRUE, delay = 0.01)
 	current_string += string
-	message.maptext = MAPTEXT(turn_to_styled(current_string))
+	animate(time = delay, maptext = MAPTEXT(turn_to_styled(current_string)), tag = "runechat_spell[src]")
 	if(audible && !_extra_classes.Find("emote"))
 		/*
 		play_toot()
@@ -311,12 +332,11 @@
 
 	if(!_extra_classes.Find("emote"))
 		animate(
-			message,
 			time = CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER,
 			pixel_w = ((exclaimed_multiplier - 1) + rand(0, (exclaimed_multiplier - 1))) * pick(-1, 1),
 			pixel_z = ((exclaimed_multiplier - 1) + rand((exclaimed_multiplier - 1) * direction, (exclaimed_multiplier - 1) * (direction ? direction : 1) * (exclaimed_multiplier - 1))),
 			easing = ELASTIC_EASING,
-			flags = ANIMATION_PARALLEL,
+			tag = "runechat_move[src]",
 		)
 
 	if(source_shake)
@@ -324,19 +344,20 @@
 		var/old_pixel_w = message_loc.pixel_w
 		var/old_pixel_z = message_loc.pixel_z
 		animate(
-			message_loc,
 			time = CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER + 0.1,
 			pixel_w = ((exclaimed_multiplier - 1) + rand(0, exclaimed_multiplier)) * pick(-1, 1),
 			pixel_z = (exclaimed_multiplier + rand((exclaimed_multiplier - 1) * direction, 1 * (direction ? direction : 1) * exclaimed_multiplier)),
 			transform = message_loc.transform.Turn(rand(2 * exclaimed_multiplier, 6 * (exclaimed_multiplier - 0.5) * direction)),
 			easing = ELASTIC_EASING,
 			flags = ANIMATION_PARALLEL,
+			tag = "runechat_source_shake[src]",
 		)
 		animate(
 			time = 0,
 			pixel_z = old_pixel_z,
 			pixel_w = old_pixel_w,
 			transform = old_transform,
+			tag = "runechat_source_shake[src]",
 		)
 
 /datum/chatmessage/proc/premature_end_of_life()
@@ -418,3 +439,10 @@
 #undef BLIP_TONE_FEMININE
 #undef BLIP_TONE_MASCULINE
 #undef TOOT_COOLDOWN
+
+/mob/proc/debug_tag_animates()
+	animate(src, time = 1 SECONDS)
+	animate(pixel_w = 20, time = 1 SECONDS, flags = ANIMATION_RELATIVE)
+	animate(pixel_w = -20, time = 1 SECONDS, flags = ANIMATION_RELATIVE)
+	animate(pixel_w = -20, time = 1 SECONDS, flags = ANIMATION_RELATIVE)
+	animate(pixel_w = 20, time = 1 SECONDS, flags = ANIMATION_RELATIVE)

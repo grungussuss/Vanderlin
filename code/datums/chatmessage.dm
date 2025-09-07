@@ -258,6 +258,8 @@
 	var/delay = CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER
 	var/direction = 1
 
+	animate(message, time = 0, tag = "runechat[src]") // set the tag for the loop
+
 	for(var/letter as anything in remaining_letters)
 		if(premature_end)
 			return
@@ -314,6 +316,7 @@
 			pixel_w = ((exclaimed_multiplier - 1) + rand(0, (exclaimed_multiplier - 1))) * pick(-1, 1),
 			pixel_z = ((exclaimed_multiplier - 1) + rand((exclaimed_multiplier - 1) * direction, (exclaimed_multiplier - 1) * (direction ? direction : 1) * (exclaimed_multiplier - 1))),
 			easing = ELASTIC_EASING,
+			flags = ANIMATION_PARALLEL,
 		)
 
 	if(source_shake)
@@ -327,6 +330,7 @@
 			pixel_z = (exclaimed_multiplier + rand((exclaimed_multiplier - 1) * direction, 1 * (direction ? direction : 1) * exclaimed_multiplier)),
 			transform = message_loc.transform.Turn(rand(2 * exclaimed_multiplier, 6 * (exclaimed_multiplier - 0.5) * direction)),
 			easing = ELASTIC_EASING,
+			flags = ANIMATION_PARALLEL,
 		)
 		animate(
 			time = 0,

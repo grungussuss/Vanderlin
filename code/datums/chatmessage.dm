@@ -278,10 +278,6 @@
 	var/delay = CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER
 	var/direction = 1
 
-	animate(message, time = 0, tag = "runechat_spell[src]") // set the tag for the loop
-	animate(message, time = 0, tag = "runechat_move[src]")
-	animate(message_loc, time = 0, tag = "runechat_source_shake[src]")
-
 	for(var/letter as anything in remaining_letters)
 		if(premature_end)
 			return
@@ -295,9 +291,11 @@
 		delay += CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER + extra_delay
 
 	animate(
+		message,
 		time = CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER,
 		pixel_w = 0,
 		pixel_z = 0,
+		flags = ANIMATION_CONTINUE,
 		tag = "runechat_spell[src]",
 	)
 	addtimer(CALLBACK(src, PROC_REF(end_of_life)), delay + 2 SECONDS)
@@ -312,7 +310,13 @@
 
 /datum/chatmessage/proc/_add_string(string = "", direction = 1, audible = TRUE, delay = 0.01)
 	current_string += string
-	animate(time = delay, maptext = MAPTEXT(turn_to_styled(current_string)), tag = "runechat_spell[src]")
+	animate(
+		message,
+		time = delay,
+		maptext = MAPTEXT(current_string),
+		flags = ANIMATION_CONTINUE,
+		tag = "runechat_spell[src]",
+		)
 	if(audible && !_extra_classes.Find("emote"))
 		/*
 		play_toot()
@@ -332,10 +336,12 @@
 
 	if(!_extra_classes.Find("emote"))
 		animate(
+			message,
 			time = CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER,
 			pixel_w = ((exclaimed_multiplier - 1) + rand(0, (exclaimed_multiplier - 1))) * pick(-1, 1),
 			pixel_z = ((exclaimed_multiplier - 1) + rand((exclaimed_multiplier - 1) * direction, (exclaimed_multiplier - 1) * (direction ? direction : 1) * (exclaimed_multiplier - 1))),
 			easing = ELASTIC_EASING,
+			flags = ANIMATION_CONTINUE,
 			tag = "runechat_move[src]",
 		)
 
@@ -344,19 +350,22 @@
 		var/old_pixel_w = message_loc.pixel_w
 		var/old_pixel_z = message_loc.pixel_z
 		animate(
+			message_loc,
 			time = CHAT_SPELLING_DELAY_WITH_EXCLAIMED_MULTIPLIER + 0.1,
 			pixel_w = ((exclaimed_multiplier - 1) + rand(0, exclaimed_multiplier)) * pick(-1, 1),
 			pixel_z = (exclaimed_multiplier + rand((exclaimed_multiplier - 1) * direction, 1 * (direction ? direction : 1) * exclaimed_multiplier)),
 			transform = message_loc.transform.Turn(rand(2 * exclaimed_multiplier, 6 * (exclaimed_multiplier - 0.5) * direction)),
 			easing = ELASTIC_EASING,
-			flags = ANIMATION_PARALLEL,
+			flags = ANIMATION_CONTINUE,
 			tag = "runechat_source_shake[src]",
 		)
 		animate(
+			message_loc,
 			time = 0,
 			pixel_z = old_pixel_z,
 			pixel_w = old_pixel_w,
 			transform = old_transform,
+			flags = ANIMATION_CONTINUE,
 			tag = "runechat_source_shake[src]",
 		)
 

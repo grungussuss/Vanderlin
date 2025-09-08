@@ -211,5 +211,12 @@
                 "admin": "admins have a new god hand smite"
             }
         ]
+    },
+    "2025-09-08": {
+        "Just-Sim": [
+            {
+                "rscadd": "Shift+E, Shift+Q, Shift+B quick-take keybinds"
+            }
+        ]
     }
 }

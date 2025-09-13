@@ -177,7 +177,7 @@
 			var/prename
 			if(held_items[O]["NAME"])
 				prename = held_items[O]["NAME"]
-			var/newname = input(usr, "SET A NEW NAME FOR THIS PRODUCT", src, prename)
+			var/newname = browser_input_text(usr, "SET A NEW NAME FOR THIS PRODUCT", src, prename, max_length = MAX_NAME_LEN)
 			if(newname)
 				held_items[O]["NAME"] = newname
 	if(href_list["setprice"])

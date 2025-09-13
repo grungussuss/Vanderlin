@@ -348,7 +348,7 @@
 
 /datum/vampire_project/amulet_crafting/confirm_start(mob/living/user)
 	if(..())
-		amulet_name = input(user, "Select a name for the amulet.", "VANDERLIN") as text|null
+		amulet_name = browser_input_text(user, "Select a name for the amulet", max_length = MAX_NAME_LEN)
 		return TRUE
 	return FALSE
 

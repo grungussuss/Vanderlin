@@ -321,5 +321,25 @@
                 "bugfix": "Fixed ultimate sacrifice buttons"
             }
         ]
+    },
+    "2025-09-13": {
+        "Wouju": [
+            {
+                "rscadd": "Blacksmiths can craft bronze gears"
+            },
+            {
+                "rscadd": "Crafting iron gears gives 2 gears now"
+            }
+        ],
+        "snowyseshi": [
+            {
+                "balance": "Minor vampire buff"
+            }
+        ],
+        "flleeppyy": [
+            {
+                "server": "SSplexora now actually sends the serverstart request, roundnotify should work now"
+            }
+        ]
     }
 }

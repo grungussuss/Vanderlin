@@ -97,7 +97,7 @@
 	var/override_alerts = FALSE //If it is overriding other alerts of the same type
 	var/mob/mob_viewer //the mob viewing this alert
 	var/alert_group = ALERT_STATUS //decides where on the screen the alert shows up, if it's a debuff, status effect, or buff
-	nomouseover = FALSE
+	no_over_text = FALSE
 
 /atom/movable/screen/alert/MouseEntered(location,control,params)
 	..()
@@ -186,12 +186,12 @@
 /atom/movable/screen/alert/status_effect/debuff/hot
 	name = "Too Hot"
 	desc = ""
-	icon_state = "hot"
+	icon_state = "debuff"
 
 /atom/movable/screen/alert/status_effect/debuff/cold
 	name = "Too Cold"
 	desc = ""
-	icon_state = "cold"
+	icon_state = "debuff"
 
 /atom/movable/screen/alert/lowpressure
 	name = "Low Pressure"

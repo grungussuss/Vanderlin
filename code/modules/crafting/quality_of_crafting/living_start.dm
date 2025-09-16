@@ -27,6 +27,40 @@
 		return list()
 	return passed_recipes
 
+/proc/get_recipe_output_typepath(datum/recipe) // this is dogshit
+	if(istype(recipe, /datum/orderless_slapcraft))
+		var/datum/orderless_slapcraft/_recipe = recipe
+		return _recipe.output_item
+	if(istype(recipe, /datum/slapcraft_recipe))
+		var/datum/slapcraft_recipe/_recipe = recipe
+		return _recipe.result_type
+	if(istype(recipe, /datum/repeatable_crafting_recipe))
+		var/datum/repeatable_crafting_recipe/_recipe = recipe
+		return _recipe.output
+
+/mob/living/proc/recipe_selection_hud(list/recipes, atom/attacked_atom)
+	if(!length(recipes))
+		return
+	var/selected
+
+	if(recipes.len <= 6)
+		var/choices = recipes
+		var/list/options = list()
+		for(var/choice in choices)
+			var/datum/radial_menu_choice/option = new
+			var/obj/crafting_result = get_recipe_output_typepath(choice)
+			var/icon_to_use = crafting_result::icon
+			var/icon_state_to_use = crafting_result::icon_state
+			var/image/image_to_use = icon(icon = icon_to_use, icon_state = icon_state_to_use)
+			option.image = image_to_use
+			option.name = crafting_result::name
+			option.info = crafting_result::desc
+			options[option] += choice
+		selected = options[show_radial_menu(src, attacked_atom, choices = options, tooltips = TRUE, custom_check = CALLBACK(src, TYPE_PROC_REF(/atom/movable, Adjacent), attacked_atom), autopick_single_option = FALSE)]
+	else
+		selected = browser_input_list(src, "Choose a recipe to craft", "Recipes", recipes)
+
+	return selected
 
 /mob/living/proc/try_recipes(obj/item/attacked_atom, obj/item/starting_atom)
 	if(has_world_trait(/datum/world_trait/delver))
@@ -51,7 +85,7 @@
 	if(length(recipes) == 1 && (istype(recipes[1], /datum/repeatable_crafting_recipe/cooking)))
 		recipe = recipes[1]
 	else
-		recipe = browser_input_list(src, "Choose a recipe to craft", "Recipes", recipes)
+		recipe = recipe_selection_hud(recipes, attacked_atom)
 	if(!recipe)
 		return TRUE
 	if(!Adjacent(attacked_atom)) // sanity check

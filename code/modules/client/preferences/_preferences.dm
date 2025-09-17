@@ -300,7 +300,6 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 
 	dat += "<td style='width:33%;text-align:right'>"
 	dat += "<a href='?_src_=prefs;preference=keybinds;task=menu'>Keybinds</a>"
-	dat += "<br><a href='?_src_=prefs;preference=toggles'>Toggles</a>"
 	dat += "</td>"
 	dat += "</tr>"
 
@@ -315,7 +314,7 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 	dat += "</td>"
 
 	dat += "<td style='width:33%;text-align:right'>"
-
+	dat += "<a href='?_src_=prefs;preference=toggles'>Toggles</a>"
 	dat += "</td>"
 	dat += "</tr>"
 

@@ -519,5 +519,26 @@
                 "code_imp": "added a drop_source parameter which keeps track of whether a drop proc was called by a throw or a drop to prevent qdel double counting."
             }
         ]
+    },
+    "2025-09-18": {
+        "snowyseshi": [
+            {
+                "rscadd": "Bloodsucker wretch"
+            },
+            {
+                "rscadd": "Caitiff clan"
+            },
+            {
+                "code_imp": "added new variables for VL assignement."
+            }
+        ],
+        "CheffieGithub": [
+            {
+                "bugfix": "Fixed certain herbal brews, vampire spells and some other stuff I don't even know not effecting your mood when they are supposed to."
+            },
+            {
+                "bugfix": "Fixed twist not causing dislocations or fractures"
+            }
+        ]
     }
 }

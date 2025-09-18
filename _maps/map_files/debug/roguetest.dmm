@@ -1502,6 +1502,10 @@
 /obj/item/ore/gold,
 /turf/open/floor/cobble,
 /area/rogue/indoors)
+"mg" = (
+/obj/item/needle,
+/turf/open/floor/ruinedwood,
+/area/rogue/outdoors)
 "mj" = (
 /obj/machinery/light/fueled/torchholder/hotspring/standing{
 	pixel_x = 15
@@ -1988,6 +1992,10 @@
 "sK" = (
 /obj/structure/well,
 /turf/open/water,
+/area/rogue/outdoors)
+"sO" = (
+/obj/item/natural/bundle/fibers/full,
+/turf/open/floor/ruinedwood,
 /area/rogue/outdoors)
 "sZ" = (
 /obj/structure/essence_node/rare,
@@ -22428,7 +22436,7 @@ ET
 ET
 FI
 DF
-DF
+sO
 QN
 Wr
 ai
@@ -22685,7 +22693,7 @@ pW
 pW
 WL
 GO
-DF
+mg
 QN
 QN
 QN

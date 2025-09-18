@@ -51,7 +51,7 @@
 			var/obj/crafting_result = get_recipe_output_typepath(choice)
 			var/icon_to_use = crafting_result::icon
 			var/icon_state_to_use = crafting_result::icon_state
-			var/image/image_to_use = icon(icon = icon_to_use, icon_state = icon_state_to_use)
+			var/image/image_to_use = image(icon = icon_to_use, icon_state = icon_state_to_use)
 			option.image = image_to_use
 			option.name = crafting_result::name
 			option.info = crafting_result::desc

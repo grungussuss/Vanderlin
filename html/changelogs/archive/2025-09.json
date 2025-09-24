@@ -705,5 +705,50 @@
                 "balance": "Savoyard now has steel durability"
             }
         ]
+    },
+    "2025-09-24": {
+        "7erracotta": [
+            {
+                "balance": "Increased armor ot the lakkaian jupon to match the padded gambeson, as was intended"
+            }
+        ],
+        "CheffieGithub": [
+            {
+                "bugfix": "Fixed false appearance changing your limbs/organs/patron and prevents it working on the undead."
+            }
+        ],
+        "wgtjunior743": [
+            {
+                "rscadd": "Silver Amulet can also protect you from the WW infection"
+            }
+        ],
+        "Wouju": [
+            {
+                "balance": "Wooden shield integrity slightly buffed, aswell as coverage. The heater shield is still a direct upgrade."
+            },
+            {
+                "balance": "coifs have proper armour classes now"
+            },
+            {
+                "balance": "renegade collar requires hide to craft"
+            },
+            {
+                "balance": "coif, etc. items are smeltable now"
+            },
+            {
+                "balance": "strike and smash AP increased"
+            },
+            {
+                "qol": "Combat intents descriptions updated."
+            },
+            {
+                "balance": "Feinting is affected by perception. Defend intent increases chance to dodge."
+            }
+        ],
+        "Somniworld": [
+            {
+                "sound": "Changed the combat mode music for the Servant, Tapster and Ring Servant roles."
+            }
+        ]
     }
 }

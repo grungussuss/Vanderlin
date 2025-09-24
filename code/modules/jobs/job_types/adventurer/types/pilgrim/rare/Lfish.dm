@@ -37,6 +37,7 @@
 			H.adjust_skillrank(/datum/skill/misc/swimming, 5, TRUE)
 			H.adjust_skillrank(/datum/skill/craft/cooking, 3, TRUE)
 			H.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
+			H.adjust_skillrank(/datum/skill/misc/sewing, 2, TRUE)
 			H.adjust_skillrank(/datum/skill/labor/fishing, 5, TRUE)
 			H.adjust_skillrank(/datum/skill/misc/medicine, 1, TRUE)
 			H.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)

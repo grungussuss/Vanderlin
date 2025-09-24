@@ -195,6 +195,9 @@ GLOBAL_LIST_INIT(RATS_DONT_EAT, typecacheof(list(
 	#define is_rousman_job(job_type) (istype(job_type, /datum/job/rousman))
 	#define is_goblin_job(job_type) (istype(job_type, /datum/job/goblin))
 
+	#define is_zizolackey(mind) (mind.has_antag_datum(/datum/antagonist/zizocultist))
+	#define is_zizocultist(mind) (mind.has_antag_datum(/datum/antagonist/zizocultist/leader))
+
 // seemingly deprecated:
 //"Preacher" //as a job, there is an equivalent class
 

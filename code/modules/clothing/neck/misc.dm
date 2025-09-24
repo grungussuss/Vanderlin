@@ -47,6 +47,7 @@
 	resistance_flags = FLAMMABLE // Made of leather
 	smeltresult = /obj/item/fertilizer/ash
 
+	armor_class = AC_LIGHT
 	armor = ARMOR_LEATHER
 	body_parts_covered = NECK|HAIR|EARS|HEAD
 	max_integrity = INTEGRITY_POOR
@@ -85,6 +86,7 @@
 	adjustable = CAN_CADJUST
 	toggle_icon_state = TRUE
 
+	armor_class = AC_LIGHT
 	armor = ARMOR_PADDED
 	body_parts_covered = NECK|HAIR|EARS|HEAD
 	prevent_crits = MINOR_CRITICALS
@@ -150,8 +152,11 @@
 	toggle_icon_state = TRUE
 	blocksound = CHAINHIT
 	smeltresult = null
+	melt_amount = 75
+	melting_material = /datum/material/steel
 	clothing_flags = CANT_SLEEP_IN
 
+	armor_class = AC_MEDIUM
 	armor = ARMOR_MAILLE
 	body_parts_covered = NECK|HAIR|EARS|HEAD
 	max_integrity = INTEGRITY_STRONGEST
@@ -186,7 +191,7 @@
 	name = "iron chain coif"
 	desc = "A chain coif made of interwoven iron rings. Affordable protection against arrows and blades, \
 			but should be used as padding rather than relied upon as armor."
-	smeltresult = null
+	melting_material = /datum/material/iron
 
 	armor = ARMOR_MAILLE_IRON
 	max_integrity = INTEGRITY_STRONG
@@ -197,6 +202,7 @@
 	desc = "An antique and simple protection for the neck, used more as an accessory by the common folk. But poor protection is still better than nothing."
 	smeltresult = /obj/item/ingot/copper
 
+	armor_class = AC_MEDIUM
 	armor = ARMOR_LEATHER_GOOD
 	max_integrity = INTEGRITY_POOR
 
@@ -214,6 +220,8 @@
 	icon_state = "bevor"
 	flags_inv = HIDEFACIALHAIR
 	smeltresult = /obj/item/ingot/steel
+	melt_amount = 100
+	melting_material = /datum/material/steel
 	equip_sound = 'sound/foley/equip/equip_armor.ogg'
 	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
 	break_sound = 'sound/foley/breaksound.ogg'
@@ -232,6 +240,7 @@
 	desc = "A piece of iron plate armor meant to protect the throat and neck of its wearer against decapitation, extending the protection of armor plates."
 	icon_state = "ibevor"
 	smeltresult = /obj/item/ingot/iron
+	melting_material = /datum/material/iron
 
 	armor = ARMOR_PLATE_BAD
 	max_integrity = INTEGRITY_STRONG
@@ -249,6 +258,7 @@
 	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
 	break_sound = 'sound/foley/breaksound.ogg'
 	smeltresult = /obj/item/ingot/iron
+	melting_material = /datum/material/iron
 	clothing_flags = CANT_SLEEP_IN
 
 	armor_class = AC_HEAVY
@@ -262,6 +272,7 @@
 	desc = "A heavy collar of great age, meant to protect the neck."
 	icon_state = "aasimarneck"
 	smeltresult = /obj/item/ingot/bronze
+	melting_material = /datum/material/bronze
 	armor = ARMOR_MAILLE_GOOD
 
 /obj/item/clothing/neck/highcollier
@@ -311,16 +322,26 @@
 	name = "iron high collier"
 	desc = "A thicker piece of chain neck protection made from iron, though, this one only covers the neck and mouth when pulled up."
 	icon_state = "ihigh_collier"
-	armor = ARMOR_MAILLE
+	body_parts_covered = NECK|MOUTH
+	armor = ARMOR_MAILLE_IRON
 	max_integrity = INTEGRITY_STRONG
+	smeltresult = /obj/item/ingot/iron
+	melt_amount = 100
+	melting_material = /datum/material/iron
 
 /obj/item/clothing/neck/highcollier/iron/renegadecollar
 	icon_state = "renegadecollar"
 	name = "black collar"
-	desc = "A tough leather collar concealing iron chain mail, meant to be paired with its jacket."
+	desc = "A tough leather collar concealing iron chain mail, meant to be paired with its jacket. This one also covers not only the neck and mouth, but also the nose and ears."
 	body_parts_covered = NECK|EARS|MOUTH|NOSE
-	armor = ARMOR_MAILLE_IRON
-	max_integrity = INTEGRITY_STRONG
+
+//........................................................................................
+/*---------------\
+|				|
+|	Misc?		|
+|				|
+\---------------*/
+
 
 /obj/item/clothing/neck/talkstone
 	name = "talkstone"

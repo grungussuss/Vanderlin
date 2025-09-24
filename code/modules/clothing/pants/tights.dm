@@ -29,7 +29,7 @@
 	color = CLOTHING_FOREST_GREEN
 
 /obj/item/clothing/pants/tights/colored/jester
-	desc = "Funny tights!"
+	name = "funny tights"
 	color = CLOTHING_SALMON
 
 /obj/item/clothing/pants/tights/colored/lord

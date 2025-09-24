@@ -399,7 +399,7 @@
 		if(prob(12))
 			M.emote("gag")
 			M.add_nausea(9)
-			if(isdwarf(M))
+			if(HAS_TRAIT(M, TRAIT_POISON_RESILIENCE))
 				M.adjustToxLoss(2)
 			else
 				M.adjustToxLoss(5)

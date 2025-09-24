@@ -12,6 +12,7 @@
 	anvilrepair = /datum/skill/craft/armorsmithing
 	sewrepair = FALSE
 	smeltresult = /obj/item/ingot/iron //no 1 to 1 conversion
+	max_integrity = INTEGRITY_STRONG
 
 /obj/item/clothing/wrists/bracers/iron
 	name = "iron plate vambraces"
@@ -48,20 +49,25 @@
 	anvilrepair = null
 	sewrepair = TRUE
 	salvage_result = null
+	max_integrity = INTEGRITY_STANDARD
+
+//THE ARMOUR VALUES OF ADVANCED AND MASTERWORK BRACERS ARE INTENDED
+//KEEP THIS IN MIND
+//...why the hell do they exist anyways, we got advanced/masterwork gloves.
 
 /obj/item/clothing/wrists/bracers/leather/advanced
 	name = "hardened leather bracers"
 	desc = "Hardened leather braces that will keep your wrists safe from bludgeoning."
 	armor = list("blunt" = 60, "slash" = 40, "stab" = 20, "piercing" = 0, "fire" = 0, "acid" = 0)
 	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST) //We're losing stab here
-	max_integrity = 250
+	max_integrity = INTEGRITY_STANDARD + 50
 
 /obj/item/clothing/wrists/bracers/leather/masterwork
 	name = "masterwork leather bracers"
 	desc = "These bracers are a craftsmanship marvel. Made with the finest leather. Strong, nimible, reliable."
 	armor = list("blunt" = 80, "slash" = 60, "stab" = 40, "piercing" = 0, "fire" = 0, "acid" = 0)
 	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST) //We're getting chop here
-	max_integrity = 300
+	max_integrity = INTEGRITY_STANDARD + 100
 
 /obj/item/clothing/wrists/bracers/leather/masterwork/Initialize()
 	. = ..()

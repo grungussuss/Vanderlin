@@ -648,7 +648,7 @@
 	allow_inverse_start = FALSE
 	output = /obj/item/gear/wood/basic
 	craftdiff = 3
-	skillcraft = /datum/skill/labor/lumberjacking
+	skillcraft = /datum/skill/craft/carpentry
 
 /datum/repeatable_crafting_recipe/crafting/wheatlbait
 	name = "bait (wheat)"

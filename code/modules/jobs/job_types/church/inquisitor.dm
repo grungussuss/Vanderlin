@@ -336,12 +336,15 @@
 					if(/datum/patron/godless/defiant) //need better desc
 						held_confession.bad_type = "A DAMNED CHAINBREAKER"
 						held_confession.antag = "worshiper of nothing"
-					if( /datum/patron/godless/dystheist) //need better desc
+					if(/datum/patron/godless/dystheist) //need better desc
 						held_confession.bad_type = "A SPURNER OF THE DIVINE"
 						held_confession.antag = "worshiper of nothing"
-					if( /datum/patron/godless/naivety)
+					if(/datum/patron/godless/naivety)
 						held_confession.bad_type = "A IGNORANT FOOL"
 						held_confession.antag = "worshiper of nothing"
+					if(/datum/patron/godless/rashan)
+						held_confession.bad_type = "A FOLLOWER OF A FALSE GOD"
+						held_confession.antag = "worshiper of the false god, Rashan-Kahl"
 					if(/datum/patron/inhumen/baotha)
 						held_confession.bad_type = "A FOLLOWER OF THE REMORSELESS RUINER"
 						held_confession.antag = "worshiper of " + initial(antag_type:name)

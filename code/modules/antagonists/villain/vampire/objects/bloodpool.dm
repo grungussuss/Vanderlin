@@ -368,7 +368,7 @@
 	new /obj/item/clothing/pants/platelegs/vampire (bloodpool.loc)
 	new /obj/item/clothing/gloves/chain/vampire (bloodpool.loc)
 	new /obj/item/clothing/armor/chainmail/hauberk/vampire (bloodpool.loc)
-	new /obj/item/clothing/armor/cuirass/vampire (bloodpool.loc)
+	new /obj/item/clothing/armor/plate/vampire (bloodpool.loc)
 	new /obj/item/clothing/shoes/boots/armor/vampire (bloodpool.loc)
 	new /obj/item/clothing/head/helmet/heavy/vampire (bloodpool.loc)
 	creation_point.visible_message(span_notice("A complete set of armor materializes from the crimson crucible."))

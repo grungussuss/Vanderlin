@@ -165,4 +165,3 @@
 	if(H.backr && istype(H.backr, /obj/item/clothing/cloak/boiler))
 		var/obj/item/clothing/cloak/boiler/B = H.backr
 		SEND_SIGNAL(B, COMSIG_ATOM_STEAM_INCREASE, 1000)
-		B.update_armor()

@@ -87,7 +87,7 @@
 	to_chat(owner, span_notice("I've escaped the cloying mists!"))
 	owner.remove_filter("filter_abrogation")
 
-/datum/status_effect/debuff/abrogation/refresh()
+/datum/status_effect/debuff/abrogation/refresh(datum/status_effect/new_effect, duration_override, ...)
 	. = ..()
 	intensity += 1
 	to_chat(owner, span_boldwarning("The mists intensify, the glowing wisps steadily disrupting my body..."))

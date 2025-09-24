@@ -48,6 +48,9 @@
 		H.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
 		H.adjust_skillrank(/datum/skill/misc/sneaking, 3, TRUE)
 		H.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)
+
+	new /mob/living/simple_animal/hostile/retaliate/saiga/tame/saddled(get_turf(H))
+
 	H.change_stat(STATKEY_PER, 1)
 	H.change_stat(STATKEY_CON, 1)
 	H.change_stat(STATKEY_SPD, 1)

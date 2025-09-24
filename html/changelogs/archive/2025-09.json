@@ -540,5 +540,170 @@
                 "bugfix": "Fixed twist not causing dislocations or fractures"
             }
         ]
+    },
+    "2025-09-19": {
+        "grungussuss": [
+            {
+                "qol": "tweaked animated runechat"
+            },
+            {
+                "rscadd": "You can now move diagonally"
+            }
+        ],
+        "7erracotta": [
+            {
+                "rscadd": "Added a new class alongside some sprites"
+            }
+        ],
+        "CheffieGithub": [
+            {
+                "bugfix": "Fix infinite stress events"
+            }
+        ]
+    },
+    "2025-09-20": {
+        "Wouju": [
+            {
+                "rscadd": "Heads are now guaranteed when butchering"
+            },
+            {
+                "rscadd": "You can butcher heads with MMB and a knife to get extra meats"
+            }
+        ],
+        "wgtjunior743": [
+            {
+                "bugfix": "Prevents the Tome sleep bug from happening."
+            },
+            {
+                "bugfix": "Crusaders from Crusader Wave not getting their grenzel accent"
+            }
+        ],
+        "CheffieGithub": [
+            {
+                "rscadd": "Converted various things to balloon alerts for readability."
+            },
+            {
+                "rscadd": "Re-added reagent container transfer amount changing. Shift left/right click to \\\"scroll\\\" the transfer amounts, report containers with only one option."
+            }
+        ]
+    },
+    "2025-09-21": {
+        "grungussuss": [
+            {
+                "rscdel": "removed the cannon from Vanderlin the map"
+            },
+            {
+                "bugfix": "jobs disabled by an admin before the round has started will not be elligible for roundstart rolls."
+            },
+            {
+                "admin": "admins can now disable migration."
+            },
+            {
+                "admin": "admins can now disable particle weather."
+            }
+        ],
+        "CheffieGithub": [
+            {
+                "bugfix": "Fixed jesterphobia"
+            },
+            {
+                "bugfix": "Fixed reagent cycling conflicts, its now alt"
+            }
+        ],
+        "7erracotta": [
+            {
+                "rscadd": "Lakkari and Lakkarian cities lore to the lore primer"
+            }
+        ],
+        "DrSirKnight": [
+            {
+                "rscadd": "New mercenary classes: Bogwalker, Hollow Dragoon, Iron Maiden, Sword Dancer, Spellsword"
+            },
+            {
+                "balance": "Corsair and Boltslinger no longer species restricted"
+            },
+            {
+                "balance": "Steppesman now starts with a saiga"
+            }
+        ],
+        "wgtjunior743": [
+            {
+                "bugfix": "Younglings that turn into werewolves will have their proper WW sprite"
+            }
+        ],
+        "snowyseshi": [
+            {
+                "rscadd": "new dungeoneer hood, shield heraldies"
+            },
+            {
+                "image": "dungeoneer.dmi"
+            },
+            {
+                "image": "shield heraldies"
+            }
+        ]
+    },
+    "2025-09-22": {
+        "wgtjunior743": [
+            {
+                "bugfix": "Vault keys can open the Storage doors near the vault."
+            }
+        ],
+        "Wouju": [
+            {
+                "rscadd": "Added a new artificer contraption, basically an ingot mold that cools down metal twice as fast as a normal one (normal ingot moulds cool down THRICE as fast as before now)"
+            },
+            {
+                "bugfix": "fixed ingot molds not needing to reharden metal after the first harden-ing"
+            }
+        ]
+    },
+    "2025-09-23": {
+        "Wouju": [
+            {
+                "balance": "adepts no longer have church key"
+            },
+            {
+                "rscadd": "Abyssorites and Pestrans can summon leeches now."
+            },
+            {
+                "balance": "tweaked cost and cooldown of cure rot and bodypart miracle. Bodypart miracle now heals limbs and organs when reattached."
+            },
+            {
+                "balance": "Fireball, arcyne storm and meteor storm have shout invocations now."
+            },
+            {
+                "rscadd": "Added new mercenary. Sellmage. Basically a mage noble whom became a mercenary to make ends meet."
+            }
+        ],
+        "wgtjunior743": [
+            {
+                "bugfix": "Non zizo cultist worshippers being affected by the zizo godweapon."
+            },
+            {
+                "bugfix": "Zizo clerics/paladins hearing the necra variant when someone dies instead of the zizo one."
+            }
+        ],
+        "SarmentiCampbell": [
+            {
+                "rscadd": "Add a race-locked patron for Rakshari in the godless section."
+            }
+        ],
+        "MercadierY2K": [
+            {
+                "balance": "Fishers now start with average crafting and some sewing skill."
+            }
+        ],
+        "snowyseshi": [
+            {
+                "rscadd": "Added descriptions for the ancient gauntlet, ancient hauberk renamed to ancient haubergeon"
+            },
+            {
+                "balance": "Vampire plate is now a half-plate like the sprite."
+            },
+            {
+                "balance": "Savoyard now has steel durability"
+            }
+        ]
     }
 }

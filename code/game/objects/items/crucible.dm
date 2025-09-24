@@ -1,5 +1,6 @@
 /obj/item/storage/crucible
 	name = "crucible"
+	desc = "A crucible in which metal items can be molten down."
 	layer = ABOVE_ALL_MOB_LAYER
 
 	icon = 'icons/roguetown/weapons/crucible.dmi'

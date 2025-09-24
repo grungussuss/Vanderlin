@@ -203,6 +203,7 @@
 						alloy = /obj/item/ingot/bronze
 					else if(blacksteelalloy == 7)
 						alloy = /obj/item/ingot/blacksteel
+						maxore = 2
 					else
 						alloy = null
 					if(alloy)

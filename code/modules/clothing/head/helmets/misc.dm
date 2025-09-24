@@ -126,6 +126,7 @@
 	armor = ARMOR_SCALE
 	max_integrity = INTEGRITY_POOR
 	item_weight = 5.5 * IRON_MULTIPLIER
+
 //................ Iron Pot Helmet ............... //
 /obj/item/clothing/head/helmet/ironpot
 	name = "pot helmet"
@@ -137,6 +138,18 @@
 	body_parts_covered = COVERAGE_HEAD_NOSE
 	item_weight = 5.5 * IRON_MULTIPLIER
 
+/obj/item/clothing/head/helmet/ironpot/lakkariancap
+	name = "lakkarian crowned cap"
+	desc = "a crimson red iron cap decorated with gold trims and embellishments. The design of this Lakkarian helmet hasn't changed in centuries."
+	icon_state = "lakkaricap"
+	item_state = "lakkaricap"
+	sellprice = 50
+	flags_inv = null
+	armor = ARMOR_SCALE
+	anvilrepair = /datum/skill/craft/armorsmithing
+	body_parts_covered = COVERAGE_HEAD
+	max_integrity = INTEGRITY_STANDARD
+	item_weight = 5.5 * IRON_MULTIPLIER
 
 //................ Copper Lamellar Cap ............... //
 /obj/item/clothing/head/helmet/coppercap

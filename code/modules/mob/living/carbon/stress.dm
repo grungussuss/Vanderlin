@@ -143,7 +143,7 @@
 	. = TRUE
 	var/datum/stress_event/existing_event = has_stress_type(event_type)
 	if(existing_event)
-		existing_event.timer += world.time
+		existing_event.timer = initial(existing_event.timer) + world.time // RESET THE TIMER
 		if(existing_event.stacks >= existing_event.max_stacks)
 			return
 		var/pre_stack = existing_event.get_stress()

@@ -160,6 +160,14 @@
 				/obj/item/natural/fibers = 1)
 	category = "Pants"
 
+/datum/repeatable_crafting_recipe/sewing/lakkarikilt
+	name = "padded kilt"
+	output = /obj/item/clothing/pants/trou/leather/quiltedkilt
+	requirements = list(/obj/item/natural/cloth = 4,
+				/obj/item/natural/fibers = 2)
+	category = "Pants"
+	craftdiff = 3
+
 /datum/repeatable_crafting_recipe/sewing/headband
 	name = "headband"
 	output = /obj/item/clothing/head/headband
@@ -257,6 +265,13 @@
 /datum/repeatable_crafting_recipe/sewing/sack
 	name = "sack hood"
 	output = /obj/item/clothing/head/menacing
+	requirements = list(/obj/item/natural/cloth = 3)
+	craftdiff = 1
+	category = "Hat"
+
+/datum/repeatable_crafting_recipe/sewing/sack
+	name = "dark sack hood"
+	output = /obj/item/clothing/head/dungeoneer
 	requirements = list(/obj/item/natural/cloth = 3)
 	craftdiff = 1
 	category = "Hat"
@@ -991,6 +1006,15 @@
 				/obj/item/natural/fibers = 1)
 	craftdiff = 4
 	category = "Cloak"
+
+/datum/repeatable_crafting_recipe/sewing/lakkarijupon
+	name = "lakkarian jupon"
+	output = /obj/item/clothing/armor/gambeson/heavy/lakkarijupon
+	requirements = list(/obj/item/natural/cloth = 4,
+				/obj/item/natural/fibers = 2,
+				/obj/item/ingot/iron = 1)
+	craftdiff = 4
+	category = "Armor"
 
 /*.............. recipes requiring skill 5 ..............*/
 

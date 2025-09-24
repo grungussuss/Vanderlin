@@ -732,6 +732,11 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 	if(!silent)
 		to_chat(user, "<font color='red'>Classes reset.</font>")
 
+/datum/preferences/proc/ResetPatron(mob/user, silent = FALSE)
+	selected_patron = default_patron
+	if(!silent)
+		to_chat(user, "<font color='red'>Patron reset.</font>")
+
 /datum/preferences/proc/ResetLastClass(mob/user)
 	if(user.client?.prefs)
 		if(!user.client.prefs.lastclass)
@@ -1152,6 +1157,9 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 						var/datum/patron/patron = GLOB.preference_patrons[path]
 						if(!patron.name)
 							continue
+						if(patron.allowed_races)
+							if(!(user.client.prefs.pref_species.id in patron.allowed_races))
+								continue
 						var/pref_name = patron.display_name ? patron.display_name : patron.name
 						patrons_named[pref_name] = patron
 					var/datum/faith/current_faith = GLOB.faithlist[selected_patron?.associated_faith] || GLOB.faithlist[initial(default_patron.associated_faith)]
@@ -1215,6 +1223,7 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 						//Now that we changed our species, we must verify that the mutant colour is still allowed.
 						real_name = pref_species.random_name(gender,1)
 						ResetJobs(user)
+						ResetPatron(user)
 						randomise_appearance_prefs(~(RANDOMIZE_SPECIES))
 						customizer_entries = list()
 						validate_customizer_entries()

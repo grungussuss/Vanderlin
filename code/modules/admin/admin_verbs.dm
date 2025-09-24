@@ -61,6 +61,7 @@ GLOBAL_PROTECT(admin_verbs_admin)
 	/client/proc/cmd_admin_pm_panel,		/*admin-pm list*/
 	/client/proc/stop_sounds,
 	/client/proc/mark_datum_mapview,
+	/client/proc/toggle_migrations, // toggles migrations.
 
 	/client/proc/invisimin,				/*allows our mob to go invisible/visible*/
 	/client/proc/toggle_specific_triumph_buy, /*toggle whether specific triumphs can be bought*/

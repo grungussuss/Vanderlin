@@ -149,7 +149,7 @@
 	SPEC_ID_AASIMAR,\
 )
 
-/// Races who are affiliated with Zaladin
+/// Species who are affiliated with Zaladin
 #define RACES_PLAYER_ZALADIN list(\
 	SPEC_ID_HUMEN,\
 	SPEC_ID_RAKSHARI,\

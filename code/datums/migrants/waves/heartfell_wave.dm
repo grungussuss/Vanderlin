@@ -222,7 +222,6 @@
 		if(H.backl && istype(H.backl, /obj/item/clothing/cloak/boiler))
 			var/obj/item/clothing/cloak/boiler/B = H.backl
 			SEND_SIGNAL(B, COMSIG_ATOM_STEAM_INCREASE, rand(500, 900))
-			B.update_armor()
 
 /datum/migrant_role/heartfelt/magos
 	name = "Magos of Heartfelt"

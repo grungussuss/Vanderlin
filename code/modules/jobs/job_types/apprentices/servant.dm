@@ -18,7 +18,7 @@
 
 	outfit = /datum/outfit/job/servant
 	give_bank_account = TRUE
-
+	cmode_music = 'sound/music/cmode/towner/CombatPrisoner.ogg'
 	can_have_apprentices = FALSE
 
 /datum/outfit/job/servant/pre_equip(mob/living/carbon/human/H)
@@ -67,6 +67,7 @@
 	give_bank_account = TRUE
 
 	can_have_apprentices = FALSE
+	cmode_music = 'sound/music/cmode/towner/CombatInn.ogg'
 
 /datum/outfit/job/tapster/pre_equip(mob/living/carbon/human/H)
 	..()
@@ -157,7 +158,7 @@
 	bypass_lastclass = TRUE
 
 	allowed_races = RACES_PLAYER_ALL
-
+	cmode_music = 'sound/music/cmode/adventurer/CombatIntense.ogg'
 	outfit = /datum/outfit/job/gaffer_assistant
 	give_bank_account = TRUE
 

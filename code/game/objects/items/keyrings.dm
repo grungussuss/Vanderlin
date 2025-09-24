@@ -240,6 +240,9 @@
 /obj/item/storage/keyring/inquisitor
 	keys = list(/obj/item/key/inquisition, /obj/item/key/church)
 
+/obj/item/storage/keyring/adept
+	keys = list(/obj/item/key/inquisition)
+
 /obj/item/storage/keyring/apothecary
 	keys = list(/obj/item/key/apothecary, /obj/item/key/bathhouse, /obj/item/key/clinic)
 

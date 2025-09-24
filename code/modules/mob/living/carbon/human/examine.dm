@@ -157,7 +157,7 @@
 		if(real_name in GLOB.heretical_players)
 			. += span_userdanger("HERETIC! SHAME!")
 
-		if(iszizocultist(user) || iszizolackey(user))
+		if(is_zizocultist(user.mind) || is_zizolackey(user.mind))
 			if(virginity)
 				. += span_userdanger("VIRGIN!")
 

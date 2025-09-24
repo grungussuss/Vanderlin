@@ -4,6 +4,13 @@
 	abstract_type = /obj/item/clothing/head/padded
 
 //................ Simple Hats ............... //
+/obj/item/clothing/head/dungeoneer
+	name = "sack hood"
+	desc = "A crude way to conceal one's identity, these are usually worn by local brigands to not get recognised."
+	icon_state = "dungeoneer"
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR|HIDEFACIALHAIR
+	fiber_salvage = FALSE
+
 /obj/item/clothing/head/menacing
 	name = "sack hood"
 	desc = "A crude way to conceal one's identity, these are usually worn by local brigands to not get recognised."

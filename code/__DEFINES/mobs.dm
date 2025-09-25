@@ -205,6 +205,19 @@
 #define DISGUST_LEVEL_GROSS 25
 #define DISGUST_LEVEL_SLIGHTLYGROSS 10
 
+//Hygiene
+
+#define HYGIENE_LEVEL_CLEAN 250
+#define HYGIENE_LEVEL_NORMAL 200
+#define HYGIENE_LEVEL_DIRTY 75
+#define HYGIENE_LEVEL_DISGUSTING 0
+
+//For washing
+#define HYGIENE_GAIN_CLOTHED 10
+#define HYGIENE_GAIN_UNCLOTHED 25
+
+#define HARPY_PREENING_COOLDOWN 10 MINUTES
+
 //Used as an upper limit for species that continuously gain nutriment
 #define NUTRITION_LEVEL_ALMOST_FULL 995
 
@@ -305,6 +318,7 @@
 #define OFFSET_UNDIES "underwear"
 
 #define HUNGER_FACTOR		0.15	//factor at which mob nutrition decreases
+#define	HYGIENE_FACTOR  	0.05  //factor at which hygiene decreases
 #define ETHEREAL_CHARGE_FACTOR	0.12 //factor at which ethereal's charge decreases
 #define REAGENTS_METABOLISM 1	//How many units of reagent are consumed per tick, by default.
 #define REAGENTS_SLOW_METABOLISM 0.1 // needed to have poisons have powerful effect at low doses without making it too fast

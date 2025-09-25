@@ -87,10 +87,16 @@
 
 //#define NO_DUNGEON //comment this to load dungeons.
 
+//#define ABSOLUTE_MINIMUM_MODE //uncomment this to skip as many resource intensive ops as possible to load in for testing the fastest while preserving most gameplay features.
+
 #define USES_PQ
 
 #ifdef LOWMEMORYMODE
+#ifdef ABSOLUTE_MINIMUM_MODE
+#define FORCE_MAP "_maps/minimal_test.json"
+#else
 #define FORCE_MAP "_maps/roguetest.json"
+#endif
 #endif
 
 #ifdef TESTING

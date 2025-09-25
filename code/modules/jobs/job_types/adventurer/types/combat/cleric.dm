@@ -54,7 +54,7 @@
 			wrists = /obj/item/clothing/neck/psycross/silver/necra
 			cloak = /obj/item/clothing/cloak/stabard/templar/necra
 			H.cmode_music = 'sound/music/cmode/church/CombatGravekeeper.ogg'
-			ADD_TRAIT(H, TRAIT_NOSTINK, TRAIT_GENERIC)//accustomed to death
+			ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)//accustomed to death
 			backr = /obj/item/weapon/shield/heater
 			if(iself(H) || ishalfelf(H))
 				beltl = /obj/item/weapon/mace/elvenclub

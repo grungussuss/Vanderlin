@@ -206,7 +206,7 @@
 			)
 		if("Destitute") // Fuck you, die. Welcome to Heartcrit. Dark souls challenge run.
 			ADD_TRAIT(H, TRAIT_DODGEEXPERT, TRAIT_GENERIC)
-			ADD_TRAIT(H, TRAIT_NOSTINK, TRAIT_GENERIC)
+			ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)
 			H.adjust_skillrank(/datum/skill/craft/cooking, 1, TRUE)
 			H.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
 			H.adjust_skillrank(/datum/skill/misc/medicine, 1, TRUE)
@@ -590,7 +590,7 @@
 			H.adjust_skillrank(/datum/skill/misc/sewing, 2, TRUE)
 			H.adjust_skillrank(/datum/skill/misc/medicine, 2, TRUE)
 			H.change_stat(STATKEY_INT, 1)
-			ADD_TRAIT(H, TRAIT_NOSTINK, TRAIT_GENERIC)
+			ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)
 			to_chat(H,span_info("\
 			I've studied anatomy, and used to practice medicine.")
 			)

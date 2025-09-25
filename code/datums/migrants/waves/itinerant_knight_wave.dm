@@ -25,6 +25,7 @@
 	var/honorary = "Itinerant Knight"
 	H.real_name = "[honorary] [prev_real_name]"
 	H.name = "[honorary] [prev_name]"
+	H.set_patron(/datum/patron/psydon)
 
 	if(H.mind)
 		H.adjust_skillrank(/datum/skill/combat/polearms, 4, TRUE)
@@ -96,6 +97,7 @@
 	if(H.gender == MALE && H.dna?.species)
 		H.dna.species.soundpack_m = new /datum/voicepack/male/squire()
 	ADD_TRAIT(H, TRAIT_DODGEEXPERT, TRAIT_GENERIC)
+	H.set_patron(/datum/patron/psydon)
 	H.cmode_music = 'sound/music/cmode/garrison/CombatGarrison.ogg'
 
 /datum/migrant_wave/knight

@@ -16,6 +16,7 @@ GLOBAL_LIST_INIT(garrison_positions, list(
 	/datum/job/royalknight::title,
 	/datum/job/veteran::title,
 	/datum/job/guardsman::title,
+	/datum/job/lieutenant::title,
 	/datum/job/men_at_arms::title,
 	/datum/job/gatemaster::title,
 	/datum/job/jailor::title,

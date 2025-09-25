@@ -30,7 +30,7 @@
 
 	return TRUE
 
-/datum/status_effect/stacking/phobia_reaction/refresh(datum/status_effect/new_effect, duration_override, stacks_to_add)
+/datum/status_effect/stacking/phobia_reaction/refresh(mob/living/new_owner, duration_override, stacks_to_add, datum/stress_event/event_type)
 	. = ..()
 	add_stacks(stacks_to_add)
 

@@ -42,6 +42,7 @@ GLOBAL_LIST_INIT(traits_by_type, list(
 		"TRAIT_NOFIRE" = TRAIT_NOFIRE,
 		"TRAIT_NOGUNS" = TRAIT_NOGUNS,
 		"TRAIT_NOHUNGER" = TRAIT_NOHUNGER,
+		"TRAIT_NOHYGIENE" = TRAIT_NOHYGIENE,
 		"TRAIT_NOMETABOLISM" = TRAIT_NOMETABOLISM,
 		"TRAIT_TOXIMMUNE" = TRAIT_TOXIMMUNE,
 		"TRAIT_EASYDISMEMBER" = TRAIT_EASYDISMEMBER,
@@ -92,7 +93,7 @@ GLOBAL_LIST_INIT(traits_by_type, list(
 		"Of the Cabal" = TRAIT_CABAL,
 		"Unleechable" = TRAIT_LEECHIMMUNE,
 		"Webwalker" = TRAIT_WEBWALK,
-		"Dead Nose" = TRAIT_NOSTINK,
+		"Dead Nose" = TRAIT_DEADNOSE,
 		"High Jumping" = TRAIT_ZJUMP,
 		"Jesterophobia" = TRAIT_JESTERPHOBIA,
 		"Xenophobia" = TRAIT_XENOPHOBIC,
@@ -185,7 +186,7 @@ GLOBAL_LIST_INIT(traits_by_type, list(
 
 GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_WEBWALK = "I can move freely between webs.",
-	TRAIT_NOSTINK = span_dead("My nose is numb to the smell of decay."),
+	TRAIT_DEADNOSE = span_dead("My nose is numb to the smell of unpleasant odors."),
 	TRAIT_ZJUMP = "Time to reach a new height.",
 	TRAIT_JESTERPHOBIA = span_warning("I have a severe irrational fear of Jesters"),
 	TRAIT_XENOPHOBIC = span_warning("Lesser species pollute our land"),

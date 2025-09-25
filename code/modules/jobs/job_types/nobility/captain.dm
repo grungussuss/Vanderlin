@@ -1,7 +1,7 @@
 /datum/job/captain
 	title = "Captain"
 	tutorial = "Law and Order, your divine reason for existence. \
-	You have been given command over the garrison to help keep order and peace within the city, \
+	You have been given command over the town and keep garrison to help ensure order and peace within the city, \
 	and defend it against the many dangers of the peninsula."
 	department_flag = NOBLEMEN
 	display_order = JDO_CAPTAIN

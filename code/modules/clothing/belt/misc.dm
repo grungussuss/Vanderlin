@@ -291,6 +291,12 @@
 	sewrepair = FALSE
 	//for those curious, yes the artibackpack preserves organs and food. Check _organ.dm and snacks.dm
 
+/obj/item/storage/backpack/backpack/artibackpack/porter
+	name = "humdrum"
+	desc = "A absurdly oversized backpack with complex bronze pipework coursing through it. It hums and vibrates constantly."
+	sewrepair = TRUE //Kobold thing, trust.
+	component_type = /datum/component/storage/concrete/grid/porter
+
 /obj/item/storage/backpack/satchel/surgbag
 	name = "surgery bag"
 	desc = "Contains all the phreakish devices one needs to cut a person up."

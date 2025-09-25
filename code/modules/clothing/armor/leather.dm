@@ -148,6 +148,11 @@
 	icon_state = "artijacket"
 	desc = "A thick leather jacket adorned with fur and cog decals. The height of Heartfelt fashion."
 
+/obj/item/clothing/armor/leather/jacket/artijacket/porter
+	name = "leather jacket"
+	desc = "A thick leather jacket adorned with fur."
+	misc_flags = CRAFTING_TEST_EXCLUDE
+
 /obj/item/clothing/armor/leather/jacket/gatemaster_jacket
 	name = "gatemaster's coat"
 	desc = "A thick cloth padded coat specialty made for the gatemaster."

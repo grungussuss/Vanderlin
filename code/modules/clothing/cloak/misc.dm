@@ -290,3 +290,11 @@
 	nodismemsleeves = TRUE
 	inhand_mod = TRUE
 	allowed_race = SPECIES_BASE_BODY
+
+/obj/item/clothing/cloak/pegasusknight
+	name = "pegasus knight tabard"
+	desc = "A quilted tabard worn by Lakkarian pegasus knights."
+	icon_state = "lakkaritabard"
+	item_state = "lakkaritabard"
+	sleeved = 'icons/roguetown/clothing/onmob/cloaks.dmi'
+	allowed_race = SPECIES_BASE_BODY

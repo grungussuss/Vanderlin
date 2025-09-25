@@ -135,7 +135,7 @@
 		/obj/item/natural/fibers = 7,
 		/obj/item/reagent_containers/food/snacks/fat = 1,
 	)
-	attacked_atom = /obj/item/grown/log/tree/small
+	attacked_atom = /obj/item/natural/wood/plank
 	starting_atom  = /obj/item/natural/fibers
 	allow_inverse_start = FALSE
 	output = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/long

@@ -15,7 +15,7 @@
 	pants = /obj/item/clothing/pants/tights/colored/random
 	shirt = /obj/item/clothing/shirt/tunic/noblecoat
 	gloves = /obj/item/clothing/gloves/fingerless
-	belt = /obj/item/storage/belt/leather
+	belt = /obj/item/storage/belt/leather/mercenary
 	armor = /obj/item/clothing/armor/leather/jacket
 	cloak = /obj/item/clothing/cloak/cape
 	backl = /obj/item/storage/backpack/satchel

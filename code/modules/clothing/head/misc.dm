@@ -310,3 +310,15 @@
 	desc = ""
 	icon_state = "takuhatsugasa"
 	item_flags = ABSTRACT
+
+/obj/item/clothing/head/helmet/pegasusknight
+	name = "pegasus knight helm"
+	desc = "A helmet typically worn by Lakkarian pegasus knights. Many find the design of this helmet unusual, but it protects the neck well and is easy to see out of."
+	icon_state = "lakkarihelm"
+	armor = ARMOR_PLATE
+	flags_inv = HIDEEARS|HIDEHAIR
+	body_parts_covered = HEAD_NECK
+	prevent_crits = ALL_EXCEPT_BLUNT
+	block2add = FOV_BEHIND
+	anvilrepair = /datum/skill/craft/armorsmithing
+	sewrepair = FALSE

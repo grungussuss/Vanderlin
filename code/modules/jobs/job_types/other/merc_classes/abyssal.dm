@@ -11,7 +11,7 @@
 /datum/outfit/job/mercenary/abyssal/pre_equip(mob/living/carbon/human/H)
 	..()
 	shoes = /obj/item/clothing/shoes/sandals
-	belt = /obj/item/storage/belt/leather
+	belt = /obj/item/storage/belt/leather/mercenary
 	backl = /obj/item/storage/backpack/satchel
 	armor = /obj/item/clothing/armor/medium/scale
 	head = /obj/item/clothing/head/helmet/winged

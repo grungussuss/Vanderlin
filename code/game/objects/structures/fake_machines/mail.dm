@@ -168,6 +168,8 @@ GLOBAL_LIST_EMPTY(letters_sent)
 				new /obj/item/clothing/neck/mercmedal(drop_location)
 			if(10)
 				new /obj/item/clothing/neck/mercmedal/abyssal(drop_location)
+			if(11)
+				new /obj/item/clothing/neck/mercmedal/goldfeather(drop_location)
 
 	if(istype(P, /obj/item/paper/confession))
 		if(is_inquisitor_job(user.mind.assigned_role) || is_adept_job(user.mind.assigned_role)) // Only Inquisitors and Adepts can sumbit confessions.

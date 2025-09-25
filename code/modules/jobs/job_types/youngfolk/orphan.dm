@@ -44,14 +44,8 @@
 		H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
 	else
 		if(prob(50))
-			if(prob(50))
-				shirt = /obj/item/clothing/shirt/undershirt/colored/vagrant/l
-			else
-				shirt = /obj/item/clothing/shirt/undershirt/colored/vagrant
-			if(prob(50))
-				pants = /obj/item/clothing/pants/tights/colored/vagrant/l
-			else
-				pants = /obj/item/clothing/pants/tights/colored/vagrant
+			shirt = /obj/item/clothing/shirt/undershirt/colored/vagrant
+			pants = /obj/item/clothing/pants/tights/colored/vagrant
 		else
 			armor = /obj/item/clothing/shirt/rags
 

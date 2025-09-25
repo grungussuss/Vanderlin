@@ -750,5 +750,64 @@
                 "sound": "Changed the combat mode music for the Servant, Tapster and Ring Servant roles."
             }
         ]
+    },
+    "2025-09-25": {
+        "CheffieGithub": [
+            {
+                "bugfix": "Fixed the mapping changelog tag being broken"
+            },
+            {
+                "rscdel": "Removed pref randomisation alert"
+            }
+        ],
+        "CactusMouth": [
+            {
+                "map": "Adds the Old Watchtower to the Forest."
+            }
+        ],
+        "wgtjunior743": [
+            {
+                "bugfix": "You can now talk into the clinic SCOM and Weaponsmith SCOM."
+            },
+            {
+                "rscadd": "Armorer SCOM."
+            },
+            {
+                "rscadd": "Two Shylocks inside the smith for the workers there."
+            },
+            {
+                "bugfix": "Longbow recipe uses a plank to start it instead of a small log"
+            },
+            {
+                "bugfix": "Itinerant Knight and Squire are now psydonites."
+            }
+        ],
+        "7erracotta": [
+            {
+                "rscadd": "fixed some item descriptions, added new lore to the lore primer,\\n<!-- Both :cl:'s are required for the changelog to work! You can put your name to the right of the first :cl: if you want to overwrite your GitHub username as author ingame. -->\\n<!-- You can use multiple of the same prefix (they're only used for the icon ingame) and delete the unneeded ones. Despite some of the tags, changelogs should generally represent how a player might be affected by the changes rather than a summary of the PR's contents. -->\\n## Pre-Merge Checklist\\n<!-- Don't bother filling these in while creating your Pull Request, just click the checkboxes after the Pull Request is opened and you are redirected to the page. -->\\n- [x] You tested this on a local server.\\n- [x] This code did not runtime during testing.\\n- [x] You documented all of your changes.\\n<!-- Neither the compiler nor workflow checks are perfect at detecting runtimes and errors. It is important to test your code/feature/fix locally. -->"
+            }
+        ],
+        "codyman765": [
+            {
+                "rscadd": "Added Ginger hair options"
+            }
+        ],
+        "lmenvs": [
+            {
+                "rscadd": "Adds the hygiene system.  You will now need to bathe, you filthy animal."
+            },
+            {
+                "rscadd": "Certain perfumes are now craftable by the apothecary.  Perfume increases hygiene."
+            },
+            {
+                "rscadd": "New Be Special and Trait for those who like to get down with they funky smellin' self."
+            },
+            {
+                "rscadd": "Harpies have a new preen emote that will increase hygiene with a long cooldown. Harpies who successfully preen their feathers have a chance to drop a feather on the ground."
+            },
+            {
+                "rscadd": "Eora's miracle, Instill Perfection, will also increase hygiene now."
+            }
+        ]
     }
 }

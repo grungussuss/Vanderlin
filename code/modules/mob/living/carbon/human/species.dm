@@ -127,12 +127,15 @@ GLOBAL_LIST_EMPTY(patreon_races)
 
 	/// Multipler for how quickly nutrition decreases
 	var/nutrition_mod = 1
+	/// Multiplier for how quickly hygiene decreases
+	var/hygiene_mod = 1
 	/// Multipler for blood loss
 	var/bleed_mod = 1
 	/// Multipler for pain
 	var/pain_mod = 1
 	/// Electrocution coeffcient
 	var/siemens_coeff = 1
+
 
 	/// Type of damage melee attacks do
 	var/attack_type = BRUTE
@@ -1263,14 +1266,18 @@ GLOBAL_LIST_EMPTY(patreon_races)
 			H.apply_status_effect(/datum/status_effect/debuff/hungryt1)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt2)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt3)
+			H.remove_status_effect(/datum/status_effect/debuff/hungryt4)
 		if(NUTRITION_LEVEL_STARVING to NUTRITION_LEVEL_HUNGRY)
 			H.apply_status_effect(/datum/status_effect/debuff/hungryt2)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt1)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt3)
+			H.remove_status_effect(/datum/status_effect/debuff/hungryt4)
 		if(0 to NUTRITION_LEVEL_STARVING)
 			H.apply_status_effect(/datum/status_effect/debuff/hungryt3)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt1)
 			H.remove_status_effect(/datum/status_effect/debuff/hungryt2)
+			if(CONFIG_GET(flag/starvation_death))
+				H.apply_status_effect(/datum/status_effect/debuff/hungryt4)
 			if(prob(3))
 				playsound(get_turf(H), pick('sound/vo/hungry1.ogg','sound/vo/hungry2.ogg','sound/vo/hungry3.ogg'), 100, TRUE, -1)
 
@@ -1281,15 +1288,18 @@ GLOBAL_LIST_EMPTY(patreon_races)
 			H.apply_status_effect(/datum/status_effect/debuff/thirstyt1)
 			H.remove_status_effect(/datum/status_effect/debuff/thirstyt2)
 			H.remove_status_effect(/datum/status_effect/debuff/thirstyt3)
+			H.remove_status_effect(/datum/status_effect/debuff/thirstyt4)
 		if(HYDRATION_LEVEL_DEHYDRATED to HYDRATION_LEVEL_THIRSTY)
 			H.apply_status_effect(/datum/status_effect/debuff/thirstyt2)
 			H.remove_status_effect(/datum/status_effect/debuff/thirstyt1)
 			H.remove_status_effect(/datum/status_effect/debuff/thirstyt3)
+			H.remove_status_effect(/datum/status_effect/debuff/thirstyt4)
 		if(0 to HYDRATION_LEVEL_DEHYDRATED)
 			H.apply_status_effect(/datum/status_effect/debuff/thirstyt3)
 			H.remove_status_effect(/datum/status_effect/debuff/thirstyt1)
 			H.remove_status_effect(/datum/status_effect/debuff/thirstyt2)
-
+			if(CONFIG_GET(flag/dehydration_death))
+				H.apply_status_effect(/datum/status_effect/debuff/thirstyt4)
 
 /datum/species/proc/update_health_hud(mob/living/carbon/human/H)
 	return 0
@@ -1302,6 +1312,51 @@ GLOBAL_LIST_EMPTY(patreon_races)
 	if(H.gender == FEMALE)
 		H.set_facial_hair_style(/datum/sprite_accessory/hair/facial/none, FALSE)
 	H.set_hair_style(/datum/sprite_accessory/hair/head/bald)
+
+
+/datum/species/proc/handle_hygiene(mob/living/carbon/human/H)
+	if(H.stat == DEAD)
+		return
+	if(HAS_TRAIT(H, TRAIT_NOHYGIENE))
+		return
+	switch(H.hygiene)
+		if(HYGIENE_LEVEL_CLEAN to HYGIENE_LEVEL_CLEAN)
+			if(HAS_TRAIT(H, TRAIT_STINKY))
+				H.add_stress(/datum/stress_event/forced_clean)
+				H.remove_stress(/datum/stress_event/filth_lover)
+			else
+				H.add_stress(/datum/stress_event/clean)
+			H.remove_status_effect(/datum/status_effect/debuff/stinky_person)
+			H.remove_stress(/datum/stress_event/dirty)
+			H.remove_stress(/datum/stress_event/disgusting)
+		if(HYGIENE_LEVEL_DISGUSTING to HYGIENE_LEVEL_DISGUSTING)
+			if(HAS_TRAIT(H, TRAIT_STINKY))
+				H.add_stress(/datum/stress_event/filth_lover)
+			else
+				H.add_stress(/datum/stress_event/disgusting)
+			H.apply_status_effect(/datum/status_effect/debuff/stinky_person)
+			H.remove_stress(/datum/stress_event/forced_clean)
+			H.remove_stress(/datum/stress_event/dirty)
+			H.remove_stress(/datum/stress_event/clean)
+
+		if(HYGIENE_LEVEL_DIRTY to HYGIENE_LEVEL_CLEAN)
+			H.remove_stress(/datum/stress_event/dirty)
+			H.remove_stress(/datum/stress_event/disgusting)
+			H.remove_status_effect(/datum/status_effect/debuff/stinky_person)
+		if(HYGIENE_LEVEL_DISGUSTING to HYGIENE_LEVEL_DIRTY)
+			if(HAS_TRAIT(H, TRAIT_STINKY))
+				H.add_stress(/datum/stress_event/filth_lover)
+			else
+				H.add_stress(/datum/stress_event/dirty)
+			H.remove_status_effect(/datum/status_effect/debuff/stinky_person)
+			H.remove_stress(/datum/stress_event/forced_clean)
+			H.remove_stress(/datum/stress_event/disgusting)
+			H.remove_stress(/datum/stress_event/clean)
+
+
+
+
+
 
 //////////////////
 // ATTACK PROCS //

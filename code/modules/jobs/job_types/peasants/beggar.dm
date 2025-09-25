@@ -27,6 +27,15 @@
 	. = ..()
 	peopleknowme = list()
 
+/datum/job/vagrant/after_spawn(mob/living/spawned, client/player_client)
+	..()
+	if(ishuman(spawned))
+		var/mob/living/carbon/human/stinky_boy = spawned
+		if(prob(25))
+			stinky_boy.set_hygiene(HYGIENE_LEVEL_DISGUSTING)
+		else
+			stinky_boy.set_hygiene(HYGIENE_LEVEL_DIRTY)
+
 /datum/outfit/job/vagrant/pre_equip(mob/living/carbon/human/H)
 	..()
 	if(prob(20))
@@ -43,11 +52,8 @@
 		armor = /obj/item/clothing/shirt/rags
 	else
 		pants = /obj/item/clothing/pants/tights/colored/vagrant
-		if(prob(50))
-			pants = /obj/item/clothing/pants/tights/colored/vagrant/l
 		shirt = /obj/item/clothing/shirt/undershirt/colored/vagrant
-		if(prob(50))
-			shirt = /obj/item/clothing/shirt/undershirt/colored/vagrant/l
+
 	H.adjust_skillrank(/datum/skill/misc/sneaking, pick(1,2,3,4,5), TRUE)
 	H.adjust_skillrank(/datum/skill/misc/stealing, pick(1,2,3,4,5), TRUE)
 	H.adjust_skillrank(/datum/skill/misc/lockpicking, pick (1,2,3,4,5), TRUE) // thug lyfe
@@ -64,3 +70,4 @@
 
 /datum/outfit/job/vagrant
 	name = "Beggar"
+

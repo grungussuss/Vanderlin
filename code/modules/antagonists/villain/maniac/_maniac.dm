@@ -20,7 +20,7 @@
 	/// Traits we apply to the owner
 	innate_traits = list(
 		TRAIT_DECEIVING_MEEKNESS,
-		TRAIT_NOSTINK,
+		TRAIT_DEADNOSE,
 		TRAIT_EMPATH,
 		TRAIT_STEELHEARTED,
 		TRAIT_NOMOOD,

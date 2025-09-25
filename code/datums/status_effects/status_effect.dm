@@ -105,7 +105,7 @@
 /datum/status_effect/proc/before_remove()
 	return TRUE
 
-/datum/status_effect/proc/refresh(datum/status_effect/new_effect, duration_override, ...)
+/datum/status_effect/proc/refresh(mob/living/new_owner, duration_override, ...)
 	if(initial_duration == -1)
 		return
 	duration = world.time + initial_duration

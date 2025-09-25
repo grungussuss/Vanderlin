@@ -44,19 +44,19 @@
 
 	influence_sets = list(
 		"Set 1" = list(
-			STATS_BOOKS_PRINTED = list("name" = "Books printed:", "points" = 5, "capacity" = 40),
+			STATS_BOOKS_PRINTED = list("name" = "Books printed:", "points" = 4, "capacity" = 40),
 		),
 		"Set 2" = list(
-			STATS_LITERACY_TAUGHT = list("name" = "Literacy taught:", "points" = 15, "capacity" = 70),
+			STATS_LITERACY_TAUGHT = list("name" = "Literacy taught:", "points" = 12.5, "capacity" = 70),
 		),
 		"Set 3" = list(
-			STATS_ILLITERATES = list("name" = "Number of illiterates:", "points" = -2.25, "capacity" = -50),
+			STATS_ILLITERATES = list("name" = "Number of illiterates:", "points" = -2.75, "capacity" = -50),
 		),
 		"Set 4" = list(
-			STATS_SKILLS_DREAMED = list("name" = "Skills dreamed:", "points" = 0.3, "capacity" = 90),
+			STATS_SKILLS_DREAMED = list("name" = "Skills dreamed:", "points" = 0.285, "capacity" = 90),
 		),
 		"Set 5" = list(
-			STATS_MANA_SPENT = list("name" = "Mana spent:", "points" = 0.014, "capacity" = 90),
+			STATS_MANA_SPENT = list("name" = "Mana spent:", "points" = 0.0125, "capacity" = 90),
 		)
 	)
 
@@ -155,20 +155,20 @@
 
 	influence_sets = list(
 		"Set 1" = list(
-			STATS_LAUGHS_MADE = list("name" = "Laughs had:", "points" = 0.25, "capacity" = 85),
+			STATS_LAUGHS_MADE = list("name" = "Laughs had:", "points" = 0.265, "capacity" = 85),
 		),
 		"Set 2" = list(
-			STATS_GAMES_RIGGED = list("name" = "Games rigged:", "points" = 3.75, "capacity" = 40),
+			STATS_GAMES_RIGGED = list("name" = "Games rigged:", "points" = 4, "capacity" = 40),
 		),
 		"Set 3" = list(
-			STATS_PEOPLE_MOCKED = list("name" = "People mocked:", "points" = 5, "capacity" = 60),
+			STATS_PEOPLE_MOCKED = list("name" = "People mocked:", "points" = 5.25, "capacity" = 60),
 		),
 		"Set 4" = list(
-			STATS_CRITS_MADE = list("name" = "Crits made:", "points" = 0.265, "capacity" = 90),
+			STATS_CRITS_MADE = list("name" = "Crits made:", "points" = 0.27, "capacity" = 90),
 		),
 		"Set 5" = list(
-			STATS_SONGS_PLAYED = list("name" = "Songs played:", "points" = 0.7, "capacity" = 70),
-			STATS_MOAT_FALLERS = list("name" = "Moat fallers:", "points" = 4.5, "capacity" = 50),
+			STATS_SONGS_PLAYED = list("name" = "Songs played:", "points" = 0.725, "capacity" = 70),
+			STATS_MOAT_FALLERS = list("name" = "Moat fallers:", "points" = 4.75, "capacity" = 50),
 		)
 	)
 
@@ -501,7 +501,7 @@
 			STATS_ALIVE_HALF_ORCS = list("name" = "Number of half-orcs:", "points" = 8.5, "capacity" = 70),
 		),
 		"Set 5" = list(
-			STATS_PEOPLE_GIBBED = list("name" = "People gibbed:", "points" = 3.75, "capacity" = 55),
+			STATS_PEOPLE_GIBBED = list("name" = "People gibbed:", "points" = 4, "capacity" = 55),
 		)
 	)
 
@@ -544,7 +544,7 @@
 			STATS_KLEPTOMANIACS = list("name" = "Number of kleptomaniacs:", "points" = 12, "capacity" = 70),
 		),
 		"Set 4" = list(
-			STATS_DODGES = list("name" = "Dodges made:", "points" = 0.085, "capacity" = 100),
+			STATS_DODGES = list("name" = "Dodges made:", "points" = 0.0865, "capacity" = 100),
 		),
 		"Set 5" = list(
 			STATS_LOCKS_PICKED = list("name" = "Locks picked:", "points" = 4.25, "capacity" = 80),

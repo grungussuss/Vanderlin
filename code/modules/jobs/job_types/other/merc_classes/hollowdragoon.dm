@@ -55,7 +55,7 @@
 	new /mob/living/simple_animal/hostile/retaliate/saiga/tame/saddled(get_turf(H))
 
 	ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_NOSTINK, TRAIT_GENERIC)
+	ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)
 
 
 

@@ -27,6 +27,10 @@
 	desc = "A sporting cap with a small gear adornment. Popular fashion amongst Heartfelt engineers."
 	icon_state = "articap"
 
+/obj/item/clothing/head/articap/porter
+	desc = "A cap with a small adornment."
+	misc_flags = CRAFTING_TEST_EXCLUDE
+
 /obj/item/clothing/head/cookhat
 	name = "cook hat"
 	desc = "A white top hat typically worn by distinguished kitchen workers."

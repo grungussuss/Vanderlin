@@ -75,7 +75,7 @@
 
 /datum/special_trait/deadened/on_apply(mob/living/carbon/human/character, silent)
 	ADD_TRAIT(character, TRAIT_NOMOOD, "[type]")
-	ADD_TRAIT(character, TRAIT_NOSTINK, "[type]")
+	ADD_TRAIT(character, TRAIT_DEADNOSE, "[type]")
 
 /datum/special_trait/latentmagic
 	name = "Latent Magic"
@@ -703,6 +703,15 @@
 	catte.desc = "This cat seems a little.. strange..."
 	catte.ckey = character.ckey
 	qdel(character)
+
+/datum/special_trait/smelly
+	name = "Smelly"
+	greet_text = span_notice("I was born in the sewers and the smell just never went away... ")
+	weight = 25
+
+/datum/special_trait/smelly/on_apply(mob/living/carbon/human/character, silent)
+	ADD_TRAIT(character, TRAIT_STINKY, TRAIT_GENERIC)
+	ADD_TRAIT(character, TRAIT_DEADNOSE, TRAIT_GENERIC)
 
 /datum/special_trait/keenears
 	name = "Keen Ears"

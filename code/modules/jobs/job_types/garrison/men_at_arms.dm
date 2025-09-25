@@ -1,8 +1,9 @@
 /datum/job/men_at_arms
 	title = "Men-at-arms"
-	tutorial = "Like a hound on a leash, you stand vigilant for your masters. \
+	tutorial = "Chosen by the Captain and King, you're not like those shit stinking City Watchmen. \
+	Like a hound on a leash, you stand vigilant for your masters. \
 	You live better than the rest of the taffers in this kingdom-- \
-	infact, you take shifts manning the gate with your brethren, \
+	infact, you take shifts manning the gate with your brethren, assuming the gatemaster isn't there, \
 	keeping the savages out, keeping the shit-covered knaves away from your foppish superiors. \
 	It will be a cold day in hell when you and your compatriots are slain, and nobody in this town will care. \
 	The nobility needs good men, and they only come in a pair of pairs."

@@ -131,8 +131,9 @@
 	"red - wine" = "82534c",
 	"red - sunset" = "82462b",
 	"red - blood" = "822b2b",
-	"red - maroon" = "612929"
+	"red - maroon" = "612929",
 
+	"orange - rust" = "bc5e35"
 	))
 
 /datum/species/human/northern/get_possible_names(gender = MALE)

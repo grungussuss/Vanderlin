@@ -420,6 +420,32 @@
 	stress_change = 3
 	desc = span_red("I've been taken hostage!")
 
+/datum/stress_event/perfume_hater
+	stress_change = 1
+	desc = span_red("The scent of flowers makes me nauseous!")
+	timer = 10 MINUTES
+
+/datum/stress_event/odor
+	stress_change = 1
+	desc = span_red("The scent of body odor violates my nostrils!")
+	timer = 10 MINUTES
+
+//Hygiene
+
+/datum/stress_event/dirty
+	timer = INFINITY
+	desc = span_red("I smell horrid.")
+	stress_change = 1
+
+/datum/stress_event/disgusting
+	timer = INFINITY
+	desc = span_red("I smell <i>DISGUSTING!</i>")
+	stress_change = 2
+
+/datum/stress_event/forced_clean
+	timer = 10 MINUTES
+	desc = span_red("My wonderful musk has been washed away...")
+	stress_change = 1
 /datum/stress_event/startled
 	desc = span_warning("Hearing that word made me think about something scary.")
 	stress_change = 1

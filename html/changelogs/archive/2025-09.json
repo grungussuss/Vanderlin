@@ -809,5 +809,49 @@
                 "rscadd": "Eora's miracle, Instill Perfection, will also increase hygiene now."
             }
         ]
+    },
+    "2025-09-26": {
+        "wgtjunior743": [
+            {
+                "bugfix": "Not being able to craft the Hardened leather coat"
+            },
+            {
+                "bugfix": "Abyssal and Sword Dancer mercs spawning without their keys."
+            },
+            {
+                "bugfix": "All godless types counts toward Apostasy at the round end."
+            }
+        ],
+        "SarmentiCampbell": [
+            {
+                "rscadd": "Added Porter, A mercenary Class for Kobold"
+            },
+            {
+                "balance": "Lowered Rolling Pin's weight class"
+            }
+        ],
+        "Just-Sim": [
+            {
+                "rscadd": "OOC Notes, OOC Extra, Flavor Text Markdown"
+            }
+        ],
+        "lmenvs": [
+            {
+                "config": "adds configuration for death via starvation/dehydration. not on by default"
+            }
+        ],
+        "7erracotta": [
+            {
+                "rscadd": "Added some armor and cloaks for the merc class to waer"
+            }
+        ],
+        "Wouju": [
+            {
+                "rscadd": "Added City Watch Lieutenant"
+            },
+            {
+                "map": "added city watch lieutenant's room and office, tweaked the city watch garrison a bit"
+            }
+        ]
     }
 }

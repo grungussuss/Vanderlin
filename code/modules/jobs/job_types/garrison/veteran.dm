@@ -108,7 +108,7 @@
 	neck = /obj/item/clothing/neck/gorget
 	armor = /obj/item/clothing/armor/plate // Meant to be better than man-at-arms, but worse than knight. No heavy armor!! This is a cuirass, not half-plate.
 	shirt = /obj/item/clothing/armor/gambeson/heavy
-	head = /obj/item/clothing/head/helmet/sallet
+	head = /obj/item/clothing/head/helmet/sargebarbute //veteran who won a nice helmet
 	pants = /obj/item/clothing/pants/chainlegs
 	gloves = /obj/item/clothing/gloves/plate
 	wrists = /obj/item/clothing/wrists/bracers

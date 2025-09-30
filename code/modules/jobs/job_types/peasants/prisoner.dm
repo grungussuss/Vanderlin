@@ -18,7 +18,7 @@
 	banned_leprosy = FALSE
 	bypass_lastclass = TRUE
 
-	allowed_races = RACES_PLAYER_ALL
+	allowed_races = RACES_PLAYER_FOREIGNNOBLE
 
 	outfit = /datum/outfit/job/prisoner
 	give_bank_account = 173

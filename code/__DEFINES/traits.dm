@@ -221,6 +221,11 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_NOEMBED			"noembed"
 #define TRAIT_NO_TELEPORT		"no-teleport" //you just can't
 
+/// this object has been frozen
+#define TRAIT_FROZEN "frozen"
+/// Trait applied by element
+#define ELEMENT_TRAIT(source) "element_trait_[source]"
+
 // Debug traits
 /// This object has sound debugging tools attached to it
 #define TRAIT_SOUND_DEBUGGED "sound_debugged"

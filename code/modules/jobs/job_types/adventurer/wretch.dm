@@ -5,8 +5,8 @@
 	job_flags = (JOB_EQUIP_RANK | JOB_NEW_PLAYER_JOINABLE | JOB_SHOW_IN_CREDITS)
 	display_order = JDO_WRETCH
 	faction = FACTION_TOWN
-	total_positions = 3
-	spawn_positions = 3
+	total_positions = 2
+	spawn_positions = 2
 	min_pq = 10
 	antag_job = TRUE
 

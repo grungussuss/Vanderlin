@@ -19,19 +19,19 @@
 
 		// Top 3 penalties
 		if(i == 1)
-			initialized_storyteller.influence_modifier = 0.875
+			initialized_storyteller.influence_modifier = 0.9
 		else if(i == 2)
-			initialized_storyteller.influence_modifier = 0.925
-		else if(i == 3)
 			initialized_storyteller.influence_modifier = 0.95
+		else if(i == 3)
+			initialized_storyteller.influence_modifier = 0.975
 
 		// Bottom 3 bonuses
 		else if(i == length(storytellers))
-			initialized_storyteller.influence_modifier = 1.125
+			initialized_storyteller.influence_modifier = 1.1
 		else if(i == (length(storytellers) - 1))
-			initialized_storyteller.influence_modifier = 1.075
-		else if(i == (length(storytellers) - 2))
 			initialized_storyteller.influence_modifier = 1.05
+		else if(i == (length(storytellers) - 2))
+			initialized_storyteller.influence_modifier = 1.025
 
 		// Handle ascension
 		var/points = json[initialized_storyteller.name] || 0
@@ -89,10 +89,10 @@
 	var/current_points_influential = json[most_influential] || 0
 	var/current_points_frequent = json[most_frequent] || 0
 	if(most_influential == most_frequent)
-		json[most_influential] = current_points_influential + 2
+		json[most_influential] = current_points_influential + 3
 	else
 		json[most_influential] = current_points_influential + 1
-		json[most_frequent] = current_points_frequent + 1
+		json[most_frequent] = current_points_frequent + 2
 
 	fdel(json_file)
 	WRITE_FILE(json_file, json_encode(json))

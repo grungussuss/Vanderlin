@@ -75,8 +75,8 @@ GLOBAL_LIST_EMPTY(tennite_schisms)
 
 	if(astrata_count >= challenger_count)
 		priority_announce("Astrata's light prevails over the challenge of [challenger.name]! The Sun Queen confirms her status as a true heir of Psydon!", "Astrata is VICTORIOUS!", 'sound/magic/ahh2.ogg')
-		adjust_storyteller_influence(ASTRATA, 200)
-		adjust_storyteller_influence(challenger.name, -50)
+		adjust_storyteller_influence(ASTRATA, 250)
+		adjust_storyteller_influence(challenger.name, -100)
 
 		for(var/datum/weakref/supporter_ref in supporters_astrata)
 			var/mob/living/carbon/human/supporter = supporter_ref.resolve()

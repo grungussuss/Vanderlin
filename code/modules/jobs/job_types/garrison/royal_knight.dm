@@ -111,6 +111,8 @@
 		if("Longsword")
 			grant_shield = FALSE
 			H.clamped_adjust_skillrank(/datum/skill/combat/swords, 2, 4, TRUE)
+		if("Sabre")
+			H.clamped_adjust_skillrank(/datum/skill/combat/swords, 2, 4, TRUE)
 		if("Unarmed")
 			H.clamped_adjust_skillrank(/datum/skill/combat/unarmed, 3, 5, TRUE)
 			H.clamped_adjust_skillrank(/datum/skill/combat/knives, 2, 4, TRUE)
@@ -158,6 +160,7 @@
 	H.adjust_skillrank(/datum/skill/combat/whipsflails, -1, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/axesmaces, -1, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/bows, -1, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/crossbows, -1, TRUE)
 	H.adjust_skillrank(/datum/skill/craft/engineering, 3, TRUE)//replaces the int buff
 
 /datum/outfit/job/royalknight/steam/post_equip(mob/living/carbon/human/H, visualsOnly)

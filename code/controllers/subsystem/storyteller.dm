@@ -1349,7 +1349,7 @@ SUBSYSTEM_DEF(gamemode)
 	if(!highest)
 		return
 
-	var/adjustment = min(3, 1 + (0.4 * FLOOR(max(0, highest.times_chosen - 5) / 5, 1)))
+	var/adjustment = min(3, 1 + (0.4 * FLOOR(max(0, highest.times_chosen - 4) / 4, 1)))
 
 	if(storytellers_with_influence[highest] > adjustment)
 		highest.bonus_points -= adjustment
@@ -1663,20 +1663,25 @@ SUBSYSTEM_DEF(gamemode)
 
 	var/follower_count = GLOB.patron_follower_counts[initialized_storyteller.name] || 0
 	var/base_mod = initialized_storyteller.follower_modifier
-	var/diminish_threshold = 4
-	var/second_diminish_threshold = 9
+	var/diminish_threshold = 3
+	var/second_diminish_threshold = 6
 	var/min_mod = 15
 	var/second_min_mod = 10
 
 	// Calculate total influence with diminishing returns
 	var/total_influence = 0
+	var/current_penalty = 0
+
 	for(var/i in 1 to follower_count)
 		if(i <= diminish_threshold)
 			total_influence += base_mod
+			current_penalty = 0
 		else if(i <= second_diminish_threshold)
-			total_influence += max(min_mod, base_mod - (i - diminish_threshold))
+			current_penalty += 1
+			total_influence += max(min_mod, base_mod - current_penalty)
 		else
-			total_influence += max(second_min_mod, base_mod - (i - diminish_threshold))
+			current_penalty += 2
+			total_influence += max(second_min_mod, base_mod - current_penalty)
 
 	total_influence = total_influence * initialized_storyteller.influence_modifier
 

@@ -8,7 +8,7 @@
 
 /datum/outfit/job/serjeant_at_arms/pre_equip(mob/living/carbon/human/H)
 	..()
-	head = /obj/item/clothing/head/helmet/leather
+	head = /obj/item/clothing/head/helmet/sargebarbute
 	pants = /obj/item/clothing/pants/trou/leather
 	cloak = /obj/item/clothing/cloak/half/vet
 	shirt = /obj/item/clothing/shirt/undershirt/colored/guardsecond
@@ -73,7 +73,7 @@
 	wrists = /obj/item/clothing/wrists/bracers/leather
 	backpack_contents = list(/obj/item/weapon/knife/dagger/steel/special = 1)
 	if(prob(30))
-		head = /obj/item/clothing/head/helmet/kettle
+		head = /obj/item/clothing/head/helmet/townbarbute
 	else
 		head = pick(/obj/item/clothing/head/roguehood/colored/guard, /obj/item/clothing/head/roguehood/colored/guardsecond)
 
@@ -122,7 +122,7 @@
 	wrists = /obj/item/clothing/wrists/bracers/leather
 	backpack_contents = list(/obj/item/weapon/knife/dagger/steel/special = 1)
 	if(prob(30))
-		head = /obj/item/clothing/head/helmet/kettle
+		head = /obj/item/clothing/head/helmet/townbarbute
 	else
 		head = pick(/obj/item/clothing/head/roguehood/colored/guard, /obj/item/clothing/head/roguehood/colored/guardsecond)
 
@@ -158,10 +158,10 @@
 
 /datum/outfit/job/footman_bannerman/pre_equip(mob/living/carbon/human/H)
 	..()
-	armor = /obj/item/clothing/armor/cuirass
-	shirt = /obj/item/clothing/armor/chainmail
+	armor = /obj/item/clothing/armor/cuirass/iron
+	shirt = /obj/item/clothing/armor/chainmail/iron
 	neck = /obj/item/clothing/neck/gorget
-	head = /obj/item/clothing/head/helmet/nasal
+	head = /obj/item/clothing/head/helmet/townbarbute
 	backr = /obj/item/weapon/shield/wood
 	beltr = /obj/item/weapon/sword/scimitar/messer
 	beltl = /obj/item/weapon/mace
@@ -198,10 +198,10 @@
 
 /datum/outfit/job/pikeman_bannerman/pre_equip(mob/living/carbon/human/H)
 	..()
-	armor = /obj/item/clothing/armor/chainmail
+	armor = /obj/item/clothing/armor/chainmail/hauberk/iron
 	shirt = /obj/item/clothing/armor/gambeson
 	neck = /obj/item/clothing/neck/gorget
-	head = /obj/item/clothing/head/helmet/kettle
+	head = /obj/item/clothing/head/helmet/townbarbute
 	beltr = /obj/item/weapon/sword/scimitar/messer
 	pants = /obj/item/clothing/pants/trou/leather
 	cloak = /obj/item/clothing/cloak/stabard/guard

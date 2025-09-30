@@ -302,6 +302,7 @@
 				/obj/item/mana_battery/mana_crystal,
 				/obj/item/reagent_containers/powder,
 				/obj/item/organ,
+				/obj/item/neuFarm/seed,
 				)
 			),
 		)

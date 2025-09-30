@@ -1,4 +1,6 @@
 /datum/job
+	///If the job is disabled/enabled for preferences
+	var/enabled = TRUE
 	/// The name of the job , used for preferences, bans and more. Make sure you know what you're doing before changing this.
 	var/title = "NOPE"
 	/// The title of this job given to female mobs. Fluff, not as important as [var/title].

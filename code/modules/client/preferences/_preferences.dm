@@ -546,6 +546,9 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 			if(!job.total_positions && !job.spawn_positions)
 				continue
 
+			if(!job.enabled)
+				continue
+
 			if(job.spawn_positions <= 0)
 				continue
 

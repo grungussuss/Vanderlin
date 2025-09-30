@@ -395,7 +395,7 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 		ssaddle.forceMove(get_turf(src))
 		ssaddle = null
 	var/list/butcher = list()
-	var/butchery_skill_level = user.get_skill_level(/datum/skill/labor/butchering)
+	var/butchery_skill_level = user.get_skill_level(/datum/skill/labor/butchering) + user.get_inspirational_bonus()
 	var/time_per_cut = max(5, 30 - butchery_skill_level * 5) // 30 seconds for no skill, 5 seconds for master
 	var/botch_chance = 0
 	if(length(botched_butcher_results) && butchery_skill_level < SKILL_LEVEL_JOURNEYMAN)

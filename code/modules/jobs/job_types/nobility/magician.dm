@@ -42,9 +42,7 @@
 
 /datum/outfit/job/magician/pre_equip(mob/living/carbon/human/H)
 	..()
-	head = /obj/item/clothing/head/wizhat
 	backr = /obj/item/storage/backpack/satchel
-	armor = /obj/item/clothing/shirt/robe/colored/black
 	cloak = /obj/item/clothing/cloak/black_cloak
 	ring = /obj/item/clothing/ring/gold
 	belt = /obj/item/storage/belt/leather/plaquesilver
@@ -67,14 +65,9 @@
 	H.adjust_skillrank(/datum/skill/craft/alchemy, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/labor/mathematics, 4, TRUE)
 	if(H.age == AGE_OLD)
-		armor = /obj/item/clothing/shirt/robe/colored/courtmage
 		H.change_stat(STATKEY_SPD, -1)
 		H.change_stat(STATKEY_INT, 1)
-	if(H.gender == FEMALE)
-		head = /obj/item/clothing/head/wizhat/witch
 	if(H.gender == MALE)
-		if(H.dna.species.id != SPEC_ID_DWARF)
-			armor = /obj/item/clothing/shirt/robe/wizard
 		H.dna.species.soundpack_m = new /datum/voicepack/male/wizard()
 	ADD_TRAIT(H, TRAIT_SEEPRICES, TRAIT_GENERIC)
 	ADD_TRAIT(H, TRAIT_NOBLE, TRAIT_GENERIC)
@@ -84,3 +77,22 @@
 	H.change_stat(STATKEY_INT, 5)
 	H.change_stat(STATKEY_CON, -2)
 	H.change_stat(STATKEY_SPD, -2)
+
+/datum/outfit/job/magician/post_equip(mob/living/carbon/human/H)
+	. = ..()
+	var/static/list/selectablehat = list(
+		"Witch hat" = /obj/item/clothing/head/wizhat/witch,
+		"Random Wizard hat" = /obj/item/clothing/head/wizhat/random,
+		"Mage hood" = /obj/item/clothing/head/roguehood/colored/mage,
+		"Generic Wizard hat" = /obj/item/clothing/head/wizhat/gen,
+		"Mage hood" = /obj/item/clothing/head/roguehood/colored/mage,
+		"Black hood" = /obj/item/clothing/head/roguehood/colored/black,
+	)
+	H.select_equippable(H, selectablehat, message = "Choose your hat of choice", title = "WIZARD")
+	var/static/list/selectablerobe = list(
+		"Black robes" = /obj/item/clothing/shirt/robe/colored/black,
+		"Mage robes" = /obj/item/clothing/shirt/robe/colored/mage,
+		"Courtmage Robes" = /obj/item/clothing/shirt/robe/colored/courtmage,
+		"Wizard robes" = /obj/item/clothing/shirt/robe/wizard,
+	)
+	H.select_equippable(H, selectablerobe, message = "Choose your robe of choice", title = "WIZARD")

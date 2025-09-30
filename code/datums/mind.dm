@@ -781,6 +781,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
  ** check_apprentice - do apprentices recieve skill experience too?
 */
 /datum/mind/proc/add_sleep_experience(skill, amt, silent = FALSE, check_apprentice = TRUE)
+	amt *= GLOB.sleep_experience_modifier
 	if(check_apprentice)
 		current.adjust_apprentice_exp(skill, amt, silent)
 	if(sleep_adv.add_sleep_experience(skill, amt, silent))

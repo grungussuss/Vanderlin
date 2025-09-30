@@ -76,6 +76,10 @@
 					H.update_inv_head()
 		user.regenerate_clothes()
 
+/obj/item/clothing/neck/coif/Initialize()
+	. = ..()
+	ADD_TRAIT(src, TRAIT_HARD_TO_STEAL, TRAIT_GENERIC)
+
 /obj/item/clothing/neck/coif/cloth
 	name = "padded coif"
 	desc = "A simple coif made of cloth. Not very effective armor, but may soften weak blows and keeps the head and neck warm."
@@ -186,6 +190,10 @@
 
 	user.regenerate_clothes()
 
+/obj/item/clothing/neck/chaincoif/Initialize()
+	. = ..()
+	ADD_TRAIT(src, TRAIT_HARD_TO_STEAL, TRAIT_GENERIC)
+
 /obj/item/clothing/neck/chaincoif/iron
 	icon_state = "ichaincoif"
 	name = "iron chain coif"
@@ -235,6 +243,10 @@
 	max_integrity = INTEGRITY_STRONGEST
 	prevent_crits = ALL_EXCEPT_STAB
 
+/obj/item/clothing/neck/bevor/Initialize()
+	. = ..()
+	ADD_TRAIT(src, TRAIT_HARD_TO_STEAL, TRAIT_GENERIC)
+
 /obj/item/clothing/neck/bevor/iron
 	name = "iron bevor"
 	desc = "A piece of iron plate armor meant to protect the throat and neck of its wearer against decapitation, extending the protection of armor plates."
@@ -266,6 +278,10 @@
 	body_parts_covered = NECK
 	max_integrity = INTEGRITY_STRONG
 	prevent_crits = ALL_EXCEPT_STAB
+
+/obj/item/clothing/neck/gorget/Initialize()
+	. = ..()
+	ADD_TRAIT(src, TRAIT_HARD_TO_STEAL, TRAIT_GENERIC)
 
 /obj/item/clothing/neck/gorget/hoplite // Better than an iron gorget, not quite as good as a steel bevor
 	name = "bronze gorget"
@@ -317,6 +333,10 @@
 					var/mob/living/carbon/H = user
 					H.update_inv_neck()
 		user.regenerate_clothes()
+
+/obj/item/clothing/neck/highcollier/Initialize()
+	. = ..()
+	ADD_TRAIT(src, TRAIT_HARD_TO_STEAL, TRAIT_GENERIC)
 
 /obj/item/clothing/neck/highcollier/iron
 	name = "iron high collier"

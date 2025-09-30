@@ -38,7 +38,7 @@
 	. = ..()
 	var/datum/reagent/molten_metal/metal = reagents.get_reagent(/datum/reagent/molten_metal)
 	if(metal)
-		for(var/datum/material/material as anything in metal.data)
+		for(var/datum/material/material in metal.data)
 			var/tag = "Molten"
 			if(reagents.chem_temp < material.melting_point)
 				tag = "Hardened"

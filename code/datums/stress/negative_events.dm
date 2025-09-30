@@ -618,3 +618,8 @@
 	desc = span_red("My phantom ear was destroyed!")
 	stress_change = 1
 	timer = 2 MINUTES
+
+/datum/stress_event/collarcurse
+	desc = "<span class='boldwarning'>It's uncomfortable, and I can't take it off!</span>\n" //torture yay!
+	stress_change = 50
+	timer = 1000 MINUTES

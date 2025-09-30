@@ -57,7 +57,7 @@
 
 /datum/outfit/job/watchman/pikeman/pre_equip(mob/living/carbon/human/H)
 	..()
-	head = /obj/item/clothing/head/helmet/kettle
+	head = /obj/item/clothing/head/helmet/kettle/slit/atarms
 	armor = /obj/item/clothing/armor/cuirass
 	shirt = /obj/item/clothing/armor/chainmail
 	neck = /obj/item/clothing/neck/chaincoif/iron
@@ -98,7 +98,7 @@
 
 /datum/outfit/job/watchman/swordsmen/pre_equip(mob/living/carbon/human/H)
 	..()
-	head = pick(/obj/item/clothing/head/roguehood/colored/guard, /obj/item/clothing/head/roguehood/colored/guardsecond)
+	head = /obj/item/clothing/head/helmet/kettle/slit/atarms
 	armor = /obj/item/clothing/armor/leather/advanced
 	shirt = /obj/item/clothing/armor/gambeson
 	neck = /obj/item/clothing/neck/gorget
@@ -135,7 +135,7 @@
 
 /datum/outfit/job/watchman/ranger/pre_equip(mob/living/carbon/human/H)
 	..()
-	head = /obj/item/clothing/head/helmet/kettle
+	head = /obj/item/clothing/head/helmet/kettle/slit/atarms
 	armor = /obj/item/clothing/armor/leather/hide
 	shirt = /obj/item/clothing/armor/gambeson/heavy
 	beltr = /obj/item/weapon/mace/cudgel

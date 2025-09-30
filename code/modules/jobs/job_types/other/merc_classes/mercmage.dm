@@ -30,8 +30,6 @@
 	if(prob(1)) //extremely rare just like court mage
 		H.cmode_music = 'sound/music/cmode/antag/combat_evilwizard.ogg'
 
-	head = /obj/item/clothing/head/wizhat/random
-	armor = /obj/item/clothing/shirt/robe/colored/mage
 	shirt = /obj/item/clothing/armor/chainmail/iron //intended, iron chainmail underneath the robe to stop knives
 	ring = /obj/item/clothing/ring/silver
 	gloves = /obj/item/clothing/gloves/leather
@@ -43,8 +41,6 @@
 	backr = /obj/item/storage/backpack/satchel
 	backl = /obj/item/weapon/polearm/woodstaff/quarterstaff/iron
 	backpack_contents = list(/obj/item/book/granter/spellbook/adept = 1, /obj/item/chalk = 1, /obj/item/reagent_containers/glass/bottle/manapot = 1)
-	if(H.gender == FEMALE)
-		head = /obj/item/clothing/head/wizhat/witch
 
 	//combat
 	H.adjust_skillrank(/datum/skill/combat/knives, 1, TRUE)
@@ -79,3 +75,20 @@
 	H.merctype = 9
 
 	ADD_TRAIT(H, TRAIT_NOBLE, TRAIT_GENERIC)
+
+/datum/outfit/job/mercenary/sellmage/post_equip(mob/living/carbon/human/H)
+	. = ..()
+	var/static/list/selectablehat = list(
+		"Witch hat" = /obj/item/clothing/head/wizhat/witch,
+		"Random Wizard hat" = /obj/item/clothing/head/wizhat/random,
+		"Mage hood" = /obj/item/clothing/head/roguehood/colored/mage,
+		"Generic Wizard hat" = /obj/item/clothing/head/wizhat/gen,
+		"Mage hood" = /obj/item/clothing/head/roguehood/colored/mage,
+		"Black hood" = /obj/item/clothing/head/roguehood/colored/black,
+	)
+	H.select_equippable(H, selectablehat, message = "Choose your hat of choice", title = "WIZARD")
+	var/static/list/selectablerobe = list(
+		"Black robes" = /obj/item/clothing/shirt/robe/colored/black,
+		"Mage robes" = /obj/item/clothing/shirt/robe/colored/mage,
+	)
+	H.select_equippable(H, selectablerobe, message = "Choose your robe of choice", title = "WIZARD")

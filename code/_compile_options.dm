@@ -142,3 +142,9 @@
 #error You need version 515.1643 or higher
 #endif
 #endif
+
+//#define KALYPSO_PROJECT
+#if defined(KALYPSO_PROJECT)
+#define NO_DUNGEON
+#define FORCE_MAP "_maps/projectkalypso.json"
+#endif

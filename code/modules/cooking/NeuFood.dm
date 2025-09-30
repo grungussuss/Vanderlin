@@ -160,11 +160,11 @@
 	reagent_flags = TRANSFERABLE | AMOUNT_VISIBLE
 	force = 5
 	throwforce = 5
-	amount_per_transfer_from_this = 6
-	possible_transfer_amounts = list(6)
+	amount_per_transfer_from_this = 5
+	possible_transfer_amounts = list(5)
 	dropshrink = 0.8
 	w_class = WEIGHT_CLASS_SMALL
-	volume = 24
+	volume = 25
 	obj_flags = CAN_BE_HIT
 	sellprice = 1
 	drinksounds = list('sound/items/drink_cup (1).ogg','sound/items/drink_cup (2).ogg','sound/items/drink_cup (3).ogg','sound/items/drink_cup (4).ogg','sound/items/drink_cup (5).ogg')

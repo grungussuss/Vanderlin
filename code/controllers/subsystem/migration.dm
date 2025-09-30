@@ -329,7 +329,7 @@ SUBSYSTEM_DEF(migrants)
 
 		// Standard role preference priority
 		if(role_type in client.prefs.migrant.role_preferences)
-			base_priority = 100
+			base_priority = 1
 
 		// Add triumph contribution bonus
 		var/triumph_bonus = get_triumph_selection_bonus(client, wave_type)

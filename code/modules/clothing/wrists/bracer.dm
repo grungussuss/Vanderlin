@@ -31,7 +31,21 @@
 	armor = ARMOR_MAILLE
 	max_integrity = INTEGRITY_STANDARD
 	prevent_crits = CUT_AND_MINOR_CRITS
-	smeltresult = null //Gives two per smith, gives none per smelt.
+	smeltresult = /obj/item/fertilizer/ash
+	melting_material = /datum/material/steel
+	melt_amount = 75
+
+/obj/item/clothing/wrists/bracers/ironjackchain
+	name = "iron jack chains"
+	desc = "Thin strips of iron and small plates attached to small shoulder and elbow guards, worn on the outside of the arms to protect against slashes, bludgeons and whatever they block."
+	icon_state = "ijackchain"
+	item_state = "ijackchain"
+	armor = ARMOR_MAILLE
+	max_integrity = INTEGRITY_STANDARD
+	prevent_crits = CUT_AND_MINOR_CRITS
+	smeltresult = /obj/item/fertilizer/ash //we avoid melting one piece for one bar
+	melting_material = /datum/material/iron // we get one bar per two pieces of the item recovered and smelted
+	melt_amount = 75
 
 /obj/item/clothing/wrists/bracers/leather
 	name = "leather bracers"

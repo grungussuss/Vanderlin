@@ -10,6 +10,8 @@
 
 /datum/outfit/job/wretch/necromancer/pre_equip(mob/living/carbon/human/H)
 	..()
+	if(prob(1))
+		H.cmode_music = 'sound/music/cmode/antag/combat_evilwizard.ogg'
 	H.set_patron(/datum/patron/inhumen/zizo) //Zizo only, obviously.
 	H.mind.current.faction += FACTION_CABAL
 	H.mana_pool?.intrinsic_recharge_sources &= ~MANA_ALL_LEYLINES
@@ -23,11 +25,9 @@
 	H.adjust_skillrank(/datum/skill/misc/reading, 5, TRUE)
 	H.adjust_skillrank(/datum/skill/craft/alchemy, 4, TRUE)
 	H.adjust_skillrank(/datum/skill/magic/arcane, 4, TRUE)
-	head = /obj/item/clothing/head/helmet/skullcap/cult
 	pants = /obj/item/clothing/pants/chainlegs
 	shoes = /obj/item/clothing/shoes/shortboots
 	neck = /obj/item/clothing/neck/chaincoif
-	armor = /obj/item/clothing/shirt/robe/necromancer
 	shirt = /obj/item/clothing/shirt/tunic/colored
 	wrists = /obj/item/clothing/wrists/bracers
 	gloves = /obj/item/clothing/gloves/chain
@@ -58,3 +58,22 @@
 	ADD_TRAIT(H, TRAIT_GRAVEROBBER, TRAIT_GENERIC)
 	ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)
 	wretch_select_bounty(H)
+
+/datum/outfit/job/wretch/necromancer/post_equip(mob/living/carbon/human/H)
+	. = ..()
+	var/static/list/selectablehat = list(
+		"Witch hat" = /obj/item/clothing/head/wizhat/witch,
+		"Random Wizard hat" = /obj/item/clothing/head/wizhat/random,
+		"Mage hood" = /obj/item/clothing/head/roguehood/colored/mage,
+		"Generic Wizard hat" = /obj/item/clothing/head/wizhat/gen,
+		"Mage hood" = /obj/item/clothing/head/roguehood/colored/mage,
+		"Black hood" = /obj/item/clothing/head/roguehood/colored/black,
+		"Ominous hood (skullcap)" = /obj/item/clothing/head/helmet/skullcap/cult,
+	)
+	H.select_equippable(H, selectablehat, message = "Choose your hat of choice", title = "WIZARD")
+	var/static/list/selectablerobe = list(
+		"Black robes" = /obj/item/clothing/shirt/robe/colored/black,
+		"Mage robes" = /obj/item/clothing/shirt/robe/colored/mage,
+		"Necromancer robes" = /obj/item/clothing/shirt/robe/necromancer
+	)
+	H.select_equippable(H, selectablerobe, message = "Choose your robe of choice", title = "WIZARD")

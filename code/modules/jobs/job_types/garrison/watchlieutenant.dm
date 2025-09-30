@@ -28,7 +28,7 @@
 //................. Base Gear .............. //
 /datum/outfit/job/lieutenant/pre_equip(mob/living/carbon/human/H)
 	. = ..()
-	head = pick(/obj/item/clothing/head/helmet/townwatch, /obj/item/clothing/head/helmet/townwatch/alt)
+	head = /obj/item/clothing/head/helmet/sargebarbute //veteran who won a nice helmet
 	cloak = pick(/obj/item/clothing/cloak/half/guard, /obj/item/clothing/cloak/half/guardsecond)
 	wrists = /obj/item/clothing/wrists/bracers/jackchain
 	shoes = /obj/item/clothing/shoes/boots/leather

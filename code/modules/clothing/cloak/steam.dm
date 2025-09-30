@@ -97,10 +97,10 @@
 		user.audible_message(span_warning("The [src.name] sputters violently before stopping."), runechat_message = TRUE)
 		var/random_loss = rand(100, 200)
 		//If they can reduce the steam, do it, if it can't it will be set to zero.
-		if(!SEND_SIGNAL(user, COMSIG_ATOM_PROXY_STEAM_USE, src, random_loss, "steam_armor"))
+		if(!SEND_SIGNAL(user, COMSIG_ATOM_PROXY_STEAM_USE, src, random_loss, "steam_armor", FALSE, FALSE))
 			SEND_SIGNAL(user, COMSIG_ATOM_PROXY_STEAM_USE, src, random_loss, "steam_armor", TRUE)
 		else
-			SEND_SIGNAL(user, COMSIG_ATOM_PROXY_STEAM_USE, src, random_loss, "steam_armor")
+			SEND_SIGNAL(user, COMSIG_ATOM_PROXY_STEAM_USE, src, random_loss, "steam_armor", FALSE, FALSE)
 
 	//Triggers when the steamknight boiler runs out of steam.
 	if(disable)
@@ -112,7 +112,7 @@
 		active = FALSE
 		to_chat(user, span_warning("The [src.name] breaks!"))
 		user.audible_message(span_warning("The [src.name] sputters violently as you hear a loud crack!"), runechat_message = TRUE)
-		SEND_SIGNAL(user, COMSIG_ATOM_PROXY_STEAM_USE, src, 0.5, "steam_armor", TRUE)
+		SEND_SIGNAL(user, COMSIG_ATOM_PROXY_STEAM_USE, src, 0.5, "steam_armor", TRUE, FALSE)
 
 	return
 
@@ -125,7 +125,7 @@
 		power_off(source, FALSE, TRUE)
 		return FALSE
 
-	if(!SEND_SIGNAL(source, COMSIG_ATOM_PROXY_STEAM_USE, src, 0.5, "steam_armor"))
+	if(!SEND_SIGNAL(source, COMSIG_ATOM_PROXY_STEAM_USE, src, 0.5, "steam_armor", FALSE, FALSE))
 		//Out of steam, shut down the boiler forcibly
 		power_off(source, TRUE)
 		return FALSE

@@ -6,7 +6,7 @@
 	outfit = /datum/outfit/job/wretch/hedgemage
 	category_tags = list(CTAG_WRETCH)
 
-	cmode_music = 'sound/music/cmode/antag/combat_evilwizard.ogg'
+	cmode_music = 'sound/music/cmode/antag/CombatRogueMage.ogg'
 	maximum_possible_slots = 2
 
 /datum/outfit/job/wretch/hedgemage
@@ -14,10 +14,10 @@
 
 /datum/outfit/job/wretch/hedgemage/pre_equip(mob/living/carbon/human/H)
 	..()
+	if(prob(1))
+		H.cmode_music = 'sound/music/cmode/antag/combat_evilwizard.ogg'
 	H.mana_pool?.set_intrinsic_recharge(MANA_ALL_LEYLINES)
-	head = /obj/item/clothing/head/roguehood/colored/black
 	shoes = /obj/item/clothing/shoes/simpleshoes
-	armor = /obj/item/clothing/shirt/robe/colored/black
 	belt = /obj/item/storage/belt/leather/rope
 	neck = /obj/item/clothing/neck/mana_star //Stolen from the academy, dude trust
 	backr = /obj/item/storage/backpack/satchel
@@ -49,6 +49,23 @@
 	H.change_stat(STATKEY_END, 1)
 	H.adjust_spell_points(12)
 	H.add_spell(/datum/action/cooldown/spell/undirected/touch/prestidigitation)
-	wretch_select_bounty(H)
 	ADD_TRAIT(H, TRAIT_STEELHEARTED, TRAIT_GENERIC)
 	ADD_TRAIT(H, TRAIT_INHUMENCAMP, TRAIT_GENERIC)
+
+/datum/outfit/job/wretch/hedgemage/post_equip(mob/living/carbon/human/H)
+	. = ..()
+	var/static/list/selectablehat = list(
+		"Witch hat" = /obj/item/clothing/head/wizhat/witch,
+		"Random Wizard hat" = /obj/item/clothing/head/wizhat/random,
+		"Mage hood" = /obj/item/clothing/head/roguehood/colored/mage,
+		"Generic Wizard hat" = /obj/item/clothing/head/wizhat/gen,
+		"Mage hood" = /obj/item/clothing/head/roguehood/colored/mage,
+		"Black hood" = /obj/item/clothing/head/roguehood/colored/black,
+	)
+	H.select_equippable(H, selectablehat, message = "Choose your hat of choice", title = "WIZARD")
+	var/static/list/selectablerobe = list(
+		"Black robes" = /obj/item/clothing/shirt/robe/colored/black,
+		"Mage robes" = /obj/item/clothing/shirt/robe/colored/mage,
+	)
+	H.select_equippable(H, selectablerobe, message = "Choose your robe of choice", title = "WIZARD")
+	wretch_select_bounty(H)

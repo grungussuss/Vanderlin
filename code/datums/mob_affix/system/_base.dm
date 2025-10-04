@@ -1,16 +1,3 @@
-/mob/living
-	var/list/affixes = list()
-	var/delve_level = 0
-
-	var/cold_res = 0
-	var/max_cold_res = 75
-	var/fire_res = 0
-	var/max_fire_res = 75
-	var/lightning_res = 0
-	var/max_lightning_res = 75
-
-	var/list/status_modifiers
-
 /datum/mob_affix_system
 	var/list/available_affixes = list()
 

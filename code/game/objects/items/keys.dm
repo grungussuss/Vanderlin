@@ -39,7 +39,7 @@
 		if(k.access2add)
 			src.access2add = k.access2add
 			return TRUE
-	var/list/access= O.get_access()
+	var/list/access = O.get_access()
 	if(access)
 		access2add = access.Copy()
 		return TRUE

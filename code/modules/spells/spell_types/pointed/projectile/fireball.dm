@@ -34,8 +34,13 @@
 	invocation = "FR BRTH"
 	invocation_type = "whisper"
 
+	associated_skill = /datum/skill/magic/blood
+
+	spell_type = SPELL_BLOOD
+
 	charge_time = 4 SECONDS
-	cooldown_time = 20 SECONDS
+	spell_cost = 150
+	cooldown_time = 60 SECONDS
 
 /datum/action/cooldown/spell/projectile/fireball/greater
 	name = "Fireball (Greater)"

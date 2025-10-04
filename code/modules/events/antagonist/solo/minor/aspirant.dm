@@ -32,7 +32,7 @@
 		/datum/round_event_control/antagonist/solo/werewolf,
 		/datum/round_event_control/antagonist/solo/zizo_cult
 	)
-	secondary_prob = 60
+	secondary_prob = 90
 	weight = 8
 
 	typepath = /datum/round_event/antagonist/solo/aspirant

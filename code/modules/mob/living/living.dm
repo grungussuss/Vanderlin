@@ -1177,6 +1177,7 @@
 		playsound(src, 'sound/misc/surrender.ogg', 100, FALSE, -1)
 		toggle_cmode()
 		sleep(150)
+		log_attack("[key_name(src)] has yielded!")
 	surrendering = 0
 
 
@@ -2897,3 +2898,6 @@
 		)
 	SEND_SIGNAL(offered_item, COMSIG_OBJ_HANDED_OVER, src, offerer)
 	offerer.stop_offering_item()
+
+/mob/living/proc/is_dead() // bwuh
+	return (!QDELETED(src) && (stat >= DEAD))

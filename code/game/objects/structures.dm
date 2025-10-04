@@ -67,7 +67,7 @@
 			component.set_power(power_level, user, null) // Lever acts as power source
 	last_redstone_state = !last_redstone_state
 
-/obj/structure/pre_lock_interact(mob/user)
+/obj/structure/pre_lock_interact(mob/living/user)
 	if(obj_broken)
 		to_chat(user, span_notice("[src] is broken, I cannot do this."))
 		return FALSE

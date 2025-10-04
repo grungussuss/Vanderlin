@@ -321,7 +321,7 @@ SUBSYSTEM_DEF(job)
 				// If the player wants that job on this level, then try give it to him.
 				if(player.client.prefs.job_preferences[job.title] == level)
 					// If the job isn't filled
-					if((job.current_positions < job.total_positions) || job.total_positions == -1)
+					if((job.current_positions < job.spawn_positions) || job.spawn_positions == -1)
 						// Use boost if applicable
 						for(var/datum/job_priority_boost/boost in player_boosts)
 							if(boost.can_boost_job(job))
@@ -566,10 +566,11 @@ SUBSYSTEM_DEF(job)
 	SEND_SIGNAL(equipping, COMSIG_JOB_RECEIVED, job)
 
 	equipping.mind?.set_assigned_role(job)
+	job.pre_outfit_equip(equipping, player_client) // sigh
 	equipping.on_job_equipping(job)
 	addtimer(CALLBACK(job, TYPE_PROC_REF(/datum/job, greet), equipping), 5 SECONDS) //TODO: REFACTOR OUT
 
-	if(player_client.holder)
+	if(player_client?.holder)
 		if(CONFIG_GET(flag/auto_deadmin_players) || (player_client.prefs?.toggles & DEADMIN_ALWAYS))
 			player_client.holder.auto_deadmin()
 		else

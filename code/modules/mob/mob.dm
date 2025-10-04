@@ -414,7 +414,46 @@ GLOBAL_VAR_INIT(mobids, 1)
 
 	if(isturf(A.loc) && isliving(src))
 		face_atom(A)
-		visible_message("<span class='emote'>[src] looks at [A].</span>")
+		if(src.m_intent != MOVE_INTENT_SNEAK)
+			visible_message("<span class='emote'>[src] looks at [A].</span>")
+		else
+			if(isliving(A))
+				var/mob/living/observer = src
+				var/mob/living/target = A
+				var/observer_skill = observer.get_skill_level(/datum/skill/misc/sneaking)
+				if(observer_skill <= 0)
+					observer_skill = 1
+				if(observer.rogue_sneaking)
+					observer_skill += 1
+				
+				// determine PER multiplier based on the target PER
+				var/multiplier = 5
+				if(target.STAPER < 5)
+					multiplier = 4
+				else if(target.STAPER >= 5 && target.STAPER < 10)
+					multiplier = 5
+				else if(target.STAPER >= 10 && target.STAPER < 15)
+					multiplier = 6
+				else if(target.STAPER >= 15 && target.STAPER <= 20)
+					multiplier = 7
+			
+				// calculate probability to fail
+				var/probby = (target.STAPER * multiplier) - (observer_skill * 10)
+			
+				// clamp probability
+				probby = max(probby, 5)
+				probby = min(probby, 95)
+				
+				if(prob(probby))
+					to_chat(src, span_warning("[A] noticed me peeking!"))
+					to_chat(A, span_warning("[src] peeks at you!"))
+					if(target.client) // only if they have a client to see it
+						found_ping(get_turf(observer), target.client, "hidden")
+				else
+					if(observer.client?.prefs.showrolls)
+						to_chat(src, span_info("[probby]%... my peeking went unnoticed.."))
+					else
+						to_chat(src, span_info("My peeking went unnoticed.."))
 	var/list/result = A.examine(src)
 	if(LAZYLEN(result))
 		for(var/i in 1 to (length(result) - 1))

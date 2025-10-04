@@ -370,7 +370,7 @@
 		return
 	if(user.mind && isliving(user))
 		if(user.mind.special_items && user.mind.special_items.len)
-			var/item = input(user, "What will I take?", "STASH") as null|anything in user.mind.special_items
+			var/item = browser_input_list(user, "What will I take?", "STASH", user.mind.special_items)
 			if(item)
 				if(user.Adjacent(src))
 					if(user.mind.special_items[item])
@@ -624,7 +624,7 @@
 		return
 	if(user.mind && isliving(user))
 		if(user.mind.special_items && user.mind.special_items.len)
-			var/item = input(user, "What will I take?", "STASH") as null|anything in user.mind.special_items
+			var/item = browser_input_list(user, "What will I take?", "STASH", user.mind.special_items)
 			if(item)
 				if(user.Adjacent(src))
 					if(user.mind.special_items[item])

@@ -429,6 +429,7 @@
 	smeltresult = /obj/item/ingot/iron
 	sellprice = VALUE_IRON_ARMOR_UNUSUAL
 	item_weight = 6 * IRON_MULTIPLIER
+	detail_tag = "_detail"
 	detail_color = CLOTHING_PLUM_PURPLE
 	uses_lord_coloring = LORD_PRIMARY
 	misc_flags = CRAFTING_TEST_EXCLUDE
@@ -446,6 +447,7 @@
 	smeltresult = /obj/item/ingot/iron
 	sellprice = VALUE_IRON_ARMOR_UNUSUAL
 	item_weight = 6 * STEEL_MULTIPLIER
+	detail_tag = "_detail"
 	detail_color = CLOTHING_PLUM_PURPLE
 	uses_lord_coloring = LORD_PRIMARY
 	misc_flags = CRAFTING_TEST_EXCLUDE
@@ -454,9 +456,14 @@
 	name = "royal slitted kettle"
 	desc = "A lightweight steel helmet decorated for the royal men at arms, wear this piece with pride, triumph for your lord."
 	mob_overlay_icon = 'icons/roguetown/clothing/onmob/head.dmi'
+	bloody_icon = 'icons/effects/blood.dmi'
+	bloody_icon_state = "helmetblood"
+	worn_x_dimension = 32
+	worn_y_dimension = 32
 	icon_state = "atarmslit"
 	flags_cover = HEADCOVERSEYES
 	body_parts_covered = HEAD|HAIR|EARS|EYES
+	detail_tag = "_detail"
 	detail_color = CLOTHING_PLUM_PURPLE
 	uses_lord_coloring = LORD_PRIMARY
 	misc_flags = CRAFTING_TEST_EXCLUDE

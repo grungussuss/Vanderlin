@@ -64,6 +64,8 @@
 /datum/ai_behavior/minotaur_charge_attack/perform(delta_time, datum/ai_controller/controller, target_key)
 	. = ..()
 	var/mob/living/simple_animal/hostile/retaliate/minotaur/boss = controller.pawn
+	if(!boss || boss.stat != CONSCIOUS)
+		return
 	var/atom/target = controller.blackboard[target_key]
 
 	if(!istype(boss) || QDELETED(target))
@@ -204,6 +206,8 @@
 /datum/ai_behavior/minotaur_fury_slam/perform(delta_time, datum/ai_controller/controller, target_key)
 	. = ..()
 	var/mob/living/simple_animal/hostile/retaliate/minotaur/boss = controller.pawn
+	if(!boss || boss.stat != CONSCIOUS)
+		return
 	var/atom/target = controller.blackboard[target_key]
 
 	if(!istype(boss) || QDELETED(target))
@@ -278,6 +282,8 @@
 /datum/ai_behavior/minotaur_ground_slam/perform(delta_time, datum/ai_controller/controller)
 	. = ..()
 	var/mob/living/simple_animal/hostile/retaliate/minotaur/boss = controller.pawn
+	if(!boss || boss.stat != CONSCIOUS)
+		return
 	if(!istype(boss))
 		finish_action(controller, FALSE)
 		return

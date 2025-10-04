@@ -422,4 +422,10 @@
 					'sound/vo/cat/cat_purr3.ogg',
 					'sound/vo/cat/cat_purr4.ogg',
 				)
+			if(SFX_EGG_HATCHING)
+				soundin = pick(
+					'sound/foley/egg_hatching/egghatching1.ogg',
+					'sound/foley/egg_hatching/egghatching2.ogg',
+					'sound/foley/egg_hatching/egghatching3.ogg',
+				)
 	return soundin

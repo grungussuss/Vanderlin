@@ -213,6 +213,10 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 	var/list/descriptor_entries = list()
 	var/list/custom_descriptors = list()
 
+	var/datum/loadout_item/loadout1
+	var/datum/loadout_item/loadout2
+	var/datum/loadout_item/loadout3
+
 	var/list/preference_message_list = list()
 
 	/// Tracker to whether the person has ever spawned into the round, for purposes of applying the respawn ban
@@ -424,18 +428,14 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 
 		dat += "<b>[skin_tone_wording]: </b><a href='?_src_=prefs;preference=s_tone;task=input'>Change </a>"
 		//dat += "<a href='?_src_=prefs;preference=toggle_random;random_type=[RANDOM_SKIN_TONE]'>[(randomise[RANDOM_SKIN_TONE]) ? "Lock" : "Unlock"]</A>"
-		dat += "<br>"
 
 	dat += "<br>"
 	dat += "<b>Voice Type:</b> <a href='?_src_=prefs;preference=voicetype;task=input'>[voice_type]</a>"
 	dat += "<br><b>Voice Color:</b> <a href='?_src_=prefs;preference=voice;task=input'>Change</a>"
-	dat += "<br>"
 	dat += "<br><b>Accent:</b> <a href='?_src_=prefs;preference=selected_accent;task=input'>[selected_accent]</a>"
-	dat += "<br>"
 	dat += "<br><b>Features:</b> <a href='?_src_=prefs;preference=customizers;task=menu'>Change</a>"
 	if(length(pref_species.descriptor_choices))
 		dat += "<br><b>Descriptors:</b> <a href='?_src_=prefs;preference=descriptors;task=menu'>Change</a>"
-		dat += "<br>"
 
 	dat += "<br><b>Headshot:</b> <a href='?_src_=prefs;preference=headshot;task=input'>Change</a>"
 	if(headshot_link != null)
@@ -444,7 +444,12 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 
 	dat += "<br><b>[(length(ooc_notes) < MINIMUM_OOC_NOTES) ? "<font color = '#802929'>" : ""]OOC Notes:[(length(ooc_notes) < MINIMUM_OOC_NOTES) ? "</font>" : ""]</b><a href='?_src_=prefs;preference=formathelp;task=input'>(?)</a><a href='?_src_=prefs;preference=ooc_notes;task=input'>Change</a>"
 	dat += "<br><b>OOC Extra:</b> <a href='?_src_=prefs;preference=ooc_extra;task=input'>Change</a>"
-	dat += "<br><a href='?_src_=prefs;preference=ooc_preview;task=input'><b>Preview Examine</b></a>"
+	dat += "<br><a href='?_src_=prefs;preference=ooc_preview;task=input' style='margin: 0; padding: 0;'><b>Preview Examine</b></a>"
+
+	dat += "<br><b>Loadout Item I:</b> <a href='?_src_=prefs;preference=loadout_item;loadout_number=1;task=input'>[loadout1 ? loadout1.name : "None"]</a>"
+	dat += "<br><b>Loadout Item II:</b> <a href='?_src_=prefs;preference=loadout_item;loadout_number=2;task=input'>[loadout2 ? loadout2.name : "None"]</a>"
+	dat += "<br><b>Loadout Item III:</b> <a href='?_src_=prefs;preference=loadout_item;loadout_number=3;task=input'>[loadout3 ? loadout3.name : "None"]</a>"
+
 	dat += "<br></td>"
 
 	dat += "</tr></table>"
@@ -479,7 +484,7 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 	user?.client.acquire_dpi()
 	winshow(user, "stonekeep_prefwin", TRUE)
 	winshow(user, "stonekeep_prefwin.character_preview_map", TRUE)
-	var/datum/browser/popup = new(user, "preferences_browser", "<div align='center'>Character Sheet</div>", 700, 600)
+	var/datum/browser/popup = new(user, "preferences_browser", "<div align='center'>Character Sheet</div>", 700, 650)
 	popup.set_window_options(can_close = TRUE)
 	popup.set_content(dat.Join())
 	popup.open(FALSE)
@@ -1230,6 +1235,22 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 					var/datum/browser/popup = new(user, "Formatting Help", width = 400, height = 350)
 					popup.set_content(dat.Join())
 					popup.open(FALSE)
+				if("loadout_item")
+					var/list/loadouts_available = list("None" = null)
+					for(var/datum/loadout_item/item as anything in GLOB.loadout_items)
+						loadouts_available[item.name] += item
+
+					var/loadout_input = browser_input_list(
+						user,
+						"Choose your character's loadout item. RMB a tree, statue or clock to collect.",
+						"Loadout",
+						loadouts_available,
+						)
+
+					var/loadout_number = href_list["loadout_number"]
+
+					set_loadout(user, loadout_number, loadouts_available[loadout_input])
+
 				if("species")
 					selected_accent = ACCENT_DEFAULT
 					var/list/selectable = get_selectable_species(patreon)
@@ -1449,14 +1470,16 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 						print_special_text(user, next_special_trait)
 						return
 					to_chat(user, span_boldwarning("You will become special for one round, this could be something negative, positive or neutral and could have a high impact on your character and your experience. You cannot back out from or reroll this, and it will not carry over to other rounds."))
-					to_chat(user, span_boldwarning("THIS COSTS 1 TRIUMPH"))
-					if(user.get_triumphs() < 1)
-						to_chat(user, span_bignotice("YOU DON'T HAVE ENOUGH TRIUMPHS."))
-						return
+					if(!patreon)
+						to_chat(user, span_boldwarning("THIS COSTS 1 TRIUMPH"))
+						if(user.get_triumphs() < 1)
+							to_chat(user, span_bignotice("YOU DON'T HAVE ENOUGH TRIUMPHS."))
+							return
 					var/result = alert(user, "You'll receive a unique trait for one round\n You cannot back out from or reroll this\nDo you really want to spend 1 triumph for it?", "Be Special", "Yes", "No")
 					if(result != "Yes")
 						return
-					user.adjust_triumphs(-1)
+					if(!patreon)
+						user.adjust_triumphs(-1)
 					if(next_special_trait)
 						return
 					next_special_trait = roll_random_special(user.client)
@@ -1922,7 +1945,7 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 			</html>
 			"}
 
-/datum/proc/is_valid_headshot_link(mob/user, value, silent = FALSE, list/valid_extensions = list("jpg", "png", "jpeg", "gif"))
+/datum/preferences/proc/is_valid_headshot_link(mob/user, value, silent = FALSE, list/valid_extensions = list("jpg", "png", "jpeg", "gif"))
 	var/static/list/allowed_hosts = list("i.gyazo.com", "a.l3n.co", "b.l3n.co", "c.l3n.co", "images2.imgbox.com", "thumbs2.imgbox.com", "files.catbox.moe")
 
 	if(!length(value))
@@ -1963,3 +1986,21 @@ GLOBAL_LIST_INIT(name_adjustments, list())
 
 	return TRUE
 
+
+/datum/preferences/proc/set_loadout(mob/user, loadout_number, datum/loadout_item/loadout)
+	if(!loadout)
+		return
+	if(!patreon)
+		to_chat(user, span_danger("This is a patreon feature!"))
+		return FALSE
+
+	if(loadout == "None")
+		vars["loadout[loadout]"] = null
+		to_chat(user, span_notice("Who needs stuff anyway?"))
+	else
+		if(!(loadout in GLOB.loadout_items))
+			return
+		vars["loadout[loadout_number]"] = loadout
+		to_chat(user, span_notice("[loadout.name]"))
+		if(loadout.description)
+			to_chat(user, "[loadout.description]")

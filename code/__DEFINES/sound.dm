@@ -83,6 +83,7 @@
 #define SFX_WATCH_BOOT_STEP	"watch_boot_step"
 #define SFX_CAT_MEOW "cat_meow"
 #define SFX_CAT_PURR "cat_purr"
+#define SFX_EGG_HATCHING "egg_hatching"
 
 #define INTERACTION_SOUND_RANGE_MODIFIER 0
 #define EQUIP_SOUND_VOLUME 100

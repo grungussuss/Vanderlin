@@ -20,7 +20,7 @@ GLOBAL_LIST_EMPTY(patreon_races)
 	var/list/possible_ages = ALL_AGES_LIST_CHILD
 	/// Whether or not this species has sexual characteristics
 	var/sexes = TRUE
-	/// Whether this species a requires patreon subscription to access
+	/// Whether this species a requires patreon subscription to access, we removed all patreon restrictions for species, but it's here if we ever want to reenable them or smth.
 	var/patreon_req = FALSE
 
 	/**

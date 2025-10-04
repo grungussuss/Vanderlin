@@ -328,7 +328,7 @@
 	if(!trajectory && !istype(src, /obj/projectile/orbital))
 		qdel(src)
 		return FALSE
-	if(impacted[A])
+	if(LAZYACCESS(impacted, A))
 		return FALSE
 	var/datum/point/pcache = trajectory.copy_to()
 	var/turf/T = get_turf(A)
@@ -375,7 +375,7 @@
 	if(QDELETED(src) || !T || !target)
 		return
 	// 2.
-	impacted[target] = TRUE		//hash lookup > in for performance in hit-checking
+	LAZYSET(impacted, target, TRUE) //hash lookup > in for performance in hit-checking
 	// 3.
 	var/mode = prehit_pierce(target)
 	if(mode == PROJECTILE_DELETE_WITHOUT_HITTING)
@@ -451,7 +451,7 @@
 //Returns true if the target atom is on our current turf and above the right layer
 //If direct target is true it's the originally clicked target.
 /obj/projectile/proc/can_hit_target(atom/target, direct_target = FALSE, ignore_loc = FALSE)
-	if(QDELETED(target) || impacted[target])
+	if(QDELETED(target) || LAZYACCESS(impacted, target))
 		return FALSE
 	if(!ignore_loc && (loc != target.loc))
 		return FALSE
@@ -530,7 +530,7 @@
  * Used to not even attempt to Bump() or fail to Cross() anything we already hit.
  */
 /obj/projectile/CanPassThrough(atom/blocker, turf/target, blocker_opinion)
-	return impacted[blocker]? TRUE : ..()
+	return LAZYACCESS(impacted, blocker) ? TRUE : ..()
 
 /**
  * Projectile moved:

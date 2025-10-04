@@ -15,15 +15,6 @@
 
 	var/list/melting_pot = list()
 
-/obj/item/storage/crucible/examine(mob/user)
-	. = ..()
-	if(crucible_temperature)
-		. += "The crucible is around [crucible_temperature - 271.3]C"
-	if(length(melting_pot))
-		for(var/obj/item/atom in melting_pot)
-			var/datum/material/material = atom.melting_material
-			. += "<font color=[initial(material.color)]> [atom.name] </font> - [FLOOR((melting_pot[atom] / atom.melt_amount) * 100, 1)]% Melted"
-
 /obj/item/storage/crucible/set_material_information()
 	. = ..()
 	name = "[lowertext(initial(main_material.name))] crucible"
@@ -36,15 +27,22 @@
 
 /obj/item/storage/crucible/examine(mob/user)
 	. = ..()
+	if(crucible_temperature)
+		. += "The crucible is around [crucible_temperature - 271.3]C"
+	if(length(melting_pot))
+		for(var/obj/item/atom in melting_pot)
+			var/datum/material/material = atom.melting_material
+			. += "<font color=[initial(material.color)]> [atom.name] </font> - [FLOOR((melting_pot[atom] / atom.melt_amount) * 100, 1)]% Melted"
 	var/datum/reagent/molten_metal/metal = reagents.get_reagent(/datum/reagent/molten_metal)
-	if(metal)
-		for(var/datum/material/material in metal.data)
-			var/tag = "Molten"
-			if(reagents.chem_temp < material.melting_point)
-				tag = "Hardened"
-			var/total_volume = metal.data[material]
-			var/reagent_color = initial(material.color)
-			. += "It contains [UNIT_FORM_STRING(total_volume)] of <font color=[reagent_color]> [tag] [initial(material.name)].</font>"
+	if(!metal)
+		return
+	for(var/datum/material/material in metal.data)
+		var/tag = "Molten"
+		if(reagents.chem_temp < material.melting_point)
+			tag = "Hardened"
+		var/total_volume = metal.data[material]
+		var/reagent_color = initial(material.color)
+		. += "It contains [UNIT_FORM_STRING(total_volume)] of <font color=[reagent_color]> [tag] [initial(material.name)].</font>"
 
 /obj/item/storage/crucible/process()
 	var/obj/machinery/light/fueled/smelter/smelter = loc
@@ -60,6 +58,7 @@
 		crucible_temperature = max(300, crucible_temperature - 10)
 
 	reagents.expose_temperature(crucible_temperature, 1)
+
 	for(var/obj/item/item in contents)
 		var/datum/material/material = item.melting_material
 		if(crucible_temperature < initial(material.melting_point))
@@ -69,7 +68,9 @@
 		melting_pot[item] += 5
 		if(melting_pot[item] >= item.melt_amount)
 			melt_item(item)
-	update_appearance(UPDATE_OVERLAYS)
+
+	if(reagents?.total_volume)
+		update_appearance(UPDATE_OVERLAYS)
 
 /obj/item/storage/crucible/get_temperature()
 	return crucible_temperature

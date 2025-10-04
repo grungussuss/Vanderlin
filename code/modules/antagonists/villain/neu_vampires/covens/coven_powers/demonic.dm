@@ -185,6 +185,6 @@
 		return target.family_datum
 
 	// Create new heritage if none exists
-	var/datum/heritage/new_heritage = new /datum/heritage(src, "Cursed Bloodline")
+	var/datum/heritage/new_heritage = new /datum/heritage(target, "Cursed Bloodline")
 	target.family_datum = new_heritage
 	return new_heritage

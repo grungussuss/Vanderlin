@@ -8,7 +8,7 @@
 	bodyparts = list(/obj/item/bodypart/chest/goblin, /obj/item/bodypart/head/goblin, /obj/item/bodypart/l_arm/goblin,
 					/obj/item/bodypart/r_arm/goblin, /obj/item/bodypart/r_leg/goblin, /obj/item/bodypart/l_leg/goblin)
 	rot_type = /datum/component/rot/corpse/goblin
-	var/gob_outfit = /datum/outfit/job/npc/goblin
+	var/gob_outfit = /datum/outfit/npc/goblin
 	ambushable = FALSE
 	base_intents = list(INTENT_HELP, INTENT_DISARM, INTENT_GRAB, /datum/intent/unarmed/claw)
 	a_intent = INTENT_HELP
@@ -17,13 +17,30 @@
 	flee_in_pain = TRUE
 	stand_attempts = 6
 	bloodpool = 250 // Small, frail creechers with not so much vitality to gain from.
+	dodgetime = 30 //they can dodge easily, but have a cooldown on it
 
 /mob/living/carbon/human/species/goblin/apply_prefs_job(client/player_client, datum/job/job)
 	return
 
+/mob/living/carbon/human/species/goblin/slaved
+	gob_outfit = null
+	ai_controller = /datum/ai_controller/human_npc
+
+/mob/living/carbon/human/species/goblin/slaved/Initialize()
+	. = ..()
+	var/static/list/pet_commands = list(
+				/datum/pet_command/idle,
+				/datum/pet_command/free,
+				/datum/pet_command/follow,
+				/datum/pet_command/attack,
+				/datum/pet_command/protect_owner,
+				/datum/pet_command/aggressive,
+				/datum/pet_command/calm,
+			)
+	AddComponent(/datum/component/obeys_commands, pet_commands)
+
 /mob/living/carbon/human/species/goblin/npc
 	ai_controller = /datum/ai_controller/human_npc
-	dodgetime = 30 //they can dodge easily, but have a cooldown on it
 	flee_in_pain = TRUE
 
 	wander = FALSE
@@ -301,7 +318,7 @@
 ////
 ///
 
-/datum/outfit/job/npc/goblin/pre_equip(mob/living/carbon/human/H)
+/datum/outfit/npc/goblin/pre_equip(mob/living/carbon/human/H)
 	..()
 	H.base_strength = rand(6, 10)
 	H.base_perception = rand(5, 10)

@@ -178,8 +178,10 @@ SUBSYSTEM_DEF(triumphs)
 	if(C?.ckey)
 		C.adjust_triumphs(refund_amount, counted = FALSE, silent = TRUE)
 		to_chat(C, span_redtext("You were refunded [refund_amount] triumph\s due to \a [reason]."))
+
 	else if(previous_owner_ckey)
-		triumph_adjust(refund_amount, previous_owner_ckey)
+		global.adjust_triumphs(previous_owner_ckey, refund_amount, previous_owner_ckey, override_bonus = TRUE)
+
 	if(triumph_buy.limited)
 		triumph_buy_stocks[triumph_buy.type]++
 	if(triumph_buy_owners[triumph_buy.ckey_of_buyer])

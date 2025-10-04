@@ -140,6 +140,7 @@
 	sellprice = 30
 
 /obj/item/clothing/shirt/robe/nun
+	name = "nun habit"
 	icon_state = "nun"
 	item_state = "nun"
 	allowed_race = SPECIES_BASE_BODY

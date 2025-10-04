@@ -14,8 +14,6 @@
 	var/list/allowed_ages
 	var/list/allowed_patrons
 	var/list/allowed_jobs
-	var/list/allowed_migrants
-	var/list/restricted_migrants
 	var/list/restricted_traits
 	var/list/restricted_races
 	var/list/restricted_jobs
@@ -406,7 +404,7 @@
 	character.forceMove(location)
 	character.reagents.add_reagent(pick(/datum/reagent/ozium, /datum/reagent/moondust, /datum/reagent/druqks), 15)
 	character.reagents.add_reagent(/datum/reagent/consumable/ethanol/beer, 72)
-	grant_lit_torch(character)
+	character.grant_lit_torch()
 
 /datum/special_trait/atrophy
 	name = "Atrophy"

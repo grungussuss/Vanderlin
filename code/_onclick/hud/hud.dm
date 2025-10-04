@@ -180,6 +180,7 @@ GLOBAL_LIST_INIT(available_ui_styles, sortList(list(
 
 /mob/proc/set_hud_used(datum/hud/new_hud)
 	hud_used = new_hud
+	new_hud.mymob = src
 	new_hud.build_action_groups()
 
 /**

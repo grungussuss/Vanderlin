@@ -40,7 +40,6 @@
 	dodgetime = 50
 	aggressive = 1
 //	stat_attack = UNCONSCIOUS
-	remains_type = /obj/item/weapon/axe/battle
 
 	ai_controller = /datum/ai_controller/minotaur
 	dendor_taming_chance = DENDOR_TAME_PROB_NONE
@@ -62,6 +61,7 @@
 	base_intents = list(/datum/intent/simple/minotaur_axe)
 	melee_damage_lower = 65
 	melee_damage_upper = 85
+	loot = list(/obj/item/weapon/greataxe/steel/doublehead)
 
 /mob/living/simple_animal/hostile/retaliate/minotaur/axe/female
 	icon_state = "MinotaurFem_Axe"

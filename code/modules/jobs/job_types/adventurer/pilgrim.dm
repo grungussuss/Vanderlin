@@ -24,8 +24,3 @@
 	can_have_apprentices = TRUE
 
 	selection_color = "#a33096"
-
-/datum/job/pilgrim/after_spawn(mob/living/spawned, client/player_client)
-	..()
-	if(advclass_cat_rolls)
-		hugboxify_for_class_selection(spawned)

@@ -68,6 +68,22 @@
 
 	var/range = 9
 
+/mob/living/simple_animal/hostile/retaliate/troll/slaved
+	ai_controller = /datum/ai_controller/summon
+
+/mob/living/simple_animal/hostile/retaliate/troll/slaved/Initialize()
+	. = ..()
+	var/static/list/pet_commands = list(
+				/datum/pet_command/idle,
+				/datum/pet_command/free,
+				/datum/pet_command/follow,
+				/datum/pet_command/attack,
+				/datum/pet_command/protect_owner,
+				/datum/pet_command/aggressive,
+				/datum/pet_command/calm,
+			)
+	AddComponent(/datum/component/obeys_commands, pet_commands)
+
 /mob/living/simple_animal/hostile/retaliate/troll/Initialize()
 	. = ..()
 	AddComponent(/datum/component/ai_aggro_system, 10 , range)
@@ -211,7 +227,7 @@
 	defprob = 15
 
 	//stone chucking ability
-	var/datum/action/cooldown/mob_cooldown/stone_throw/throwing_stone
+	var/datum/action/cooldown/spell/stone_throw/throwing_stone
 
 /mob/living/simple_animal/hostile/retaliate/troll/cave/Initialize()
 	. = ..()

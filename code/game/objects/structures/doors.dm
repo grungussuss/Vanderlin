@@ -172,7 +172,7 @@
 			user.visible_message(span_warning("[user] tries the handle, but the door does not move."), \
 				span_notice("I try the handle, but the door does not move."))
 
-/obj/structure/door/pre_lock_interact(mob/user)
+/obj/structure/door/pre_lock_interact(mob/living/user)
 	if(switching_states)
 		return FALSE
 	if(door_opened)
@@ -182,7 +182,7 @@
 /obj/structure/door/attackby(obj/item/I, mob/user)
 	if(switching_states)
 		return
-	if(I.has_access())
+	if(I.can_lock_interact())
 		return (..() || attack_hand(user))
 	return ..()
 

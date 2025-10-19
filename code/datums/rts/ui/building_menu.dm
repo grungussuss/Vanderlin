@@ -16,12 +16,19 @@
 /atom/movable/screen/building_button/proc/update_build_state(mob/camera/strategy_controller/master)
 	if(!build_datum)
 		build_datum = new datum_path
+
+	if(build_datum.stockpile_needed && !master.resource_stockpile)
+		build_state = FALSE
+		color = COLOR_RED_LIGHT
+		return
+
 	if(!build_datum.resource_check(master))
 		build_state = FALSE
 		color = COLOR_RED_LIGHT
-	else
-		build_state = TRUE
-		color = null
+		return
+
+	build_state = TRUE
+	color = null
 
 /atom/movable/screen/building_button/Click(location, control, params)
 	. = ..()
@@ -57,9 +64,9 @@
 	for(var/atom/movable/screen/building_button/button in build_buttons)
 		button.update_build_state(processer)
 
-/atom/movable/screen/building_backdrop/New(loc, ...)
+/atom/movable/screen/building_backdrop/Initialize(mapload, datum/hud/hud_owner)
 	. = ..()
-	close = new
+	close = new(null, hud_owner)
 
 /atom/movable/screen/building_backdrop/proc/close_uis(mob/camera/strategy_controller/closer)
 	for(var/atom/movable/screen/building_button/button as anything in build_buttons)

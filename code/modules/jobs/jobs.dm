@@ -82,7 +82,7 @@ GLOBAL_LIST_INIT(apprentices_positions, list(
 	/datum/job/servant::title,
 	/datum/job/tapster::title,
 	/datum/job/gaffer_assistant::title,
-	/datum/job/orphan::title,
+	/datum/job/clinicapprentice::title,
 	))
 GLOBAL_PROTECT(apprentices_positions)
 

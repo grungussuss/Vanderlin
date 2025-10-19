@@ -504,6 +504,7 @@
 	icon_state = "nimcha"
 	desc = "A swift sword of Lakkarian origin. It's popular with the noblewomen of Ei Osalla."
 	wbalance = HARD_TO_DODGE
+	dropshrink = 0.8
 	sellprice = 140 // its made with gold and steel, thats pretty valuable
 
 //................ Lord's Rapier ............... //
@@ -760,6 +761,10 @@
 	desc = "An ancestral long blade with an ominous glow, serrated with barbs along it's edges. Stained with a strange green tint."
 	sellprice = 363
 	static_price = TRUE
+
+/obj/item/weapon/sword/long/vlord/Initialize(mapload)
+	. = ..()
+	enchant(/datum/enchantment/vampiric)
 
 /obj/item/weapon/sword/long/vlord/getonmobprop(tag)
 	. = ..()

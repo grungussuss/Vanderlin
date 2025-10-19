@@ -48,10 +48,10 @@
 	/// Does this step allow self surgery?
 	var/self_operable = TRUE
 	/// Acceptable mob types for this surgery
-	var/list/target_mobtypes = list(/mob/living/carbon)
+	var/list/target_mobtypes = list(/mob/living/carbon, /mob/living/simple_animal)
 
 	/// Skill used to perform this surgery step
-	var/skill_used = /datum/skill/misc/medicine
+	var/datum/skill/skill_used = /datum/skill/misc/medicine
 	/// Necessary skill MINIMUM to perform this surgery step, of skill_used
 	var/skill_min = SKILL_LEVEL_NOVICE
 	/// Skill median used to apply success and speed bonuses
@@ -297,9 +297,9 @@
 		play_failure_sound(user, target, target_zone, tool)
 		if(user.client?.prefs.showrolls)
 			if(try_to_fail)
-				to_chat(user, "<span class='warning'>Intentional surgery fail... [success_prob]%</span>")
+				to_chat(user, span_warning("Intentional surgery fail, the chance to succeed was [success_prob]%"))
 			else
-				to_chat(user, "<span class='warning'>Surgery fail... [success_prob]%</span>")
+				to_chat(user, span_warning("Surgery fail, the chance to succeed was [success_prob]%"))
 		if(repeating && can_do_step(user, target, target_zone, tool, intent, try_to_fail))
 			initiate(user, target, target_zone, tool, intent, try_to_fail)
 		return FALSE

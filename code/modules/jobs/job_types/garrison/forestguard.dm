@@ -42,6 +42,7 @@
 	gloves = /obj/item/clothing/gloves/leather
 	belt = /obj/item/storage/belt/leather/fgarrison
 	backl = /obj/item/storage/backpack/satchel
+	ADD_TRAIT(H, TRAIT_KNOWBANDITS, TRAIT_GENERIC)
 
 /datum/job/forestguard/after_spawn(mob/living/carbon/spawned, client/player_client)
 	..()
@@ -223,6 +224,7 @@
 		H.change_stat(STATKEY_LCK, rand(-4,4))//either really lucky or unlucky, like orphans
 		ADD_TRAIT(H, TRAIT_FORAGER, TRAIT_GENERIC)
 		ADD_TRAIT(H, TRAIT_ORPHAN, TRAIT_GENERIC) //someone please abuse this
+		ADD_TRAIT(H, TRAIT_BRUSHWALK, TRAIT_GENERIC)
 
 /mob/proc/haltyellorphan()
 	set name = "HALT!"

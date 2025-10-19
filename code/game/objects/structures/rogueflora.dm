@@ -316,7 +316,9 @@
 	AddComponent(/datum/component/grass)
 
 /obj/structure/flora/grass/Destroy()
-	if(prob(5))
+	if(isliving(usr) && HAS_TRAIT(usr, TRAIT_SEED_FINDER))
+		new /obj/item/neuFarm/seed/mixed_seed(get_turf(src))
+	else if(prob(5))
 		new /obj/item/neuFarm/seed/mixed_seed(get_turf(src))
 	return ..()
 
@@ -797,7 +799,7 @@
 // bush crossing
 /obj/structure/flora/grass/bush_meagre/Crossed(atom/movable/AM)
 	..()
-	if(isliving(AM))
+	if(isliving(AM) && !HAS_TRAIT(AM, TRAIT_BRUSHWALK))
 		var/mob/living/L = AM
 		L.Immobilize(5)
 		if(L.m_intent == MOVE_INTENT_WALK)

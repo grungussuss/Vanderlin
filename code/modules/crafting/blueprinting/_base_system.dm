@@ -61,17 +61,18 @@
 		open_recipe_browser()
 
 /datum/blueprint_system/proc/create_buttons()
-	recipe_button = new /atom/movable/screen/blueprint/recipe(src)
+	var/datum/hud/hud = holder?.mob?.hud_used
+	recipe_button = new /atom/movable/screen/blueprint/recipe(null, hud, src)
 	buttons += recipe_button
 
-	dir_button = new /atom/movable/screen/blueprint/direction(src)
+	dir_button = new /atom/movable/screen/blueprint/direction(null, hud, src)
 	buttons += dir_button
 
-	pixel_button = new /atom/movable/screen/blueprint/pixel_mode(src)
+	pixel_button = new /atom/movable/screen/blueprint/pixel_mode(null, hud, src)
 	buttons += pixel_button
 
-	buttons += new /atom/movable/screen/blueprint/help(src)
-	buttons += new /atom/movable/screen/blueprint/quit(src)
+	buttons += new /atom/movable/screen/blueprint/help(null, hud, src)
+	buttons += new /atom/movable/screen/blueprint/quit(null, hud, src)
 
 /datum/blueprint_system/proc/create_preview_appearance(datum/blueprint_recipe/recipe)
 	clear_preview()
@@ -658,7 +659,7 @@
 
 	var/atom/selected_output = selected_recipe.result_type
 
-	if(ispath(selected_output, /turf/closed) && istype(get_area(final_location), /area/overlord_lair))
+	if(ispath(selected_output, /turf/closed) && (istype(get_area(final_location), /area/overlord_lair) && !("overlord" in user.faction)))
 		return
 
 	// Handle wall fixtures - place blueprint on adjacent floor when clicking on wall

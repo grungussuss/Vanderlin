@@ -20,11 +20,22 @@
 			user.add_stress(/datum/stress_event/beautiful_self)
 		else
 			user.add_stress(/datum/stress_event/beautiful)
-	if(HAS_TRAIT(src, TRAIT_UGLY) && user != src)
+	if(HAS_TRAIT(src, TRAIT_UGLY) &&  user != src)
 		if(user == src)
 			user.add_stress(/datum/stress_event/ugly_self)
 		else
 			user.add_stress(/datum/stress_event/ugly)
+	if(HAS_TRAIT(src, TRAIT_FISHFACE))
+		if(HAS_TRAIT(user, TRAIT_FISHFACE))
+			if(user == src)
+				user.add_stress(/datum/stress_event/self_fishface)
+			else
+				user.add_stress(/datum/stress_event/fellow_fishface)
+		else
+			if(user.age == AGE_CHILD)
+				user.add_stress(/datum/stress_event/fish_monster)
+			else
+				user.add_stress(/datum/stress_event/fishface)
 	if(HAS_TRAIT(src, TRAIT_OLDPARTY) && HAS_TRAIT(user, TRAIT_OLDPARTY) && user != src)
 		user.add_stress(/datum/stress_event/saw_old_party)
 
@@ -87,7 +98,7 @@
 
 		if(race_name) // race name
 			appendage_to_name += " [race_name]"
- // job name, don't show job of foreigners.
+// job name, don't show job of foreigners.
 
 		if(used_title && !HAS_TRAIT(src, TRAIT_FACELESS) && (!HAS_TRAIT(src, TRAIT_FOREIGNER) || HAS_TRAIT(src, TRAIT_RECRUITED) || HAS_TRAIT(src, TRAIT_RECOGNIZED)))
 			appendage_to_name += ", [used_title]"
@@ -137,7 +148,6 @@
 				. += span_love(span_bold("[self_inspect ? "I am" : "[t_He] is"] [is_male ? "handsome" : "beautiful"]!"))
 			if(HAS_TRAIT(src, TRAIT_UGLY))
 				. += span_necrosis(span_bold("[self_inspect ? "I am" : "[t_He] is"] hideous."))
-
 		if(length(GLOB.tennite_schisms))
 			var/datum/tennite_schism/S = GLOB.tennite_schisms[1]
 			var/user_side = (WEAKREF(user) in S.supporters_astrata) ? "astrata" : (WEAKREF(user) in S.supporters_challenger) ? "challenger" : null
@@ -157,15 +167,30 @@
 		if(has_flaw(/datum/charflaw/addiction/junkie) && HAS_TRAIT(user, TRAIT_RECOGNIZE_ADDICTS))
 			. += span_userdanger("JUNKIE!")
 
+		if(HAS_TRAIT(src, TRAIT_FISHFACE) && HAS_TRAIT(user, TRAIT_FISHFACE))
+			if(user == src)
+				. += span_green("I don't look that bad, I just look different to other species.")
+			else
+				. += span_green("A fellow triton")
+
+		if(HAS_TRAIT(src, TRAIT_FISHFACE) && !HAS_TRAIT(user, TRAIT_FISHFACE))
+			var/mob/living/carbon/human/H = user
+			if(H.age == AGE_CHILD)
+				. += span_userdanger("IT'S A HORRIBLE MONSTER!!!")
+				user.emote("scream")
+			else
+				. += span_necrosis("That fish is ugly!")
+
 		if(real_name in GLOB.excommunicated_players)
 			. += span_userdanger("EXCOMMUNICATED!")
 
 		if(real_name in GLOB.heretical_players)
 			. += span_userdanger("HERETIC! SHAME!")
 
-		if(is_zizocultist(user.mind) || is_zizolackey(user.mind))
-			if(virginity)
-				. += span_userdanger("VIRGIN!")
+		if(user.mind)
+			if(is_zizocultist(user.mind) || is_zizolackey(user.mind))
+				if(virginity)
+					. += span_userdanger("VIRGIN!")
 
 		var/is_bandit = FALSE
 		if(mind?.special_role == "Bandit")
@@ -173,7 +198,7 @@
 			if((real_name in GLOB.outlawed_players) && HAS_TRAIT(user, TRAIT_KNOWBANDITS))
 				. += span_userdanger("BANDIT!")
 
-		if(mind && mind.special_role == "Vampire Lord")
+		if(mind && mind?.special_role == "Vampire Lord")
 			var/datum/component/vampire_disguise/disguise_comp = GetComponent(/datum/component/vampire_disguise)
 			if(!disguise_comp.disguised)
 				. += span_userdanger("A MONSTER!")

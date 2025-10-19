@@ -158,7 +158,6 @@
 	faretype = FARE_NEUTRAL
 	bitesize = 5
 	list_reagents = list(/datum/reagent/consumable/nutriment = 0.5)
-	dropshrink = 0.75
 	rotprocess = SHELFLIFE_SHORT
 	sellprice = 0 // spoil too quickly to export
 

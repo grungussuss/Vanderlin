@@ -93,6 +93,7 @@ GLOBAL_LIST_INIT(traits_by_type, list(
 		"Of the Cabal" = TRAIT_CABAL,
 		"Unleechable" = TRAIT_LEECHIMMUNE,
 		"Webwalker" = TRAIT_WEBWALK,
+		"Brushwalker" = TRAIT_BRUSHWALK,
 		"Dead Nose" = TRAIT_DEADNOSE,
 		"High Jumping" = TRAIT_ZJUMP,
 		"Jesterophobia" = TRAIT_JESTERPHOBIA,
@@ -154,6 +155,7 @@ GLOBAL_LIST_INIT(traits_by_type, list(
 		"Bad Mood" = TRAIT_BAD_MOOD,
 		"Night Owl" = TRAIT_NIGHT_OWL,
 		"Ugly" = TRAIT_UGLY,
+		"Fishface" = TRAIT_FISHFACE,
 		"Hollow Bones" = TRAIT_HOLLOWBONES,
 		"Light Load" = TRAIT_AMAZING_BACK,
 		"Loved By Kittens" = TRAIT_KITTEN_MOM,
@@ -165,6 +167,9 @@ GLOBAL_LIST_INIT(traits_by_type, list(
 		"Keen Ears"	= TRAIT_KEENEARS,
 		"Poison Resilience" = TRAIT_POISON_RESILIENCE,
 		"Expert Forager" = TRAIT_FORAGER,
+		"Seed Finder" = TRAIT_SEED_FINDER,
+		"Recruited" = TRAIT_RECRUITED,
+		"Recognized" = TRAIT_RECOGNIZED,
 	),
 	/obj/item/bodypart = list(
 		"TRAIT_PARALYSIS" = TRAIT_PARALYSIS
@@ -188,6 +193,7 @@ GLOBAL_LIST_INIT(traits_by_type, list(
 
 GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_WEBWALK = "I can move freely between webs.",
+	TRAIT_BRUSHWALK = "I can move freely through plain bushes.",
 	TRAIT_DEADNOSE = span_dead("My nose is numb to the smell of unpleasant odors."),
 	TRAIT_ZJUMP = "Time to reach a new height.",
 	TRAIT_JESTERPHOBIA = span_warning("I have a severe irrational fear of Jesters"),
@@ -235,6 +241,7 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_BAD_MOOD = span_warning("Everything just seems to piss me off"),
 	TRAIT_NIGHT_OWL = span_info("I enjoy spending my time in the night"),
 	TRAIT_UGLY = span_necrosis("Do not look in the mirror."),
+	TRAIT_FISHFACE = span_necrosis("Other species find me hideous."),
 	TRAIT_SPELLBLOCK = span_warning("I cannot cast any spells."),
 	TRAIT_ANTIMAGIC = "I am immune to most forms of magic.",
 	TRAIT_ANTISCRYING = "I am immune to most forms of magical divination.",
@@ -282,6 +289,7 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_KEENEARS = span_info("I've a good pair of ears, and can tell who is speaking, even when they're out of sight. I can also hear whispers from further away."),
 	TRAIT_POISON_RESILIENCE	= span_info("I'm more resilient to poisons."),
 	TRAIT_FORAGER = span_info("I can tell which jackberries are poisonous."),
+	TRAIT_SEED_FINDER = span_info("I find seeds more easily."),
 ))
 
 /// value -> trait name, generated on use from trait_by_type global

@@ -299,6 +299,7 @@
 	icon_state = "jile_iron"
 	melting_material = null
 	sellprice = 12
+	dropshrink = 1.0
 
 /obj/item/weapon/knife/njora/iron
 
@@ -331,6 +332,7 @@
 	wdefense = AVERAGE_PARRY
 	wbalance = VERY_HARD_TO_DODGE
 	sellprice = 20
+	dropshrink = 1.0
 
 /obj/item/weapon/knife/njora/steel
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/chop, /datum/intent/dagger/thrust)
@@ -581,7 +583,27 @@
 	melting_material = null
 	sellprice = 5
 
+/obj/item/weapon/knife/stone/kukri
+	name = "joapstone kukri"
+	desc = "A kukri made out of joapstone. Its more of a ceremonial piece than it is an implement of war, its somewhat fragile. Be gentle with it."
+	icon = 'icons/roguetown/gems/gem_jade.dmi'
+	icon_state = "kukri_jade"
+	max_integrity = INTEGRITY_POOR - 100
+	max_blade_int = 35
+	wdefense = AVERAGE_PARRY
+	resistance_flags = FIRE_PROOF | ACID_PROOF
+	sellprice = 75
 
+/obj/item/weapon/knife/stone/opal
+	name = "opaloise knife"
+	desc = "A beautiful knife carved out of opaloise. Its not intended for combat. It's presence is vital in some Crimson Elven ceremonies."
+	icon = 'icons/roguetown/gems/gem_opal.dmi'
+	icon_state = "knife_opal"
+	max_integrity = INTEGRITY_POOR - 100
+	max_blade_int = 35
+	wdefense = AVERAGE_PARRY
+	resistance_flags = FIRE_PROOF | ACID_PROOF
+	sellprice = 105
 //................ Villager Knife ............... //
 /obj/item/weapon/knife/villager
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/thrust, /datum/intent/dagger/chop)
@@ -649,3 +671,14 @@
 /obj/item/weapon/knife/throwingknife/psydon/Initialize(mapload)
 	. = ..()
 	enchant(/datum/enchantment/silver)
+
+/obj/item/weapon/knife/throwingknife/rous
+	name = "rous kunai"
+	desc = "A typical knife used by rous assassins. Quite effective when thrown."
+	icon_state = "rouskunai"
+	throw_speed = 4
+	wdefense = 3
+	max_integrity = INTEGRITY_POOR
+	embedding = list("embedded_pain_multiplier" = 4, "embed_chance" = 30, "embedded_fall_chance" = 15)
+	sellprice = 5
+	melt_amount = 50

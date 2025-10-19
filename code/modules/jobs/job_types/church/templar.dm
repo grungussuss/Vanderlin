@@ -49,8 +49,8 @@
 	H.adjust_skillrank(/datum/skill/magic/holy, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/medicine, 1, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/sewing, 2, TRUE)
-	H.change_stat(STATKEY_STR, 3)
-	H.change_stat(STATKEY_CON, 4)
+	H.change_stat(STATKEY_STR, 2)
+	H.change_stat(STATKEY_CON, 2)
 	H.change_stat(STATKEY_END, 2)
 	H.change_stat(STATKEY_SPD, -1)
 	if(!H.has_language(/datum/language/celestial)) // For discussing church matters with the other Clergy
@@ -64,7 +64,7 @@
 			H.cmode_music = 'sound/music/cmode/church/CombatAstrata.ogg'
 			H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE)
 		if(/datum/patron/divine/noc)
-			wrists = /obj/item/clothing/neck/psycross/noc
+			wrists = /obj/item/clothing/neck/psycross/silver/noc
 			head = /obj/item/clothing/head/helmet/heavy/necked/noc
 			cloak = /obj/item/clothing/cloak/stabard/templar/noc
 			H.cmode_music = 'sound/music/cmode/adventurer/CombatMonk.ogg'

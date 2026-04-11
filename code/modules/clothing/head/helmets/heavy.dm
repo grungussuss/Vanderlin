@@ -8,8 +8,11 @@
 	equip_delay_self = 3 SECONDS
 	unequip_delay_self = 3 SECONDS
 	emote_environment = 3		// Unknown if this actually works and what it does
-	smeltresult = /obj/item/ingot/steel
+	melt_amount = 75
+	melting_material = /datum/material/steel
 	sellprice = VALUE_STEEL_HELMET
+
+	item_weight = 3.7 KILOGRAMS
 
 	armor = ARMOR_PLATE
 	body_parts_covered = FULL_HEAD
@@ -27,6 +30,20 @@
 	prevent_crits = ALL_EXCEPT_BLUNT
 	block2add = FOV_BEHIND
 
+/obj/item/clothing/head/helmet/heavy/psydonbarbute
+	name = "psydonian barbute"
+	desc = "A barbute styled with Psydonian Imagery."
+	icon_state = "psydonbarbute"
+	item_state = "psydonbarbute"
+	block2add = FOV_BEHIND
+
+/obj/item/clothing/head/helmet/heavy/psydonhelm
+	name ="grenzelhoftian armet"
+	desc = "Headwear commonly worn by Templars in service to the Oratorium Throni Vacui. PSYDON Endures."
+	icon_state = "psydonarmet"
+	item_state = "psydonarmet"
+	block2add = FOV_BEHIND
+
 //................ Iron Plate Helmet ............... //
 /obj/item/clothing/head/helmet/heavy/ironplate
 	name = "iron plate helmet"
@@ -39,7 +56,7 @@
 
 	armor = ARMOR_PLATE_BAD
 	max_integrity = INTEGRITY_STRONG //isn't the same as a steel helmet but is better than a skullcap, costs 2 bars and protects the mouth
-	item_weight = 6 * IRON_MULTIPLIER
+	item_weight = 3.5 KILOGRAMS
 
 //............... Rusted Barbute ............... //
 /obj/item/clothing/head/helmet/heavy/rust
@@ -54,34 +71,22 @@
 	sellprice = VALUE_IRON_ARMOR/2
 	armor = ARMOR_PLATE_BAD
 	max_integrity = INTEGRITY_STANDARD
-	item_weight = 6 * IRON_MULTIPLIER
+	item_weight = 2.4 KILOGRAMS
 
 //............... Great Helm ............... //
 /obj/item/clothing/head/helmet/heavy/bucket
 	name = "great helm"
-	desc = "An immovable bulkwark of protection for the head of the faithful. Antiquated and impractical, but offering incredible defense."
+	desc = "An immovable bulwark of protection for the head of the faithful. Antiquated and impractical, but offering incredible defense."
 	icon_state = "topfhelm"
 	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
 
 	armor = ARMOR_PLATE
 	prevent_crits = ALL_CRITICAL_HITS
-	item_weight = 9 * IRON_MULTIPLIER
+	item_weight = 4.3 KILOGRAMS
 
 /obj/item/clothing/head/helmet/heavy/bucket/gold
 	icon_state = "topfhelm_gold"
-	item_weight = 9 * GOLD_MULITPLIER
-
-// Vampire Lord is no longer as OP, but the armor should protect against dreaded stabs or it makes the vitae spent on it pointless.
-/obj/item/clothing/head/helmet/heavy/vampire
-	name = "savoyard"
-	desc = "A terrifying yet crude helmet shaped like a humen skull. Commands the inspiring terror of inhumen tyrants from yils past."
-	icon_state = "savoyard"
-	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
-
-	prevent_crits = ALL_CRITICAL_HITS_VAMP
-	max_integrity = INTEGRITY_STRONGEST // steel
-	body_parts_covered = HEAD_NECK
-	block2add = FOV_BEHIND
+	item_weight = 8.6 KILOGRAMS
 
 //............... Frog Helmet ............... //
 /obj/item/clothing/head/helmet/heavy/frog
@@ -95,20 +100,7 @@
 
 	armor = ARMOR_PLATE_GOOD
 	prevent_crits = ALL_CRITICAL_HITS
-	item_weight = 9 * IRON_MULTIPLIER
-
-//............... Black Knight Helmet ............... //
-/obj/item/clothing/head/helmet/heavy/blkknight
-	name = "blacksteel helmet"
-	desc = "A helmet black as nite. Instills fear upon those that gaze upon it."
-	icon_state = "bkhelm"
-	icon = 'icons/roguetown/clothing/special/blkknight.dmi'
-	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
-	armor_class = AC_MEDIUM
-	armor = ARMOR_PLATE_GOOD
-	prevent_crits = ALL_CRITICAL_HITS
-	item_weight = 9 * BLACKSTEEL_MULTIPLIER
-	sellprice = VALUE_SILVER_ITEM * 2
+	item_weight = 4.5 KILOGRAMS
 
 //............... Zizo Frog Helmet ............... //
 
@@ -121,7 +113,7 @@
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
 	armor = ARMOR_PLATE
 	prevent_crits = ALL_CRITICAL_HITS
-	item_weight = 5 * STEEL_MULTIPLIER
+	item_weight = 4.5 KILOGRAMS
 	block2add = FOV_BEHIND
 	sellprice = 0 // Incredibly evil Zizoid armor, this should be burnt, nobody wants this
 
@@ -136,7 +128,7 @@
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor64x64.dmi'
 	armor = ARMOR_PLATE
 	prevent_crits = ALL_CRITICAL_HITS
-	item_weight = 5 * STEEL_MULTIPLIER
+	item_weight = 3.2 KILOGRAMS
 	block2add = FOV_BEHIND
 	sellprice = 0 // See above comment
 	bloody_icon = 'icons/effects/blood64x64.dmi'
@@ -146,22 +138,45 @@
 
 //............... Graggar Helmet ............... //
 
-/obj/item/clothing/head/helmet/graggar
+/obj/item/clothing/head/helmet/heavy/graggar
 	name = "vicious helmet"
 	desc = "A rugged and horrifying helmet. A violent aura emanates from it."
 	icon_state = "graggarplatehelm"
 	icon = 'icons/roguetown/clothing/special/evilarmor.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
 	armor = ARMOR_PLATE
+	flags_cover = HEADCOVERSEYES
 	prevent_crits = ALL_CRITICAL_HITS
-	item_weight = 5 * STEEL_MULTIPLIER
+	item_weight = 4.5 KILOGRAMS
+	block2add = FOV_BEHIND
+	sellprice = 0 // See above comment
+
+//............... Baothan Helmet ............... //
+
+/obj/item/clothing/head/helmet/heavy/baotha
+	name = "willful helmet"
+	desc = "Baothan knights are an antithesis : the tiefling queen preaches self preservation at the cost of even family or friend. Choosing to embark on a quest to knightlyhood means facing peril at the forefront. \
+	Indeed, many are the upstarts who understood the folly of their journey, and either turned back to the warmth of ozium and wine or died in the process. \
+	The original wearer of this helmet is no such pushover : they do not have the might of Graggar nor the magick of Zizo, and instead rely on their wits and grit to proclaim their unicity in the face of this cold, uncaring world. \
+	It is rumoured that Baotha offers this baroque piece in person, as a reward for the knight's unflinching will in the face of sheer terror, minute after minute, hour after hour. \
+	Fashioned in steel and petals, it has no viewport, the wearer instead having their senses heightened to preternatural levels." // yes, this is a long item description, but it's the only piece of armour unique to Baotha.
+	icon_state = "baothahelm"
+	icon = 'icons/roguetown/clothing/special/baothanknight.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor64x64.dmi'
+	worn_x_dimension = 64
+	worn_y_dimension = 64
+	bloody_icon = 'icons/effects/blood64x64.dmi'
+	bloody_icon_state = "helmetblood_big"
+	armor = ARMOR_PLATE
+	prevent_crits = ALL_CRITICAL_HITS
+	item_weight = 4.5 KILOGRAMS
 	block2add = FOV_BEHIND
 	sellprice = 0 // See above comment
 
 //............... Spangenhelm ............... //
 /obj/item/clothing/head/helmet/heavy/viking
 	name = "spangenhelm"
-	desc = "A steel helmet with built in eye and nose protection, commonly used by warriors of the north."
+	desc = "A steel helmet with built-in eye and nose protection, commonly used by warriors of the north."
 	icon_state = "Spangenhelm_item"
 	item_state = "Spangenhelm_worn"
 	icon = 'icons/roguetown/clothing/special/spangenhelm_item.dmi'
@@ -173,7 +188,7 @@
 	resistance_flags = FIRE_PROOF
 	blocksound = PLATEHIT
 	prevent_crits = ALL_CRITICAL_HITS
-	item_weight = 9 * IRON_MULTIPLIER
+	item_weight = 2.6 KILOGRAMS
 	clothing_flags = CANT_SLEEP_IN
 	max_integrity = INTEGRITY_STRONGEST
 	block2add = FOV_BEHIND
@@ -184,14 +199,14 @@
 	name = "astrata helmet"
 	desc = "A great helmet decorated with a golden sigil of the solar order and a maille neck cover. The dependable companion of many holy warriors of Astrata."
 	icon_state = "astratahelm"
-	item_weight = 6 * GOLD_MULITPLIER
+	item_weight = 5.5 KILOGRAMS
 
 //............... Noc Helmet ............... //
 /obj/item/clothing/head/helmet/heavy/necked/noc
 	name = "noc helmet"
 	desc = "A sleek and rounded heavy helmet with a maille neck cover. Its unique craft is said to allow holy warriors of Noc additional insight before battle."
 	icon_state = "nochelm"
-	item_weight = 6 * SILVER_MULTIPLIER
+	item_weight = 6 KILOGRAMS
 	flags_inv = HIDEEARS
 
 /obj/item/clothing/head/helmet/heavy/necked/noc/Initialize(mapload)
@@ -203,7 +218,7 @@
 	name = "necra helmet"
 	desc = "A reinforced helmet shaped into the visage of a skull with a maille neck cover under the cloth. A symbol of authority for the battle servants of the Undermaiden."
 	icon_state = "necrahelm"
-	item_weight = 6 * IRON_MULTIPLIER
+	item_weight = 4.5 KILOGRAMS
 
 //............... Dendor Helmet ............... //	This one seems a bit out of place
 /obj/item/clothing/head/helmet/heavy/necked/dendorhelm
@@ -211,7 +226,7 @@
 	desc = "A great helmet with twisted metalwork that imitates the twisting of bark, or the horns of a beast."
 	icon_state = "dendorhelm"
 	prevent_crits = ALL_EXCEPT_BLUNT
-	item_weight = 6 * IRON_MULTIPLIER
+	item_weight = 4.5 KILOGRAMS
 
 //............... Eora Helmet ............... //
 /obj/item/clothing/head/helmet/sallet/eoran
@@ -219,7 +234,7 @@
 	desc = "A standard helmet forged in the style typical of Eoran worshippers, a simple yet practical protective piece of equipment. Upon it lays several laurels of flowers and other colorful ornaments, followed by several symbols and standards of the user's chapter, accomplishments or even punishment"
 	icon_state = "eorahelm"
 	item_state = "eorahelm"
-	item_weight = 5 * IRON_MULTIPLIER
+	item_weight = 3.2 KILOGRAMS
 
 
 //............... Pestra Helmet ............... //
@@ -228,7 +243,7 @@
 	desc = "A great helmet made of coarse, tainted steel. It is modeled after a plagued carrion, a blessed abomination of Pestra."
 	icon_state = "pestrahelm"
 	item_state = "pestrahelm"
-	item_weight = 6 * IRON_MULTIPLIER
+	item_weight = 4.5 KILOGRAMS
 
 //................ Malum Helmet ............. //
 /obj/item/clothing/head/helmet/heavy/necked/malumhelm
@@ -236,14 +251,14 @@
 	desc = "A great helmet of sturdy dark steel. Its chiseled countenance reminds the viewer of Malum's stern gaze."
 	icon_state = "malumhelm"
 	item_state = "malumhelm"
-	item_weight = 6 * IRON_MULTIPLIER
+	item_weight = 4.5 KILOGRAMS
 
 /obj/item/clothing/head/helmet/heavy/necked/ravox
 	name = "ravoxian helmet"
-	desc = "Headwear commonly worn by Templars in service to Ravox. It resembles an heavily adorned visored sallet."
+	desc = "Headwear commonly worn by Templars in service to Ravox. It resembles a heavily-adorned visored sallet."
 	icon_state = "ravoxhelm"
 	item_state = "ravoxhelm"
-	item_weight = 6 * IRON_MULTIPLIER
+	item_weight = 4.5 KILOGRAMS
 
 //................ Xylix Helmet ............. //
 /obj/item/clothing/head/helmet/heavy/necked/xylix
@@ -251,11 +266,19 @@
 	desc = "A great helmet forged from steel, and fashioned in the visage of a jester, jingling bells and all. Commonly worn by Templars in service to Xylix"
 	icon_state = "xylixhelm"
 	item_state = "xylixhelm"
-	item_weight = 6 * IRON_MULTIPLIER
+	item_weight = 4.5 KILOGRAMS
 
 /obj/item/clothing/head/helmet/heavy/necked/xylix/Initialize()
 	. = ..()
 	AddComponent(/datum/component/item_equipped_movement_rustle, custom_sounds = list(SFX_JINGLE_BELLS))
+
+//................ Abyssor Helmet ............. //
+/obj/item/clothing/head/helmet/heavy/necked/abyssor
+	name = "abyssor helmet"
+	desc = "A great helmet crafted from bronze. The visor is slitted and ridged, evoking the gills of a great sea-beast."
+	icon_state = "abyssorhelm"
+	item_state = "abyssorhelm"
+	item_weight = 5.5 KILOGRAMS
 
 //............... Sinistar (Graggar) Helmet ............... //
 /obj/item/clothing/head/helmet/heavy/sinistar
@@ -269,8 +292,9 @@
 	icon_state = "sinistarhelm"
 	dropshrink = 0.9
 	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
-	smeltresult = /obj/item/ingot/steel
-	item_weight = 7 * IRON_MULTIPLIER
+	melt_amount = 75
+	melting_material = /datum/material/steel
+	item_weight = 4.45 KILOGRAMS
 
 /obj/item/clothing/head/helmet/heavy/decorated	// template
 	name = "a template"
@@ -301,9 +325,9 @@
 	name = "knights helmet"
 	desc = "A lavish knights helmet which allows a crest to be mounted on top."
 	icon_state = "decorated_knight"
-	item_weight = 9 * IRON_MULTIPLIER
+	item_weight = 4.45 KILOGRAMS
 
-/obj/item/clothing/head/helmet/heavy/decorated/knight/attack_hand_secondary(mob/user, params)
+/obj/item/clothing/head/helmet/heavy/decorated/knight/attack_hand_secondary(mob/user, list/modifiers)
 	. = ..()
 	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
 		return
@@ -328,10 +352,10 @@
 	armor = ARMOR_PLATE_GOOD
 	max_integrity = INTEGRITY_STRONG
 	prevent_crits = ALL_CRITICAL_HITS
-	item_weight = 9 * IRON_MULTIPLIER
+	item_weight = 4.45 KILOGRAMS
 
 
-/obj/item/clothing/head/helmet/heavy/decorated/hounskull/attack_hand_secondary(mob/user, params)
+/obj/item/clothing/head/helmet/heavy/decorated/hounskull/attack_hand_secondary(mob/user, list/modifiers)
 	. = ..()
 	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
 		return
@@ -354,9 +378,9 @@
 	desc = "A lavish great helm which allows a crest to be mounted on top."
 	icon_state = "decorated_bucket"
 	prevent_crits = ALL_CRITICAL_HITS
-	item_weight = 9 * IRON_MULTIPLIER
+	item_weight = 3.5 KILOGRAMS
 
-/obj/item/clothing/head/helmet/heavy/decorated/bucket/attack_hand_secondary(mob/user, params)
+/obj/item/clothing/head/helmet/heavy/decorated/bucket/attack_hand_secondary(mob/user, list/modifiers)
 	. = ..()
 	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
 		return
@@ -379,9 +403,9 @@
 	desc = "A lavish gold-trimmed greathelm which allows a crest to be mounted on top."
 	icon_state = "decorated_gbucket"
 	prevent_crits = ALL_CRITICAL_HITS
-	item_weight = 7 * GOLD_MULITPLIER
+	item_weight = 4 KILOGRAMS
 
-/obj/item/clothing/head/helmet/heavy/decorated/golden/attack_hand_secondary(mob/user, params)
+/obj/item/clothing/head/helmet/heavy/decorated/golden/attack_hand_secondary(mob/user, list/modifiers)
 	. = ..()
 	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
 		return
@@ -409,9 +433,9 @@
 	block2add = null
 
 	body_parts_covered = HEAD|HAIR|EARS
-	item_weight = 9 * STEEL_MULTIPLIER
+	item_weight = 3.25 KILOGRAMS
 
-/obj/item/clothing/head/helmet/heavy/decorated/bascinet/attack_hand_secondary(mob/user, params)
+/obj/item/clothing/head/helmet/heavy/decorated/bascinet/attack_hand_secondary(mob/user, list/modifiers)
 	. = ..()
 	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
 		return
@@ -427,3 +451,93 @@
 			var/mob/living/carbon/H = user
 			H.update_inv_head()
 		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
+
+/obj/item/clothing/head/helmet/heavy/ordinatorhelm
+	name = "inquisitorial ordinator's helmet"
+	desc = "A design suggested by a Grenzelhoftian smith, inspired by an eccentric count who insisted on sleeping in a coffin. A steel casket with thin slits that allow for deceptively clear vision. The tainted will drown in the blood you bring their way, while this high helm keeps it out of your face."
+	icon_state = "ordinatorhelm"
+	item_state = "ordinatorhelm"
+	worn_x_dimension = 64
+	worn_y_dimension = 64
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/64x64/head.dmi'
+	bloody_icon = 'icons/effects/blood64x64.dmi'
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	adjustable = CAN_CADJUST
+	block2add = FOV_BEHIND
+	max_integrity = 350
+	var/plumed = FALSE
+
+/obj/item/clothing/head/helmet/heavy/ordinatorhelm/attackby(obj/item/W, mob/living/user, params)
+	..()
+	if(istype(W, /obj/item/natural/feather))
+		user.visible_message(span_warning("[user] starts to fashion plumage using [W] for [src]."))
+		if(do_after(user, 4 SECONDS))
+			var/obj/item/clothing/head/helmet/heavy/ordinatorhelm/plume/P = new /obj/item/clothing/head/helmet/heavy/ordinatorhelm/plume(get_turf(src.loc))
+			if(user.is_holding(src))
+				user.dropItemToGround(src)
+				user.put_in_hands(P)
+			qdel(src)
+			qdel(W)
+		else
+			user.visible_message(span_warning("[user] stops fashioning plumage for [src]."))
+		return
+
+/obj/item/clothing/head/helmet/heavy/ordinatorhelm/plume
+	icon_state = "ordinatorhelmplume"
+	item_state = "ordinatorhelmplume"
+
+/obj/item/clothing/head/helmet/heavy/ordinatorhelm/plume/attackby(obj/item/W, mob/living/user, params)
+	if(istype(W, /obj/item/natural/feather))
+		return
+
+/obj/item/clothing/head/helmet/heavy/absolver
+	name = "psydonian conical helm"
+	desc = "Its shape confounds and confuses the enemies of Psydon. Offering unfound protection in its visage, the gaze is horrific to those without understanding."
+	icon_state = "absolutionisthelm"
+	item_state = "absolutionisthelm"
+	emote_environment = 3
+	block2add = null
+	body_parts_covered = FULL_HEAD|NECK
+	max_integrity = 450 // Worst vision. Yes.
+	worn_x_dimension = 64
+	worn_y_dimension = 64
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/64x64/head.dmi'
+	bloody_icon = 'icons/effects/blood64x64.dmi'
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	clothing_flags = NONE
+
+/obj/item/clothing/head/helmet/heavy/psybucket
+	name = "psydonian bucket helmet"
+	desc = "Originally just a bucket with a psycross nailed on, it proved surprisingly effective, making its way into common use for inquisitorial templars. Steel encapsulates your head, and His cross facing enemies reminds them that you will endure until they meet oblivion. Only then may you rest."
+	icon_state = "psybucket"
+	item_state = "psybucket"
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	adjustable = CAN_CADJUST
+	block2add = FOV_BEHIND
+	max_integrity = 400
+
+/obj/item/clothing/head/helmet/heavy/psysallet
+	name = "psydonian sallet"
+	desc = "A boiled leather cap, crowned with steel and veiled with His cross. Fear not - He will show you the way, and He will see your blows well-struck."
+	icon_state = "psysallet"
+	item_state = "psysallet"
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	adjustable = CAN_CADJUST
+	block2add = FOV_BEHIND
+	max_integrity = 400
+
+//............... Gronn Heavy Helmet ...............//
+/obj/item/clothing/head/helmet/heavy/ironplate/gronn
+	name = "osslandic horned helmet"
+	desc = "A horned helms of solid iron. \
+		A suitable replacement for the precious skull-helms worn in Ossland. \
+		For of course, to have your skull-helm smashed is the highest of disrespects."
+	icon = 'icons/roguetown/clothing/special/gronn.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/64x64/gronn.dmi'
+	bloody_icon = 'icons/effects/blood64x64.dmi'
+	icon_state = "gronnplatehelm"
+	item_state = "gronnplatehelm"
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	block2add = FOV_BEHIND
+	worn_x_dimension = 64
+	worn_y_dimension = 64

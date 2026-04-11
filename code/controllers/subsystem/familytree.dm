@@ -31,17 +31,18 @@ SUBSYSTEM_DEF(familytree)
 	var/list/viable_spouses = list()
 	//These jobs are excluded from AddLocal()
 	var/excluded_jobs = list(
-		"Prince",
-		"Princess",
-		"Consort",
-		"Monarch",
-		"Hand",
-		"Inquisitor",
-		"Adept",
-		"Jailor",
-		"Orphan",
-		"Innkeepers Son",
-		"Churchling",
+		/datum/job/prince,
+		/datum/job/advclass/heir,
+		/datum/job/consort,
+		/datum/job/advclass/consort,
+		/datum/job/lord,
+		/datum/job/hand,
+		/datum/job/advclass/hand,
+		/datum/job/adept,
+		/datum/job/advclass/adept,
+		/datum/job/orphan,
+		/datum/job/innkeep_son,
+		/datum/job/churchling,
 		)
 	//This creates 2 families for each race roundstart so that siblings dont fail to be added to a family.
 	var/list/preset_family_species = list(
@@ -156,7 +157,7 @@ SUBSYSTEM_DEF(familytree)
 	if(!H || !status || istype(H, /mob/living/carbon/human/dummy))
 		return
 	//Exclude princes and princesses from having their parentage calculated.
-	if(H.job in excluded_jobs)
+	if(H.mind?.assigned_role && is_type_in_list(H.mind.assigned_role, excluded_jobs))
 		return
 	switch(status)
 		if(FAMILY_PARTIAL)
@@ -218,7 +219,7 @@ SUBSYSTEM_DEF(familytree)
 /datum/controller/subsystem/familytree/proc/GetCurrentMonarch()
 	// Find the monarch at generation 12 (current ruling generation)
 	for(var/datum/family_member/member in ruling_family.members)
-		if(member.generation == 12 && member.person.job == "Monarch")
+		if(member.generation == 12 && member.person.job == JOB_MONARCH)
 			return member
 	return null
 
@@ -414,8 +415,16 @@ SUBSYSTEM_DEF(familytree)
 		return TRUE
 
 	// Neutral pronouns can only match ANY_GENDER
-	if((H.pronouns == THEY_THEM || H.pronouns == IT_ITS) || (other.pronouns == THEY_THEM || other.pronouns == IT_ITS))
-		return (H.gender_choice_pref == ANY_GENDER)
+	var/my_neutral = (H.pronouns == THEY_THEM || H.pronouns == IT_ITS)
+	var/other_neutral = (other.pronouns == THEY_THEM || other.pronouns == IT_ITS)
+
+	// If I am neutral:
+	if(my_neutral)
+		return (other_neutral || other.gender_choice_pref == ANY_GENDER)
+
+	// If they are neutral(ANY_GENDER already checked):
+	if(other_neutral)
+		return FALSE
 
 	if(H.gender_choice_pref == SAME_GENDER)
 		return (H.pronouns == other.pronouns)

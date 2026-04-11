@@ -1,63 +1,93 @@
+/datum/attribute_holder/sheet/job/pilgrim/noble
+	attribute_variance = list(
+		/datum/attribute/skill/misc/music = list(10, 20)
+	)
+	raw_attribute_list = list(
+		STAT_INTELLIGENCE = 1,
+		STAT_SPEED = 1,
+		STAT_CONSTITUTION = 1,
+		/datum/attribute/skill/misc/reading = 20,
+		/datum/attribute/skill/misc/riding = 20,
+		/datum/attribute/skill/misc/sneaking = 20,
+		/datum/attribute/skill/misc/athletics = 20,
+		/datum/attribute/skill/combat/unarmed = 10,
+		/datum/attribute/skill/combat/wrestling = 10,
+		/datum/attribute/skill/combat/bows = 20,
+	)
+
 /datum/job/advclass/pilgrim/noble
-	title = "Noble"
+	title = JOB_MINOR_NOBLE
 	tutorial = "The blood of a noble family runs through your veins. Perhaps you are visiting from some place far away, \
 	looking to enjoy the hospitality of the ruler. You have many mammons to your name, but with wealth comes \
 	danger, so keep your wits and tread lightly..."
 	allowed_races = RACES_PLAYER_FOREIGNNOBLE
-	outfit = /datum/outfit/adventurer/noble
+	outfit = /datum/outfit/pilgrim/noble
 	category_tags = list(CTAG_PILGRIM)
 	total_positions = 2
-	apprentice_name = "Servant"
+	apprentice_name = JOB_SERVANT
 	cmode_music = 'sound/music/cmode/nobility/combat_noble.ogg'
 	spells = list(
 		/datum/action/cooldown/spell/undirected/call_bird = 1,
 	)
+	honorary = "Lord"
+	honorary_f = "Lady"
 
+	attribute_sheet = /datum/attribute_holder/sheet/job/pilgrim/noble
 
-/datum/outfit/adventurer/noble/pre_equip(mob/living/carbon/human/H)
-	..()
-	var/prev_real_name = H.real_name
-	var/prev_name = H.name
-	var/honorary = "Lord"
-	if(H.gender == FEMALE)
-		honorary = "Lady"
-	H.real_name = "[honorary] [prev_real_name]"
-	H.name = "[honorary] [prev_name]"
+	traits = list(
+		TRAIT_NOBLE_BLOOD,
+		TRAIT_NOBLE_POWER
+	)
 
-	H.adjust_skillrank(/datum/skill/misc/reading, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/riding, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/sneaking, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/music, rand(1,2), TRUE)
-	H.change_stat(STATKEY_INT, 1)
+/datum/job/advclass/pilgrim/noble/on_roundstart(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+
+	var/static/list/selectable = list(
+		"Dagger" = /obj/item/weapon/knife/dagger/silver,
+		"Rapier" = /obj/item/weapon/sword/rapier/dec,
+		"Cane Blade" = /obj/item/weapon/sword/rapier/caneblade,
+	)
+
+	var/choice = spawned.select_equippable(player_client, selectable, time_limit = 1 MINUTES, message = "Choose your weapon", title = JOB_MINOR_NOBLE)
+
+	switch(choice)
+		if("Dagger")
+			spawned.clamped_adjust_skill_level(/datum/attribute/skill/combat/knives, 20, 20)
+			var/scabbard = new /obj/item/weapon/scabbard/knife/noble()
+			if(!spawned.equip_to_appropriate_slot(scabbard))
+				qdel(scabbard)
+		if("Rapier")
+			spawned.clamped_adjust_skill_level(/datum/attribute/skill/combat/swords, 20, 20)
+			var/scabbard = new /obj/item/weapon/scabbard/sword/noble()
+			if(!spawned.equip_to_appropriate_slot(scabbard))
+				qdel(scabbard)
+		if("Cane Blade")
+			spawned.clamped_adjust_skill_level(/datum/attribute/skill/combat/swords, 20, 20)
+			var/scabbard = new /obj/item/weapon/scabbard/cane()
+			if(!spawned.equip_to_appropriate_slot(scabbard))
+				qdel(scabbard)
+
+/datum/outfit/pilgrim/noble
+	name = "Noble (Pilgrim)"
 	shoes = /obj/item/clothing/shoes/boots
 	backl = /obj/item/storage/backpack/satchel
 	neck = /obj/item/storage/belt/pouch/coins/veryrich
 	belt = /obj/item/storage/belt/leather
 	ring = /obj/item/clothing/ring/silver
-	if(H.gender == FEMALE)
-		H.change_stat(STATKEY_SPD, 1)
-		H.adjust_skillrank(/datum/skill/combat/knives, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/bows, 2, TRUE)
+	cloak = /obj/item/clothing/cloak/raincloak/furcloak
+	backr = /obj/item/gun/ballistic/bow
+	beltl = /obj/item/ammo_holder/quiver/arrows
+	head = /obj/item/clothing/head/fancyhat
+
+/datum/outfit/pilgrim/noble/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
+	. = ..()
+	if(equipped_human.gender == FEMALE)
 		shirt = /obj/item/clothing/shirt/dress/silkdress/colored/random
-		head = /obj/item/clothing/head/hatfur
-		cloak = /obj/item/clothing/cloak/raincloak/furcloak
-		backr = /obj/item/gun/ballistic/revolver/grenadelauncher/bow
-		beltr = /obj/item/weapon/knife/dagger/steel/special
-		beltl = /obj/item/ammo_holder/quiver/arrows
-		backpack_contents = list(/obj/item/reagent_containers/glass/bottle/wine = 1, /obj/item/reagent_containers/glass/cup/silver = 1)
-	if(H.gender == MALE)
-		H.change_stat(STATKEY_CON, 1)
-		H.adjust_skillrank(/datum/skill/combat/swords, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/bows, 2, TRUE)
+	if(equipped_human.gender == MALE)
 		pants = /obj/item/clothing/pants/tights/colored/black
 		shirt = /obj/item/clothing/shirt/tunic/colored/random
-		cloak = /obj/item/clothing/cloak/raincloak/furcloak
-		head = /obj/item/clothing/head/fancyhat
-		backr = /obj/item/gun/ballistic/revolver/grenadelauncher/bow
-		beltr = /obj/item/weapon/sword/rapier/dec
-		beltl = /obj/item/ammo_holder/quiver/arrows
+	if(equipped_human.age == AGE_CHILD)
+		backpack_contents = list(/obj/item/reagent_containers/glass/carafe/teapot/tea = 1, /obj/item/reagent_containers/glass/cup/teacup/fancy = 3)
+	else
 		backpack_contents = list(/obj/item/reagent_containers/glass/bottle/wine = 1, /obj/item/reagent_containers/glass/cup/silver = 1)
-	ADD_TRAIT(H, TRAIT_NOBLE, TRAIT_GENERIC)
+

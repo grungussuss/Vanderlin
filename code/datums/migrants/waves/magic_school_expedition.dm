@@ -5,6 +5,19 @@
 	Your task is to lead them safely across the wilds, through hardship and wonder alike, until at last the halls of learning they seek rise before you."
 	migrant_job = /datum/job/migrant/magic_teacher
 
+/datum/attribute_holder/sheet/job/migrant/magic_teacher
+	raw_attribute_list = list(
+		STAT_STRENGTH = -1,
+		STAT_INTELLIGENCE = 4,
+		STAT_CONSTITUTION = -1,
+		STAT_SPEED = -1,
+		/datum/attribute/skill/misc/reading = 50,
+		/datum/attribute/skill/magic/arcane = 40,
+		/datum/attribute/skill/combat/polearms = 20,
+		/datum/attribute/skill/craft/alchemy = 40,
+		/datum/attribute/skill/labor/mathematics = 30,
+	)
+
 /datum/job/migrant/magic_teacher
 	title = "Magic School Teacher"
 	tutorial = "Among the lofty spires of Kingsfield’s arcane academies, one school conceived a daring idea: a grand overland expedition, on foot, through untamed lands. \
@@ -13,22 +26,11 @@
 	outfit = /datum/outfit/magic_teacher
 	allowed_ages = list(AGE_MIDDLEAGED, AGE_OLD, AGE_IMMORTAL)
 	allowed_races = RACES_PLAYER_NONEXOTIC
+	blacklisted_species = list(SPEC_ID_HALFLING)
 	allowed_patrons = list(/datum/patron/divine/noc)
+	exp_types_granted  = list(EXP_TYPE_MAGICK)
 
-	jobstats = list(
-		STATKEY_STR = -1,
-		STATKEY_INT = 4,
-		STATKEY_CON = -1,
-		STATKEY_SPD = -1,
-	)
-
-	skills = list(
-		/datum/skill/misc/reading = 5,
-		/datum/skill/magic/arcane = 4,
-		/datum/skill/combat/polearms = 2,
-		/datum/skill/craft/alchemy = 4,
-		/datum/skill/labor/mathematics = 3,
-	)
+	attribute_sheet = /datum/attribute_holder/sheet/job/migrant/magic_teacher
 
 	spells = list(/datum/action/cooldown/spell/undirected/touch/prestidigitation)
 	spell_points = 10
@@ -43,7 +45,7 @@
 	spawned.mana_pool?.set_intrinsic_recharge(MANA_ALL_LEYLINES)
 
 /datum/outfit/magic_teacher
-	name = "Magic School Teacher"
+	name = "Magic School Teacher (Migrant Wave)"
 	head = /obj/item/clothing/head/wizhat
 	backr = /obj/item/storage/backpack/satchel
 	armor = /obj/item/clothing/shirt/robe/colored/black
@@ -63,6 +65,23 @@
 	Of course, the creatures that lurk along the road seem just as eager... though perhaps for very different reasons."
 	migrant_job = /datum/job/migrant/magic_student
 
+/datum/attribute_holder/sheet/job/migrant/magic_student
+	attribute_variance = list(
+		/datum/attribute/skill/magic/arcane = list(20, 30)
+	)
+	raw_attribute_list = list(
+		STAT_STRENGTH = -1,
+		STAT_INTELLIGENCE = 3,
+		STAT_SPEED = -2,
+		/datum/attribute/skill/misc/reading = 40,
+		/datum/attribute/skill/misc/swimming = 10,
+		/datum/attribute/skill/misc/climbing = 10,
+		/datum/attribute/skill/misc/athletics = 10,
+		/datum/attribute/skill/combat/polearms = 10,
+		/datum/attribute/skill/craft/alchemy = 30,
+		/datum/attribute/skill/labor/mathematics = 20,
+	)
+
 /datum/job/migrant/magic_student
 	title = "Magic School Student"
 	tutorial = "When the call went out for daring pupils to join a great overland trek from Kingsfield, you eagerly volunteered, visions of adventure, discovery, and excitement dancing in your mind. \
@@ -71,22 +90,9 @@
 	allowed_ages = list(AGE_CHILD)
 	allowed_races = RACES_PLAYER_NONEXOTIC
 	allowed_patrons = list(/datum/patron/divine/noc)
+	exp_types_granted  = list(EXP_TYPE_MAGICK)
 
-	jobstats = list(
-		STATKEY_STR = -1,
-		STATKEY_INT = 3,
-		STATKEY_SPD = -2,
-	)
-
-	skills = list(
-		/datum/skill/misc/reading = 4,
-		/datum/skill/misc/swimming = 1,
-		/datum/skill/misc/climbing = 1,
-		/datum/skill/misc/athletics = 1,
-		/datum/skill/combat/polearms = 1,
-		/datum/skill/craft/alchemy = 3,
-		/datum/skill/labor/mathematics = 2,
-	)
+	attribute_sheet = /datum/attribute_holder/sheet/job/migrant/magic_student
 
 	spells = list(/datum/action/cooldown/spell/undirected/touch/prestidigitation)
 	spell_points = 6
@@ -94,15 +100,11 @@
 /datum/job/migrant/magic_student/after_spawn(mob/living/carbon/human/spawned, client/player_client)
 	. = ..()
 	spawned.mana_pool?.set_intrinsic_recharge(MANA_ALL_LEYLINES)
-
-/datum/job/migrant/magic_student/after_spawn(mob/living/carbon/human/spawned, client/player_client)
-	. = ..()
-	spawned.adjust_skillrank(/datum/skill/magic/arcane, pick(2,2,2,3))
 	if(prob(5))
 		spawned.cmode_music = 'sound/music/cmode/antag/combat_evilwizard.ogg'
 
 /datum/outfit/magic_student
-	name = "Magic School Student"
+	name = "Magic School Student (Migrant Wave)"
 	neck = /obj/item/clothing/neck/mana_star
 	belt  =	/obj/item/storage/belt/leather
 	beltl = /obj/item/book/granter/spellbook/adept

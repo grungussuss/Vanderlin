@@ -117,80 +117,6 @@ GLOBAL_LIST_INIT(t2buffrunerituallist, generate_t2buff_rituallist())
 	var/blacklisted = FALSE
 	var/tier = 0				/// Tier var is used for 'tier' of ritual, if the ritual has tiers. EX: Summoning rituals. If it doesn't have tiers, set tier to 0.
 
-/datum/runerituals/proc/show_menu(mob/user)
-	user << browse(generate_html(user),"window=recipe;size=500x810")
-
-/datum/runerituals/proc/generate_html(mob/user)
-	var/client/client = user
-	if(!istype(client))
-		client = user.client
-	SSassets.transport.send_assets(client, list("try4_border.png", "try4.png", "slop_menustyle2.css"))
-	user << browse_rsc('html/book.png')
-	var/html = {"
-		<!DOCTYPE html>
-		<html lang="en">
-		<meta charset='UTF-8'>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'/>
-		<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
-
-		<style>
-			@import url('https://fonts.googleapis.com/css2?family=Charm:wght@700&display=swap');
-			body {
-				font-family: "Charm", cursive;
-				font-size: 1.2em;
-				text-align: center;
-				margin: 20px;
-				background-color: #f4efe6;
-				color: #3e2723;
-				background-color: rgb(31, 20, 24);
-				background:
-					url('[SSassets.transport.get_asset_url("try4_border.png")]'),
-					url('book.png');
-				background-repeat: no-repeat;
-				background-attachment: fixed;
-				background-size: 100% 100%;
-
-			}
-			h1 {
-				text-align: center;
-				font-size: 2em;
-				border-bottom: 2px solid #3e2723;
-				padding-bottom: 10px;
-				margin-bottom: 10px;
-			}
-			.icon {
-				width: 64px;
-				height: 64px;
-				vertical-align: middle;
-				margin-right: 10px;
-			}
-		</style>
-		<body>
-		  <div>
-		    <h1>[name]</h1>
-		    <div>
-			  <h2>Complexity Tier: [tier] </h2>
-			  <br>
-			  <h2>Requirements</h2>
-			  <br>
-		"}
-
-	if(length(required_atoms))
-		html += "<strong>Items Required</strong><br>"
-		for(var/atom/path as anything in required_atoms)
-			var/count = required_atoms[path]
-			html += "[icon2html(new path, user)] [count] counts of [initial(path.name)]<br>"
-
-	html += "<h1>Steps</h1>"
-	html += "To start any ritual draw the required rune with Arcyne Chalk, then supply with the above items."
-	html += {"
-		</div>
-		</div>
-	</body>
-	</html>
-	"}
-	return html
-
 /datum/runerituals/proc/on_finished_recipe(mob/living/user, list/selected_atoms, turf/loc)
 	if(!length(result_atoms))
 		return FALSE
@@ -396,7 +322,7 @@ GLOBAL_LIST_INIT(t2buffrunerituallist, generate_t2buff_rituallist())
 	else
 		summoned = new mob_to_summon(loc)
 		ADD_TRAIT(summoned, TRAIT_PACIFISM, TRAIT_GENERIC)	//can't kill while planar bound.
-		summoned.status_flags += GODMODE//It's not meant to be killable until released from it's planar binding.
+		summoned.status_flags += GODMODE//It's not meant to be killable until released from its planar binding.
 		summoned.binded = TRUE	//No auto movement, no moving to targets
 		summoned.SetParalyzed(90 SECONDS)
 		summoned.candodge = FALSE
@@ -431,7 +357,7 @@ GLOBAL_LIST_INIT(t2buffrunerituallist, generate_t2buff_rituallist())
 
 /datum/runerituals/summoning/archfiend
 	name = "summoning fiend"
-	desc = "summons an fiend"
+	desc = "summons a fiend"
 	blacklisted = FALSE
 	tier = 4
 	required_atoms = list(/obj/item/natural/moltencore = 1, /obj/item/natural/obsidian = 3, /obj/item/natural/melded/t3 =1)
@@ -439,7 +365,7 @@ GLOBAL_LIST_INIT(t2buffrunerituallist, generate_t2buff_rituallist())
 
 /datum/runerituals/summoning/sprite
 	name = "summoning sprite"
-	desc = "summons an fae sprite"
+	desc = "summons a fae sprite"
 	blacklisted = FALSE
 	tier = 1
 	required_atoms = list(/obj/item/reagent_containers/food/snacks/produce/manabloom = 1, /obj/item/reagent_containers/food/snacks/produce/fruit/jacksberry = 1)
@@ -447,7 +373,7 @@ GLOBAL_LIST_INIT(t2buffrunerituallist, generate_t2buff_rituallist())
 
 /datum/runerituals/summoning/glimmer
 	name = "summoning glimmerwing"
-	desc = "summons an fae spirit"
+	desc = "summons a fae spirit"
 	blacklisted = FALSE
 	tier = 2
 	required_atoms = list(/obj/item/reagent_containers/food/snacks/produce/manabloom = 1, /obj/item/natural/fairydust = 3, /obj/item/natural/melded/t1 = 1)
@@ -455,7 +381,7 @@ GLOBAL_LIST_INIT(t2buffrunerituallist, generate_t2buff_rituallist())
 
 /datum/runerituals/summoning/dryad
 	name = "summoning dryad"
-	desc = "summons an drayd"
+	desc = "summons a drayd"
 	blacklisted = FALSE
 	tier = 3
 	required_atoms = list(/obj/item/reagent_containers/food/snacks/produce/manabloom = 2, /obj/item/natural/iridescentscale = 2, /obj/item/natural/melded/t2 = 1)
@@ -494,15 +420,15 @@ GLOBAL_LIST_INIT(t2buffrunerituallist, generate_t2buff_rituallist())
 	mob_to_summon = /mob/living/simple_animal/hostile/retaliate/elemental/behemoth
 
 /datum/runerituals/summoning/collossus
-	name = "summoning elemental collossus"
-	desc = "summons an huge elemental"
+	name = "summoning elemental colossus"
+	desc = "summons a huge elemental"
 	blacklisted = FALSE
 	tier = 4
 	required_atoms = list(/obj/item/natural/elementalfragment = 1, /obj/item/mana_battery/mana_crystal/small = 1, /obj/item/natural/melded/t3 =1)
 	mob_to_summon = /mob/living/simple_animal/hostile/retaliate/elemental/collossus
 
 /datum/runerituals/summoning/abberant
-	name = "summoning abberant from the void"
+	name = "summoning aberrant from the void"
 	desc = "summons a long forgotten creature"
 	blacklisted = FALSE
 	tier = 4

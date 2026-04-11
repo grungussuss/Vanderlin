@@ -25,7 +25,7 @@
 		L.apply_status_effect(status, initial(status.duration) + duration_increase)
 		L.visible_message(
 			span_info("[L] traces a warding sigil in the air."),
-			span_notice("I trace a a sigil of warding in the air."),
+			span_notice("I trace a sigil of warding in the air."),
 		)
 
 	if(attuned_strength < 1.5)
@@ -41,7 +41,7 @@
 /datum/status_effect/buff/bladeward
 	id = "blade ward"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/bladeward
-	effectedstats = list(STATKEY_CON = 3)
+	effectedstats = list(STAT_CONSTITUTION = 3)
 	duration = 20 SECONDS
 	var/static/mutable_appearance/ward = mutable_appearance('icons/effects/beam.dmi', "purple_lightning", -MUTATIONS_LAYER)
 

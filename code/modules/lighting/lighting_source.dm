@@ -87,6 +87,7 @@
 	//yes, we register the signal to the top atom too, this is intentional and ensures contained lighting updates properly
 	if(ismovable(new_atom_host) && new_atom_host == source_atom)
 		RegisterSignal(new_atom_host, COMSIG_MOVABLE_MOVED, PROC_REF(update_host_lights))
+	RegisterSignal(new_atom_host, COMSIG_TURF_NO_LONGER_BLOCK_LIGHT, PROC_REF(force_update))
 	return TRUE
 
 ///remove this light source from old_atom_host's light_sources list, unsetting movement registrations
@@ -97,6 +98,7 @@
 	LAZYREMOVE(old_atom_host.light_sources, src)
 	if(ismovable(old_atom_host) && old_atom_host == source_atom)
 		UnregisterSignal(old_atom_host, COMSIG_MOVABLE_MOVED)
+	UnregisterSignal(old_atom_host, COMSIG_TURF_NO_LONGER_BLOCK_LIGHT)
 	return TRUE
 
 ///signal handler for when our host atom moves and we need to update our effects
@@ -287,46 +289,39 @@
 
 	var/list/datum/lighting_corner/corners = list()
 	var/list/turf/turfs                    = list()
-	var/thing
 	var/turf/T
 	var/datum/lighting_corner/C
 	if (source_turf)
 		var/oldlum = source_turf.luminosity
 		source_turf.luminosity = CEILING(light_outer_range, 1)
 		for(T in view(CEILING(light_outer_range, 1), source_turf))
-			for (thing in T.get_corners(source_turf))
-				C = thing
+			for (C as anything in T.get_corners(source_turf))
 				corners[C] = 0
 			turfs += T
-			var/turf/open/transparent/O = T
-			if(istype(O) && light_depth >= 1)
-				var/turf/open/B = get_step_multiz(T, DOWN)
+			if(istransparentturf(T) && light_depth >= 1)
+				var/turf/open/B = GET_TURF_BELOW(T)
 				if(isopenturf(B))
-					for(thing in B.get_corners(source_turf))
-						C = thing
+					for(C as anything in B.get_corners(source_turf))
 						corners[C] = 0
 					turfs += B
 					if(light_depth > 1)
-						if(istype(B, /turf/open/transparent))
-							B = get_step_multiz(B, DOWN)
+						if(istransparentturf(B))
+							B = GET_TURF_BELOW(B)
 							if(isopenturf(B))
-								for(thing in B.get_corners(source_turf))
-									C = thing
+								for(C as anything in B.get_corners(source_turf))
 									corners[C] = 0
 								turfs += B
 						if(light_depth > 2)
-							if(istype(B, /turf/open/transparent))
-								B = get_step_multiz(B, DOWN)
+							if(istransparentturf(B))
+								B = GET_TURF_BELOW(B)
 								if(isopenturf(B))
-									for(thing in B.get_corners(source_turf))
-										C = thing
+									for(C as anything in B.get_corners(source_turf))
 										corners[C] = 0
 									turfs += B
 			if(light_height >= 1)
-				var/turf/open/B = get_step_multiz(T, UP)
-				if(istype(B, /turf/open/transparent))
-					for(thing in B.get_corners(source_turf))
-						C = thing
+				var/turf/open/B = GET_TURF_ABOVE(T)
+				if(!isnull(B) && istransparentturf(B))
+					for(C as anything in B.get_corners(source_turf))
 						corners[C] = 0
 					turfs += B
 		source_turf.luminosity = oldlum
@@ -334,20 +329,17 @@
 	LAZYINITLIST(affecting_turfs)
 	var/list/L = turfs - affecting_turfs // New turfs, add us to the affecting lights of them.
 	affecting_turfs += L
-	for(thing in L)
-		T = thing
+	for(T as anything in L)
 		LAZYADD(T.affecting_lights, src)
 
 	L = affecting_turfs - turfs // Now-gone turfs, remove us from the affecting lights.
 	affecting_turfs -= L
-	for (thing in L)
-		T = thing
+	for (T as anything in L)
 		LAZYREMOVE(T.affecting_lights, src)
 
 	LAZYINITLIST(effect_str)
 	if (needs_update == LIGHTING_VIS_UPDATE)
-		for (thing in  corners - effect_str) // New corners
-			C = thing
+		for (C as anything in corners - effect_str) // New corners
 			LAZYADD(C.affecting, src)
 			if (!C.active)
 				effect_str[C] = 0
@@ -355,24 +347,21 @@
 			APPLY_CORNER(C)
 	else
 		L = corners - effect_str
-		for (thing in L) // New corners
-			C = thing
+		for (C as anything in L) // New corners
 			LAZYADD(C.affecting, src)
 			if (!C.active)
 				effect_str[C] = 0
 				continue
 			APPLY_CORNER(C)
 
-		for (thing in corners - L) // Existing corners
-			C = thing
+		for (C as anything in corners - L) // Existing corners
 			if (!C.active)
 				effect_str[C] = 0
 				continue
 			APPLY_CORNER(C)
 
 	L = effect_str - corners
-	for (thing in L) // Old, now gone, corners.
-		C = thing
+	for (C as anything in L) // Old, now gone, corners.
 		REMOVE_CORNER(C)
 		LAZYREMOVE(C.affecting, src)
 	effect_str -= L

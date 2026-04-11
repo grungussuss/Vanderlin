@@ -78,6 +78,8 @@
 	/// What type of invocation the spell is.
 	/// Can be "none", "whisper", "shout", "emote".
 	var/invocation_type = INVOCATION_NONE
+	/// If invocation is set, do we ignore whether the user can actually speak?
+	var/ignore_can_speak = FALSE
 
 	/// Generic spell flags that may or may not be related to casting.
 	var/spell_flags = NONE
@@ -99,9 +101,9 @@
 	var/list/required_items
 
 	/// Skill associated with spell enhancements.
-	var/associated_skill = /datum/skill/magic/arcane
+	var/associated_skill = /datum/attribute/skill/magic/arcane
 	/// Stat associated with spell enchancements.
-	var/associated_stat = STATKEY_INT
+	var/associated_stat = STAT_INTELLIGENCE
 
 	/// Assoc list of [datum/attunement] to value.
 	var/list/attunements
@@ -161,7 +163,7 @@
 	// Experience gain is dependant on spell cost and the associated skill
 	/// Experience gain modifier, cost is multipled by this to get experience gain.
 	/// Set to 0 to stop experience gain.
-	var/experience_modifer = 0.4
+	var/experience_modifier = 0.4
 	/// Max skill level this spell can raise to.
 	var/experience_max_skill = SKILL_LEVEL_EXPERT
 	// Sleep exp variables are reliant on the caster having a mind
@@ -169,6 +171,9 @@
 	var/experience_sleep = FALSE
 	/// If set we are sleep experience after this threshold and normal before.
 	var/experience_sleep_threshold = SKILL_LEVEL_APPRENTICE
+
+	/// Timer ID for the auto cancel, so we can cancel it
+	var/auto_cancel_timer = null
 
 /datum/action/cooldown/spell/New(Target)
 	. = ..()
@@ -203,6 +208,10 @@
 	if(!owner)
 		return PROCESS_KILL
 
+	if(!can_cast_spell(TRUE))
+		cancel_casting()
+		return PROCESS_KILL
+
 	if(charge_drain)
 		if(!check_cost(charge_drain))
 			owner.balloon_alert(owner, "I cannot uphold the channeling!")
@@ -217,7 +226,7 @@
 			owner.balloon_alert(owner, "I cannot uphold the channeling!")
 			cancel_casting()
 			return PROCESS_KILL
-		owner.client.mouse_override_icon = 'icons/effects/mousemice/charge/spell_charged.dmi'
+		owner.client?.mouse_override_icon = 'icons/effects/mousemice/charge/spell_charged.dmi'
 		owner.update_mouse_pointer()
 		return PROCESS_KILL
 
@@ -247,8 +256,10 @@
 		RegisterSignal(owner, COMSIG_LIVING_MANA_CHANGED, PROC_REF(update_status_on_signal))
 	if(spell_type == SPELL_MIRACLE)
 		RegisterSignal(owner, COMSIG_LIVING_DEVOTION_CHANGED, PROC_REF(update_status_on_signal))
+	if(spell_type == SPELL_RAGE)
+		RegisterSignal(owner, COMSIG_RAGE_CHANGED, PROC_REF(update_status_on_signal))
 
-	RegisterSignal(owner, list(COMSIG_MOB_ENTER_JAUNT, COMSIG_MOB_AFTER_EXIT_JAUNT), PROC_REF(update_status_on_signal))
+	RegisterSignals(owner, list(COMSIG_MOB_ENTER_JAUNT, COMSIG_MOB_AFTER_EXIT_JAUNT), PROC_REF(update_status_on_signal))
 
 /datum/action/cooldown/spell/Remove(mob/living/remove_from)
 	UnregisterSignal(remove_from, list(
@@ -334,8 +345,8 @@
 
 	return TRUE
 
-/datum/action/cooldown/spell/InterceptClickOn(mob/living/clicker, params, atom/click_target)
-	if(!LAZYACCESS(params2list(params), MIDDLE_CLICK))
+/datum/action/cooldown/spell/InterceptClickOn(mob/living/clicker, list/modifiers, atom/click_target)
+	if(!LAZYACCESS(modifiers, MIDDLE_CLICK))
 		return
 
 	if(charge_required && !charged)
@@ -351,7 +362,7 @@
 			// If we didn't find a human, we settle for any living at all
 			aim_assist_target = locate(/mob/living) in click_target
 
-	return ..(clicker, params, aim_assist_target || click_target)
+	return ..(clicker, modifiers, aim_assist_target || click_target)
 
 // Where the cast chain starts
 /datum/action/cooldown/spell/PreActivate(atom/target)
@@ -372,7 +383,7 @@
 	var/mob/living/living_owner = owner
 	var/new_time = charge_time
 
-	new_time -= charge_time * living_owner.get_skill_level(associated_skill) * 0.05
+	new_time -= charge_time * GET_MOB_SKILL_VALUE_OLD(living_owner, associated_skill) * 0.05
 
 	var/owner_stat = living_owner.get_stat(associated_stat)
 	if(owner_stat > 10)
@@ -392,17 +403,13 @@
 	if(cost_override)
 		new_cost = cost_override
 
-	new_cost -= spell_cost * living_owner.get_skill_level(associated_skill) * 0.03
+	new_cost -= spell_cost * GET_MOB_SKILL_VALUE_OLD(living_owner, associated_skill) * 0.03
 
 	var/owner_stat = living_owner.get_stat(associated_stat)
 	if(owner_stat > 10)
 		new_cost -= spell_cost * (owner_stat - 10) * 0.02
 	else
 		new_cost += spell_cost * (10 - owner_stat) * 0.02
-
-	var/owner_encumbrance = living_owner.get_encumbrance()
-	if(owner_encumbrance > 0.4)
-		new_cost += spell_cost * owner_encumbrance * 0.5
 
 	return max(new_cost, 0)
 
@@ -531,7 +538,7 @@
 	if(!(precast_result & SPELL_NO_FEEDBACK))
 		// We do invocation and sound effects here, before actual cast
 		// That way stuff like teleports or shape-shifts can be invoked before ocurring
-		spell_feedback()
+		spell_feedback(owner)
 
 	if(length(attunements))
 		handle_attunements()
@@ -592,6 +599,12 @@
 					span_userdanger("These fools are trying to cure me with religion!!")
 				)
 				L.cursed_freak_out()
+			return sig_return | SPELL_CANCEL_CAST
+
+		if((spell_type == SPELL_MIRACLE) && HAS_TRAIT(cast_on, TRAIT_SILVER_BLESSED) && !(spell_flags & SPELL_PSYDON))
+			cast_on.visible_message(span_info("[cast_on] stirs for a moment, the miracle dissipates."), span_notice("A dull warmth swells in your heart, only to fade as quickly as it arrived."))
+			playsound(cast_on, 'sound/magic/PSY.ogg', 100, FALSE, -1)
+			owner.playsound_local(owner, 'sound/magic/PSY.ogg', 100, FALSE, -1)
 			return sig_return | SPELL_CANCEL_CAST
 
 	if(charge_required && !click_to_activate)
@@ -668,27 +681,36 @@
 		caster.finish_spell_visual_effects(attunements)
 
 /// Provides feedback after a spell cast occurs, in the form of a cast sound and/or invocation
-/datum/action/cooldown/spell/proc/spell_feedback()
-	if(!owner)
+/datum/action/cooldown/spell/proc/spell_feedback(mob/living/invoker)
+	if(!invoker)
 		return
 
-	if(invocation_type != INVOCATION_NONE)
-		invocation()
+	///even INVOCATION_NONE should go through this because the signal might change that
+	invocation(invoker)
 
 	if(sound)
-		playsound(get_turf(owner), sound, 50, TRUE)
+		playsound(owner, sound, 50, TRUE)
 
 /// The invocation that accompanies the spell, called from spell_feedback() before cast().
-/datum/action/cooldown/spell/proc/invocation()
-	switch(invocation_type)
+/datum/action/cooldown/spell/proc/invocation(mob/living/invoker)
+	//lists can be sent by reference, a string would be sent by value
+	var/list/invocation_list = list(invocation, invocation_type)
+	SEND_SIGNAL(invoker, COMSIG_MOB_PRE_INVOCATION, src, invocation_list)
+	var/used_invocation_message = invocation_list[INVOCATION_MESSAGE]
+	var/used_invocation_type = invocation_list[INVOCATION_TYPE]
+
+	switch(used_invocation_type)
 		if(INVOCATION_SHOUT)
-			owner.say(invocation, forced = "spell ([src])")
+			invoker.say(used_invocation_message, forced = "spell ([src])")
 
 		if(INVOCATION_WHISPER)
-			owner.whisper(invocation, forced = "spell ([src])")
+			invoker.whisper(used_invocation_message, forced = "spell ([src])")
 
 		if(INVOCATION_EMOTE)
-			owner.visible_message(invocation, invocation_self_message)
+			invoker.visible_message(
+				capitalize(replace_pronouns(replacetext(used_invocation_message, "%CASTER", invoker.name), invoker)),
+				capitalize(replace_pronouns(replacetext(invocation_self_message, "%CASTER", invoker.name), invoker)),
+			)
 
 /// When we start charging the spell called from set_click_ability or start_casting
 /datum/action/cooldown/spell/proc/on_start_charge()
@@ -729,7 +751,7 @@
 /// End the charging cycle
 /datum/action/cooldown/spell/proc/end_charging()
 	UnregisterSignal(owner.client, list(COMSIG_CLIENT_MOUSEDOWN, COMSIG_CLIENT_MOUSEUP))
-	UnregisterSignal(owner, list(COMSIG_MOB_LOGOUT, COMSIG_MOVABLE_MOVED))
+	UnregisterSignal(owner, list(COMSIG_MOB_LOGOUT, COMSIG_MOB_DEATH, COMSIG_MOVABLE_MOVED))
 	currently_charging = FALSE
 	charge_started_at = null
 	charge_target_time = null
@@ -753,6 +775,8 @@
 
 /// Cancel casting and all its effects.
 /datum/action/cooldown/spell/proc/cancel_casting()
+	if(QDELETED(src)) // Timer
+		return
 	charged = FALSE
 	end_charging()
 
@@ -770,7 +794,7 @@
 			owner.balloon_alert(owner, "Can't position your hands correctly to invoke!")
 		return FALSE
 
-	if((invocation_type == INVOCATION_WHISPER || invocation_type == INVOCATION_SHOUT) && !living_owner.can_speak_vocal())
+	if((invocation_type == INVOCATION_WHISPER || invocation_type == INVOCATION_SHOUT) && !ignore_can_speak && !living_owner.can_speak_vocal())
 		if(feedback)
 			owner.balloon_alert(owner, "Can't get the words out to invoke!")
 		return FALSE
@@ -888,6 +912,15 @@
 
 			return TRUE
 
+		if(SPELL_RAGE)
+			var/mob/living/carbon/human/H = caster
+			if(!istype(H) || !H.rage_datum?.check_rage(spell_cost))
+				if(feedback)
+					owner.balloon_alert(owner, "Not enough Rage!")
+				return FALSE
+
+			return TRUE
+
 		if(SPELL_ESSENCE)
 			var/obj/item/clothing/gloves/essence_gauntlet/gaunt = target
 			if(QDELETED(target) || !istype(target))
@@ -901,6 +934,14 @@
 			if(!gaunt.can_consume_essence(used_cost, attunements))
 				if(feedback)
 					owner.balloon_alert(owner, "Not enough essence!")
+				return FALSE
+
+			return TRUE
+
+		if(SPELL_PSYDONIC_MIRACLE)
+			if(!caster.has_bloodpool_cost(used_cost))
+				if(feedback)
+					owner.balloon_alert(owner, "Need more grace to cast!")
 				return FALSE
 
 			return TRUE
@@ -930,8 +971,8 @@
 		used_type = type_override
 
 	if(!re_run)
-		var/not_stamina_spell = (used_type != SPELL_STAMINA)
-		owner.adjust_stamina(-(used_cost / (1 + not_stamina_spell)))
+		if(used_type == SPELL_STAMINA)
+			owner.adjust_stamina(used_cost)
 
 	if(spell_type == NONE)
 		return // No return value == No exp
@@ -943,13 +984,19 @@
 
 		if(SPELL_MIRACLE)
 			var/mob/living/carbon/human/H = owner
-			if(!istype(H) || !H.cleric)
+			if(!istype(H))
 				return
-			H.cleric.update_devotion(-used_cost)
+			H.cleric?.update_devotion(-used_cost)
+
+		if(SPELL_RAGE)
+			var/mob/living/carbon/human/H = owner
+			if(!istype(H))
+				return
+			H.rage_datum?.update_rage(-used_cost)
 
 		if(SPELL_ESSENCE)
 			var/obj/item/clothing/gloves/essence_gauntlet/gaunt = target
-			if(!gaunt.check_gauntlet_validity(owner))
+			if(!gaunt?.check_gauntlet_validity(owner))
 				return
 
 			gaunt.consume_essence(used_cost, attunements)
@@ -958,28 +1005,29 @@
 			var/mob/living/caster = owner
 			caster.adjust_bloodpool(-used_cost)
 
+		if(SPELL_PSYDONIC_MIRACLE)
+			var/mob/living/caster = owner
+			caster.adjust_bloodpool(-used_cost)
 
 	return used_cost
 
 /datum/action/cooldown/spell/proc/handle_exp(cost_in)
-	if(experience_modifer <= 0 || !associated_skill)
+	if(experience_modifier <= 0 || !associated_skill)
 		return
 
 	if(!experience_max_skill)
 		experience_max_skill = SKILL_LEVEL_LEGENDARY
 
-	var/skill_level = owner.get_skill_level(associated_skill)
+	var/skill_level = GET_MOB_SKILL_VALUE_RAW(owner, associated_skill)
 	if(skill_level >= experience_max_skill)
 		return
 
 	var/mob/living/caster = owner
-	var/exp_to_gain = caster.get_stat(associated_stat) + (cost_in * experience_modifer) / 2
+	var/exp_to_gain = caster.get_stat(associated_stat) + (cost_in * experience_modifier) / 2
 
 	var/datum/mind/owner_mind = owner.mind
 	if(owner_mind && experience_sleep || (experience_sleep_threshold && (skill_level >= experience_sleep_threshold)))
-		// Check to make sure that experience max is adhered to even when using sleep exp
-		if(!owner_mind.sleep_adv.enough_sleep_xp_to_advance(associated_skill, experience_max_skill - skill_level))
-			owner_mind.add_sleep_experience(associated_skill, exp_to_gain)
+		owner_mind.add_sleep_experience(associated_skill, exp_to_gain)
 		return
 	owner.adjust_experience(associated_skill, exp_to_gain)
 
@@ -1004,25 +1052,28 @@
 		return
 
 	if(isnull(location) || istype(_target, /atom/movable/screen)) //Clicking on a screen object.
-		if(_target.plane != CLICKCATCHER_PLANE) //The clickcatcher is a special case. We want the click to trigger then, under it.
-			return //If we click and drag on our worn backpack, for example, we want it to open instead.
+		if(_target.plane != CLICKCATCHER_PLANE)
+			return
 
-	// We don't actually care about the target or params, we only care about the target on mouse up
+	// We don't actually care about the target or params now, we only care about the target on mouse up
 
 	// Register here because the mouse up can get triggered before the mouse down otherwise
-	RegisterSignal(owner.client, COMSIG_CLIENT_MOUSEUP, PROC_REF(try_casting))
-	RegisterSignal(owner, COMSIG_MOB_LOGOUT, PROC_REF(signal_cancel))
-
-	on_start_charge()
-
+	RegisterSignal(source, COMSIG_CLIENT_MOUSEUP, PROC_REF(try_casting))
+	RegisterSignals(owner, list(COMSIG_MOB_DEATH, COMSIG_MOB_LOGOUT), PROC_REF(signal_cancel))
 	if(spell_requirements & SPELL_REQUIRES_NO_MOVE)
 		RegisterSignal(owner, COMSIG_MOVABLE_MOVED, PROC_REF(signal_cancel), TRUE)
 
-	// Cancel the next click with no timeout
-	source.click_intercept_time = INFINITY
-	source.mouse_override_icon = 'icons/effects/mousemice/charge/spell_charging.dmi'
+	var/spell_timeout = 3 MINUTES
+
+	// Cancel the next click with 3 minutes timeout
+	source?.click_intercept_time = world.time + spell_timeout
+	// This is a failsafe to cancel casting in extreme circimstances that aren't covered here
+	// We need to call cancel_casting
+	auto_cancel_timer = addtimer(CALLBACK(src, PROC_REF(cancel_casting)), spell_timeout, TIMER_STOPPABLE)
+	source?.mouse_override_icon = 'icons/effects/mousemice/charge/spell_charging.dmi'
 	owner.update_mouse_pointer()
 
+	on_start_charge()
 	charge_started_at = world.time
 	charge_target_time = get_adjusted_charge_time()
 
@@ -1030,17 +1081,18 @@
 /datum/action/cooldown/spell/proc/try_casting(client/source, atom/_target, turf/location, control, params)
 	SIGNAL_HANDLER
 
+	// Stop the failsafe timer
+	if(auto_cancel_timer)
+		deltimer(auto_cancel_timer)
+
 	// This can happen
-	if(!charge_started_at)
+	if(!source || !charge_started_at || !can_cast_spell(TRUE))
 		cancel_casting()
 		return
 
 	var/success = world.time >= (charge_started_at + charge_target_time)
-	if(!on_end_charge(success))
-		RegisterSignal(owner.client, COMSIG_CLIENT_MOUSEDOWN, PROC_REF(start_casting))
-		return
-
-	if(!can_cast_spell(TRUE))
+	if(!on_end_charge(success)) // Give them another try if they mess up the timing
+		RegisterSignal(source, COMSIG_CLIENT_MOUSEDOWN, PROC_REF(start_casting))
 		return
 
 	var/list/modifiers = params2list(params)
@@ -1048,15 +1100,46 @@
 	// At this point we DO care about the _target value
 	if(isnull(location) || istype(_target, /atom/movable/screen)) //Clicking on a screen object.
 		_target = parse_caught_click_modifiers(modifiers, get_turf(source.eye), source)
-		params = list2params(modifiers)
 		if(!_target)
 			CRASH("Failed to get the turf under clickcatcher")
 
 	// Call this directly to do all the relevant checks and aim assist
-	InterceptClickOn(owner, params, _target)
-	owner.client?.click_intercept_time = 0
+	InterceptClickOn(owner, modifiers, _target)
+	source.click_intercept_time = 0
 
 /datum/action/cooldown/spell/proc/signal_cancel()
 	SIGNAL_HANDLER
 
 	cancel_casting()
+
+
+/**
+*Used to calculate bonuses to Great Hunt miracles/spells.
+*
+*Arguments:
+* * radial_source - Where we're starting the radial search for bonus ingredients. Defaults to spell owner.
+* * radius - The actual radius of the search. Default to 5.
+* * consume_chance - How likely it is the spell will consume the bonus ingredient. Default to 50.
+* * bonus_value - The number to return per bonus item. Defaults to zero as can be wildly different if needed for time bonuses.
+*/
+/datum/action/cooldown/spell/proc/check_hunt_bonuses(atom/radial_source, radius = 5, consume_chance = 50, bonus_value = 0)
+	var/static/list/alch_bodyparts = typecacheof(list(/obj/item/alch/bone, /obj/item/alch/sinew, /obj/item/alch/horn))
+	var/used_source = radial_source
+	var/bonus_total = 0
+	if(!used_source)
+		used_source = owner
+
+	for(var/obj/possible_bonus in oview(radius, used_source))
+		if(is_type_in_typecache(possible_bonus, alch_bodyparts))
+			bonus_total += bonus_value
+			if(prob(consume_chance))
+				consume_hunt_bonus(possible_bonus)
+
+	return bonus_total
+
+/datum/action/cooldown/spell/proc/consume_hunt_bonus(obj/target)
+	if(!target)
+		return FALSE
+	target.visible_message(span_warning("[target] disintegrates into a red mist."))
+	qdel(target)
+	return TRUE

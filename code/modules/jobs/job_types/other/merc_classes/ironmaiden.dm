@@ -1,3 +1,18 @@
+/datum/attribute_holder/sheet/job/ironmaiden
+	raw_attribute_list = list(
+		STAT_STRENGTH = 1,
+		STAT_ENDURANCE = 2,
+		STAT_INTELLIGENCE = 2,
+		/datum/attribute/skill/combat/knives = 10,
+		/datum/attribute/skill/misc/medicine = 40,
+		/datum/attribute/skill/misc/sewing = 30,
+		/datum/attribute/skill/misc/reading = 30, // Using the higher value (3) since there were two entries with different values
+		/datum/attribute/skill/combat/wrestling = 20,
+		/datum/attribute/skill/craft/crafting = 20,
+		/datum/attribute/skill/craft/alchemy = 20,
+		/datum/attribute/skill/labor/mathematics = 30
+	)
+
 /datum/job/advclass/mercenary/ironmaiden
 	title = "Iron Maiden"
 	tutorial = "You're a battlefield medic and have forsaken the blade for the scalpel. \
@@ -7,9 +22,24 @@
 	category_tags = list(CTAG_MERCENARY)
 	total_positions = 5
 
-	cmode_music = 'sound/music/cmode/nobility/combat_physician.ogg'
+	cmode_music = 'sound/music/cmode/adventurer/CombatDream.ogg' // Medicators are from the isle of Enigma, they're loosely related to Heartfelt
+	exp_types_granted = list(EXP_TYPE_MERCENARY, EXP_TYPE_COMBAT, EXP_TYPE_MEDICAL)
+
+	attribute_sheet = /datum/attribute_holder/sheet/job/ironmaiden
+
+	traits = list(
+		TRAIT_MEDIUMARMOR,
+		TRAIT_HEAVYARMOR,
+		TRAIT_DEADNOSE,
+		TRAIT_STEELHEARTED
+	)
+
+/datum/job/advclass/mercenary/ironmaiden/after_spawn(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+	spawned.merctype = 9
 
 /datum/outfit/mercenary/ironmaiden
+	name = "Iron Maiden (Mercenary)"
 	head = /obj/item/clothing/head/helmet/sallet
 	mask = /obj/item/clothing/face/facemask/steel
 	neck = /obj/item/clothing/neck/gorget
@@ -25,28 +55,5 @@
 	pants = /obj/item/clothing/pants/platelegs
 	shoes = /obj/item/clothing/shoes/boots/armor
 	backpack_contents = list(
-		/obj/item/storage/belt/pouch/coins/poor
+		/obj/item/storage/belt/pouch/coins/poor = 1
 	)
-
-/datum/outfit/mercenary/ironmaiden/pre_equip(mob/living/carbon/human/H)
-	..()
-	H.adjust_skillrank(/datum/skill/combat/knives, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/medicine, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/sewing, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/alchemy, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/mathematics, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 3, TRUE)
-
-	H.merctype = 9
-
-	H.change_stat(STATKEY_STR, 2)
-	H.change_stat(STATKEY_END, 2)
-	H.change_stat(STATKEY_INT, 2)
-
-	ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_STEELHEARTED, TRAIT_GENERIC)

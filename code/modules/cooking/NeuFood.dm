@@ -11,7 +11,7 @@
 \---------------*/
 
 /obj/item/reagent_containers/food/snacks/foodbase // root item for uncooked food thats disgusting when raw
-	list_reagents = list(/datum/reagent/consumable/nutriment = SNACK_POOR)
+	nutrition = SNACK_VPOOR
 	eat_effect = /datum/status_effect/debuff/uncookedfood
 	do_random_pixel_offset = FALSE // disables the random placement on creation for this object
 
@@ -45,11 +45,12 @@
 	desc = "A vile decaying morsel, its last hope is to become food for the soil."
 	color = "#6c6897"
 	eat_effect = /datum/status_effect/debuff/rotfood
+	list_reagents = list(/datum/reagent/yuck = 5)
 
 /obj/item/reagent_containers/food/snacks/rotten/Initialize()
 	var/mutable_appearance/rotflies = mutable_appearance('icons/roguetown/mob/rotten.dmi', "rotten")
 	add_overlay(rotflies)
-	rot_away_timer = QDEL_IN_STOPPABLE(src, 10 MINUTES)
+	rot_away_timer = QDEL_IN_STOPPABLE(src, 15 MINUTES)
 	. = ..()
 
 /obj/item/reagent_containers/food/snacks/rotten/meat
@@ -57,7 +58,7 @@
 	icon_state = "meat"
 
 /obj/item/reagent_containers/food/snacks/rotten/bacon
-	name = "rotten pigflesh"
+	name = "rotten flesh"
 	icon_state = "pigflesh"
 
 /obj/item/reagent_containers/food/snacks/rotten/sausage
@@ -95,7 +96,7 @@
 
 /obj/item/reagent_containers/food/snacks/rotten/mince/throw_impact(atom/hit_atom, datum/thrownthing/thrownthing)
 	new /obj/effect/decal/cleanable/food/mess/rotting/get_turf(src)
-	playsound(get_turf(src), 'sound/foley/meatslap.ogg', 100, TRUE, -1)
+	playsound(src, 'sound/foley/meatslap.ogg', 100, TRUE, -1)
 	..()
 	qdel(src)
 
@@ -157,7 +158,7 @@
 	righthand_file = 'icons/roguetown/onmob/righthand.dmi'
 	icon_state = "bowl"
 	fill_icon_thresholds = list(0, 30, 50, 100)
-	reagent_flags = TRANSFERABLE | AMOUNT_VISIBLE
+	reagent_flags = OPENCONTAINER
 	force = 5
 	throwforce = 5
 	amount_per_transfer_from_this = 5
@@ -171,105 +172,26 @@
 	fillsounds = list('sound/items/fillcup.ogg')
 	metalizer_result = /obj/item/reagent_containers/glass/bowl/iron
 	smeltresult = /obj/item/fertilizer/ash
+	var/salad
+	var/max_usages = 5
+	var/usages = 0
+	var/dirty = FALSE
+	var/cleaned = FALSE
 
-/obj/item/reagent_containers/glass/bowl/iron
-	icon_state = "bowl_iron"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	melting_material = /datum/material/iron
-	melt_amount = 20
-
-/obj/item/reagent_containers/glass/bowl/pewter
-	icon_state = "bowl_iron"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	melting_material = /datum/material/tin
-	melt_amount = 20
-
-/obj/item/reagent_containers/glass/bowl/jade
-	name = "joapstone bowl"
-	desc = "A bowl carved out of joapstone."
-	icon_state = "bowl_jade"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	sellprice = 55
-
-/obj/item/reagent_containers/glass/bowl/onyxa
-	name = "onyxa bowl"
-	desc = "A bowl carved out of onyxa."
-	icon_state = "bowl_onyxa"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	sellprice = 35
-
-/obj/item/reagent_containers/glass/bowl/rose
-	name = "rosellusk bowl"
-	desc = "A bowl carved out of rosellusk."
-	icon_state = "bowl_rose"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	sellprice = 20
-
-/obj/item/reagent_containers/glass/bowl/amber
-	name = "petriamber bowl"
-	desc = "A bowl carved out of petriamber."
-	icon_state = "bowl_amber"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	sellprice = 55
-
-/obj/item/reagent_containers/glass/bowl/turq
-	name = "ceruleabaster bowl"
-	desc = "A bowl carved out of ceruleabaster."
-	icon_state = "bowl_turq"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	sellprice = 80
-
-/obj/item/reagent_containers/glass/bowl/shell
-	name = "shell bowl"
-	desc = "A bowl carved out of shell."
-	icon_state = "bowl_shell"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	sellprice = 15
-
-
-/obj/item/reagent_containers/glass/bowl/coral
-	name = "aoetal bowl"
-	desc = "A bowl carved out of aoetal."
-	icon_state = "bowl_coral"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	sellprice = 65
-
-/obj/item/reagent_containers/glass/bowl/opal
-	name = "opaloise bowl"
-	desc = "A bowl carved out of opaloise."
-	icon_state = "bowl_opal"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	sellprice = 85
-
-
-/obj/item/reagent_containers/glass/bowl/clay
-	desc = "Made from fired clay."
-	icon_state = "bowl_clay"
-	fill_icon_state = "bowl"
-	drop_sound = 'sound/foley/dropsound/brick_drop.ogg'
-
-/obj/item/reagent_containers/glass/bowl/clay/set_material_information()
+/obj/item/reagent_containers/glass/bowl/examine(mob/user)
 	. = ..()
-	name = "[lowertext(initial(main_material.name))] clay bowl"
-
-/obj/item/reagent_containers/glass/bowl/clay/throw_impact(atom/hit_atom, datum/thrownthing/thrownthing)
-	new /obj/effect/decal/cleanable/shreds/clay(get_turf(src))
-	playsound(get_turf(src), 'sound/foley/break_clay.ogg', 90, TRUE)
-	..()
-	qdel(src)
+	desc = initial(desc)
+	if(dirty)
+		desc += span_boldwarning("\nThis bowl is filthy... absolutely disgusting.")
+	else if(cleaned)
+		desc += span_notice("\nThis bowl was cleaned recently!")
+	else
+		desc += "\nThis bowl looks properly stored and clean enough."
 
 /obj/item/reagent_containers/glass/bowl/update_overlays()
 	. = ..()
+	if(dirty)
+		. += mutable_appearance(icon, "dirty_bowl")
 	if(!reagents?.total_volume)
 		return
 	// ONE MILLION YEARS DUNGEON FOR NPC1314
@@ -293,7 +215,50 @@
 		. += filling
 		. += mutable_appearance(icon, "steam")
 
-/obj/item/reagent_containers/glass/bowl/attackby(obj/item/I, mob/user, params) // lets you eat with a spoon from a bowl
+/obj/item/reagent_containers/glass/bowl/attackby(obj/item/I, mob/user, list/modifiers) // lets you eat with a spoon from a bowl
+	if(reagents.total_volume == 0 && istype(I, /obj/item/natural/cloth) && user?.used_intent?.type == INTENT_USE)
+		if(dirty)
+			var/obj/item/natural/cloth/cloth_check = I
+			if(cloth_check.reagents.total_volume < 0.1)
+				to_chat(user, span_warning("[cloth_check] is too dry to clean with!"))
+				return
+			var/dirtywater = cloth_check.reagents.get_reagent_amount(/datum/reagent/water/gross)
+			if(dirtywater)
+				to_chat(user, span_warning("[cloth_check] water is too dirty to clean anything with it!"))
+				return
+			to_chat(user, ("You start cleaning the [src] with the [cloth_check]"))
+			if(do_after(user, 2 SECONDS, src))
+				cloth_check.reagents.remove_all(1)
+				dirty = FALSE
+				update_appearance(UPDATE_OVERLAYS)
+				AddComponent(/datum/component/particle_spewer/sparkle)
+				user.nobles_seen_servant_work()
+				usages = 0
+				cleaned = TRUE
+				to_chat(user, ("You cleaned the [src]"))
+				return
+		else
+			to_chat(user, span_notice("This platter is already clean."))
+			return
+	if(reagents.total_volume == 0 && istype(I, /obj/item/reagent_containers/food/snacks/veg/cabbage_sliced))
+		to_chat(user, span_warning("Tossing up a salad..."))
+		short_cooktime = (50 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking))*8))
+		playsound(get_turf(user), 'sound/foley/dropsound/food_drop.ogg', 40, TRUE, -1)
+		if(do_after(user, short_cooktime, src))
+			var/obj/item/reagent_containers/food/snacks/salad/salad = new /obj/item/reagent_containers/food/snacks/salad(get_turf(src))
+			salad.set_quality(recipe_quality)
+			salad.icon_state = src.icon_state
+			salad.trash = src.type
+			salad.drop_sound = src.drop_sound
+			salad.add_overlay("salad_base")
+			user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE)*0.5))
+			user.nobles_seen_servant_work()
+			qdel(I)
+			qdel(src)
+		return
+	if(reagents.total_volume > 0 && istype(I, /obj/item/natural/cloth) && user?.used_intent?.type == INTENT_USE)
+		to_chat(user, span_warning("You can't clean the [src] while it has something inside of it!"))
+		return
 	if(!istype(I, /obj/item/kitchen/spoon))
 		return ..()
 	if(!reagents || !reagents.total_volume)
@@ -301,7 +266,21 @@
 		return FALSE
 	if(!do_after(user, 1 SECONDS, src))
 		return FALSE
-	playsound(get_turf(src), 'sound/misc/eat.ogg', rand(30, 60), TRUE)
+	if(dirty)
+		user.add_stress(/datum/stress_event/dirty_bowl)
+	else
+		if(istype(reagents, /datum/reagent/consumable/soup))
+			var/datum/reagent/consumable/soup/soup_check = reagents
+			soup_check.taste_mult +=1
+	if(reagents.get_reagent_amount(/datum/reagent/water) != reagents.total_volume)
+		usages +=1
+	if(usages >= max_usages && !dirty)
+		dirty = TRUE
+		var/datum/component/particle_spewer = GetComponent(/datum/component/particle_spewer/sparkle)
+		if(particle_spewer)
+			qdel(particle_spewer)
+		update_appearance(UPDATE_OVERLAYS)
+	playsound(src, 'sound/misc/eat.ogg', rand(30, 60), TRUE)
 	user.visible_message(span_info("[user] eats from [src]."), \
 			span_notice("I swallow a gulp of [src]."))
 	addtimer(CALLBACK(reagents, TYPE_PROC_REF(/datum/reagents, trans_to), user, min(amount_per_transfer_from_this, 5), TRUE, TRUE, FALSE, user, FALSE, INGEST), 5 DECISECONDS)
@@ -311,6 +290,111 @@
 	if(reagents.total_volume > 5)
 		new /obj/effect/decal/cleanable/food/mess/soup(get_turf(src))
 	..()
+
+/obj/item/reagent_containers/glass/bowl/iron
+	icon_state = "bowl_iron"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	melting_material = /datum/material/iron
+	melt_amount = 20
+	max_usages = 7
+
+/obj/item/reagent_containers/glass/bowl/pewter
+	icon_state = "bowl_iron"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	melting_material = /datum/material/tin
+	melt_amount = 20
+	max_usages = 7
+
+/obj/item/reagent_containers/glass/bowl/jade
+	name = "joapstone bowl"
+	desc = "A bowl carved out of joapstone."
+	icon_state = "bowl_jade"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	sellprice = 55
+	max_usages = 10
+
+/obj/item/reagent_containers/glass/bowl/onyxa
+	name = "onyxa bowl"
+	desc = "A bowl carved out of onyxa."
+	icon_state = "bowl_onyxa"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	sellprice = 35
+	max_usages = 10
+
+/obj/item/reagent_containers/glass/bowl/rose
+	name = "rosellusk bowl"
+	desc = "A bowl carved out of rosellusk."
+	icon_state = "bowl_rose"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	sellprice = 20
+	max_usages = 10
+
+/obj/item/reagent_containers/glass/bowl/amber
+	name = "petriamber bowl"
+	desc = "A bowl carved out of petriamber."
+	icon_state = "bowl_amber"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	sellprice = 55
+	max_usages = 10
+
+/obj/item/reagent_containers/glass/bowl/turq
+	name = "ceruleabaster bowl"
+	desc = "A bowl carved out of ceruleabaster."
+	icon_state = "bowl_turq"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	sellprice = 80
+	max_usages = 10
+
+/obj/item/reagent_containers/glass/bowl/shell
+	name = "shell bowl"
+	desc = "A bowl carved out of shell."
+	icon_state = "bowl_shell"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	sellprice = 15
+	max_usages = 10
+
+/obj/item/reagent_containers/glass/bowl/coral
+	name = "aoetal bowl"
+	desc = "A bowl carved out of aoetal."
+	icon_state = "bowl_coral"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	sellprice = 65
+	max_usages = 10
+
+/obj/item/reagent_containers/glass/bowl/opal
+	name = "opaloise bowl"
+	desc = "A bowl carved out of opaloise."
+	icon_state = "bowl_opal"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
+	sellprice = 85
+	max_usages = 10
+
+
+/obj/item/reagent_containers/glass/bowl/clay
+	desc = "Made from fired clay."
+	icon_state = "bowl_clay"
+	fill_icon_state = "bowl"
+	drop_sound = 'sound/foley/dropsound/brick_drop.ogg'
+
+/obj/item/reagent_containers/glass/bowl/clay/set_material_information()
+	. = ..()
+	name = "[lowertext(initial(main_material.name))] clay bowl"
+
+/obj/item/reagent_containers/glass/bowl/clay/throw_impact(atom/hit_atom, datum/thrownthing/thrownthing)
+	new /obj/effect/decal/cleanable/shreds/clay(get_turf(src))
+	playsound(src, 'sound/foley/break_clay.ogg', 90, TRUE)
+	..()
+	qdel(src)
 
 /obj/item/reagent_containers/peppermill // new with some animated art
 	name = "pepper mill"
@@ -348,6 +432,11 @@
 	taste_mult = 3
 	hydration = 2
 
+/datum/reagent/consumable/soup/oatmeal/sunreed
+	name = "sweet-reed"
+	color = "#aa9539"
+	taste_description = "sweet and soft sunreed kernels"
+
 /datum/reagent/consumable/soup/veggie
 	name = "vegetable soup"
 	description = ""
@@ -359,6 +448,10 @@
 /datum/reagent/consumable/soup/veggie/potato
 	color = "#869256"
 	taste_description = "potato broth"
+
+/datum/reagent/consumable/soup/veggie/pompkaun
+	color = "#df7d0e"
+	taste_description = "pompkaun soup"
 
 /datum/reagent/consumable/soup/veggie/onion
 	color = "#a6b457"
@@ -372,11 +465,24 @@
 	color = "#becf9d"
 	taste_description = "boiled turnip"
 
+
+/datum/reagent/consumable/soup/veggie/tamto
+	name = "tamto soup"
+	color = "#e2461f"
+	taste_description = "tamto soup"
+
 /datum/reagent/consumable/soup/egg
 	name = "egg soup"
 	color = "#dedbaf"
 	taste_description = "egg soup"
 	nutriment_factor = 12
+
+/datum/reagent/consumable/soup/bone
+	name = "bone broth"
+	color = "#978e0d"
+	taste_description = "Savory, and deeply rich."
+	nutriment_factor = 12
+	taste_mult = 4
 
 /datum/reagent/consumable/soup/cheese // A thicker soup, almost on the level of old oatmeal. But less hydration than other soups
 	name = "cheese soup"
@@ -394,6 +500,16 @@
 	reagent_state = LIQUID
 	nutriment_factor = 11
 	taste_mult = 4
+
+/datum/reagent/consumable/soup/stew/sinew
+	color = "#6e6116"
+	taste_description = "bone broth"
+
+
+/datum/reagent/consumable/soup/stew/bone
+	color = "#8a770c"
+	taste_description = "bone broth"
+
 
 /datum/reagent/consumable/soup/stew/chicken
 	color = "#baa21c"
@@ -414,6 +530,10 @@
 /datum/reagent/consumable/soup/stew/truffle
 	color = "#5f4a0e"
 	taste_description = "rich truffles"
+
+/datum/reagent/consumable/soup/stew/borowiki
+	color = "#7c6b75"
+	taste_description = "hearty borowiki"
 
 /datum/reagent/water/spicy // filler, not important
 	taste_description = "something spicy"
@@ -456,7 +576,7 @@
 /datum/reagent/yuck/cursed_soup/on_mob_life(mob/living/carbon/M)
 	if(HAS_TRAIT(M, TRAIT_NASTY_EATER ))
 		if(M.blood_volume < BLOOD_VOLUME_NORMAL)
-			M.blood_volume = min(M.blood_volume+2, BLOOD_VOLUME_MAXIMUM)
+			M.blood_volume = min(M.blood_volume+2, BLOOD_VOLUME_NORMAL)
 		M.adjustBruteLoss(-0.2, 0)
 		M.adjustFireLoss(-0.2, 0)
 		M.adjust_energy(5)
@@ -496,7 +616,7 @@
 
 /datum/reagent/flour/on_mob_life(mob/living/carbon/M)
 	if(prob(30))
-		M.confused = max(M.confused + 3, 0)
+		M.adjust_confusion(6 SECONDS)
 	M.emote(pick("cough"))
 	..()
 
@@ -505,7 +625,7 @@
 	..()
 	qdel(src)
 
-/obj/item/reagent_containers/powder/flour/attackby(obj/item/I, mob/living/user, params)
+/obj/item/reagent_containers/powder/flour/attackby(obj/item/I, mob/living/user, list/modifiers)
 	. = ..()
 	var/found_table = locate(/obj/structure/table) in (loc)
 	var/obj/item/reagent_containers/glass/R = I
@@ -515,7 +635,7 @@
 		if(!R.reagents.has_reagent(/datum/reagent/water, 10))
 			to_chat(user, span_notice("Needs more water to work it."))
 			return TRUE
-		to_chat(user, span_notice("Adding water, now its time to knead it..."))
+		to_chat(user, span_notice("Adding water, now it's time to knead it..."))
 		playsound(get_turf(user), 'sound/foley/splishy.ogg', 100, TRUE, -1)
 		if(do_after(user, 1.5 SECONDS, src))
 			name = "wet flour"
@@ -528,22 +648,71 @@
 
 /obj/item/reagent_containers/powder/flour/attack_hand(mob/living/user)
 	if(water_added)
-		short_cooktime = (40 - ((user.get_skill_level(/datum/skill/craft/cooking))*5))
+		short_cooktime = (40 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking))*5))
 		playsound(get_turf(user), 'sound/foley/kneading_alt.ogg', 90, TRUE, -1)
 		if(do_after(user, short_cooktime, src))
 			var/obj/item/reagent_containers/food/snacks/dough_base/base = new /obj/item/reagent_containers/food/snacks/dough_base(get_turf(src))
 			base.set_quality(recipe_quality)
-			user.mind.add_sleep_experience(/datum/skill/craft/cooking, (user.STAINT*0.5))
+			user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking/baking, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE)*0.5))
+			user.nobles_seen_servant_work()
 			qdel(src)
 	else
 		..()
 
+// -------------- Sunreed Powder -----------------
+/obj/item/reagent_containers/powder/sunreed_flour
+	name = "sunreed powder"
+	desc = "Desperation breeds innovation."
+	gender = PLURAL
+	icon_state = "maize_flour"
+	list_reagents = list(/datum/reagent/flour = 1)
+	volume = 1
+	sellprice = 0
+	var/water_added
 
+/obj/item/reagent_containers/powder/sunreed_flour/throw_impact(atom/hit_atom, datum/thrownthing/thrownthing)
+	new /obj/effect/decal/cleanable/food/flour(get_turf(src))
+	..()
+	qdel(src)
+
+/obj/item/reagent_containers/powder/sunreed_flour/attackby(obj/item/I, mob/living/user, list/modifiers)
+	. = ..()
+	var/found_table = locate(/obj/structure/table) in (loc)
+	var/obj/item/reagent_containers/glass/R = I
+	if(isturf(loc)&& (found_table))
+		if(!istype(R) || (water_added))
+			return ..()
+		if(!R.reagents.has_reagent(/datum/reagent/water, 10))
+			to_chat(user, span_notice("Needs more water to work it."))
+			return TRUE
+		to_chat(user, span_notice("Adding water, now it's time to knead it..."))
+		playsound(get_turf(user), 'sound/foley/splishy.ogg', 100, TRUE, -1)
+		if(do_after(user, 1.5 SECONDS, src))
+			name = "wet sunreed powder"
+			desc = "All that's left is to invent."
+			R.reagents.remove_reagent(/datum/reagent/water, 10)
+			water_added = TRUE
+			icon_state = "maize_flour_wet"
+	else
+		to_chat(user, span_warning("Put [src] on a table before working it!"))
+
+/obj/item/reagent_containers/powder/sunreed_flour/attack_hand(mob/living/user)
+	if(water_added)
+		short_cooktime = (40 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking))*8))
+		playsound(get_turf(user), 'sound/foley/kneading_alt.ogg', 90, TRUE, -1)
+		if(do_after(user, short_cooktime, src))
+			var/obj/item/reagent_containers/food/snacks/masa_base/base = new /obj/item/reagent_containers/food/snacks/masa_base(get_turf(src))
+			base.set_quality(recipe_quality)
+			user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE)*0.5))
+			user.nobles_seen_servant_work()
+			qdel(src)
+	else
+		..()
 
 // -------------- SALT -----------------
 /obj/item/reagent_containers/powder/salt
 	name = "salt"
-	desc = "A survialist's best friend, great for preserving meat."
+	desc = "A survivalist's best friend, great for preserving meat."
 	gender = PLURAL
 	icon_state = "salt"
 	list_reagents = list(/datum/reagent/flour = 1)

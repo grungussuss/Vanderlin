@@ -1,5 +1,36 @@
+/datum/attribute_holder/sheet/job/shophand
+	raw_attribute_list = list(
+		STAT_SPEED = 1,
+		STAT_INTELLIGENCE = 1,
+		STAT_FORTUNE = 1,
+		/datum/attribute/skill/misc/stealing = 40,
+		/datum/attribute/skill/misc/sneaking = 20,
+		/datum/attribute/skill/misc/reading = 30,
+		/datum/attribute/skill/combat/knives = 20,
+		/datum/attribute/skill/misc/athletics = 10,
+		/datum/attribute/skill/misc/lockpicking = 20,
+		/datum/attribute/skill/labor/mathematics = 30
+	)
+
+/datum/attribute_holder/sheet/job/shophand/choice_three
+	raw_attribute_list = list(
+		STAT_STRENGTH = 1,
+		/datum/attribute/skill/combat/swords = 10,
+		/datum/attribute/skill/combat/axesmaces = 10,
+	)
+
+/datum/attribute_holder/sheet/job/shophand/choice_two
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/bows = 10,
+	)
+
+/datum/attribute_holder/sheet/job/shophand/choice_one
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/crossbows = 10,
+	)
+
 /datum/job/shophand
-	title = "Shophand"
+	title = JOB_SHOPHAND
 	tutorial = "You work under the greedy eyes of the Merchant who has shackled you to the drudgery of employment. \
 	Tasked with handling customers, organizing shelves, and taking inventory, your work is mind-numbing and repetitive. \
 	Despite its mundanity however, it keeps a roof over your head and teaches you the art of mercantilism. \
@@ -9,6 +40,11 @@
 	faction = "Station"
 	total_positions = 1
 	spawn_positions = 1
+	display_order = JDO_SHOPHAND
+	is_quest_giver = TRUE
+	give_bank_account = 10
+	bypass_lastclass = TRUE
+	can_have_apprentices = FALSE
 
 	allowed_races = RACES_PLAYER_ALL
 	allowed_ages = list(AGE_CHILD, AGE_ADULT)
@@ -16,49 +52,45 @@
 	outfit = /datum/outfit/shophand
 	display_order = JDO_SHOPHAND
 	give_bank_account = 10
-	min_pq = -10
 	bypass_lastclass = TRUE
 	can_have_apprentices = FALSE
+	cmode_music = 'sound/music/cmode/towner/CombatTowner2.ogg'
+	exp_types_granted = list(EXP_TYPE_MERCHANT_COMPANY)
+	can_be_apprentice = TRUE
 
-/datum/outfit/shophand/pre_equip(mob/living/carbon/human/H)
-	..()
-	ADD_TRAIT(H, TRAIT_SEEPRICES, type)
-	if(H.gender == FEMALE)
-		head = /obj/item/clothing/head/chaperon
-		pants = /obj/item/clothing/pants/tights
+	exp_types_granted = list(EXP_TYPE_MERCHANT_COMPANY)
+
+	attribute_sheet = /datum/attribute_holder/sheet/job/shophand
+
+	traits = list(
+		TRAIT_SEEPRICES
+	)
+
+/datum/job/shophand/after_spawn(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+	var/random_roll = rand(1, 3)
+	switch(random_roll)
+		if(1)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/shophand/choice_one)
+		if(2)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/shophand/choice_two)
+		if(3)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/shophand/choice_three)
+
+/datum/outfit/shophand
+	name = "Shophand Base"
+	head = /obj/item/clothing/head/chaperon
+	pants = /obj/item/clothing/pants/tights
+	shoes = /obj/item/clothing/shoes/simpleshoes
+	belt = /obj/item/storage/belt/leather
+	beltr = /obj/item/storage/belt/pouch/coins/poor
+	beltl = /obj/item/storage/keyring/stevedore
+	backr = /obj/item/storage/backpack/satchel
+	gloves = /obj/item/clothing/gloves/fingerless
+
+/datum/outfit/shophand/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
+	. = ..()
+	if(equipped_human.gender == FEMALE)
 		shirt = /obj/item/clothing/shirt/dress/gen/colored/blue
-		shoes = /obj/item/clothing/shoes/simpleshoes
-		belt = /obj/item/storage/belt/leather
-		beltr = /obj/item/storage/belt/pouch/coins/poor
-		beltl = /obj/item/storage/keyring/stevedore
-		backr = /obj/item/storage/backpack/satchel
-		gloves = /obj/item/clothing/gloves/fingerless
 	else
-		head = /obj/item/clothing/head/chaperon
-		pants = /obj/item/clothing/pants/tights
 		shirt = /obj/item/clothing/shirt/undershirt/colored/blue
-		shoes = /obj/item/clothing/shoes/simpleshoes
-		belt = /obj/item/storage/belt/leather
-		beltr = /obj/item/storage/belt/pouch/coins/poor
-		beltl = /obj/item/storage/keyring/stevedore
-		backr = /obj/item/storage/backpack/satchel
-		gloves = /obj/item/clothing/gloves/fingerless
-	//worse skills than a normal peasant, generally, with random bad combat skill
-	H.adjust_skillrank(/datum/skill/misc/stealing, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/sneaking, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/knives, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/lockpicking, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/mathematics, 3, TRUE)
-	H.change_stat(STATKEY_SPD, 1)
-	H.change_stat(STATKEY_INT, 1)
-	H.change_stat(STATKEY_LCK, 1)
-	if(prob(33))
-		H.adjust_skillrank(/datum/skill/combat/crossbows, 1, TRUE)
-	else if(prob(33))
-		H.adjust_skillrank(/datum/skill/combat/bows, 1, TRUE)
-	else //the legendary shopARM
-		H.adjust_skillrank(/datum/skill/combat/swords, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/axesmaces, 1, TRUE)
-		H.change_stat(STATKEY_STR, 1)

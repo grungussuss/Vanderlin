@@ -22,7 +22,6 @@
 	. = ..()
 	worker_mob = worker
 	worker_mind = creation_source
-
 	create_and_position_buttons()
 
 /atom/movable/screen/controller_ui/controller_ui/Destroy(force)

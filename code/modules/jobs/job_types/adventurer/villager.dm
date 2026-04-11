@@ -1,5 +1,5 @@
 /datum/job/villager
-	title = "Towner"
+	title = JOB_TOWNER
 	tutorial = "You've lived in this shithole for effectively all your life. \
 	You are not an explorer, nor exactly a warrior in many cases. \
 	You're just some average poor bastard who thinks they'll be something someday."
@@ -8,12 +8,12 @@
 	faction = FACTION_FOREIGNERS
 	total_positions = 0
 	spawn_positions = 0
-	min_pq = -100
 	banned_leprosy = FALSE
 	bypass_lastclass = TRUE
 
 	advclass_cat_rolls = list(CTAG_TOWNER = 20)
 	allowed_races = RACES_PLAYER_ALL
+	can_be_apprentice = TRUE
 
 	outfit = null
 	outfit_female = null

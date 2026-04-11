@@ -4,6 +4,8 @@
 	/// Cached appearance for disguise
 	var/cache_skin
 	var/cache_eyes
+	var/cache_eye_secondary
+	var/cache_hetero
 	var/cache_hair
 	/// Transform cooldown
 	COOLDOWN_DECLARE(transform_cooldown)
@@ -22,12 +24,30 @@
 	var/mob/living/carbon/human/H = parent
 	cache_original_appearance(H)
 
+/datum/component/vampire_disguise/RegisterWithParent()
+	. = ..()
 	RegisterSignal(parent, COMSIG_HUMAN_LIFE, PROC_REF(handle_disguise_upkeep))
 	RegisterSignal(parent, COMSIG_DISGUISE_STATUS, PROC_REF(disguise_status))
+	RegisterSignal(parent, COMSIG_PARENT_EXAMINE, PROC_REF(on_examine))
+	var/mob/living/carbon/human/H = parent
+	if(H.client)
+		add_verb(H, /mob/living/carbon/human/proc/disguise_button)
+
+/datum/component/vampire_disguise/UnregisterFromParent()
+	. = ..()
+	UnregisterSignal(parent, list(COMSIG_HUMAN_LIFE, COMSIG_DISGUISE_STATUS, COMSIG_PARENT_EXAMINE))
+	var/mob/living/carbon/human/H = parent
+	if(H.client)
+		add_verb(H, /mob/living/carbon/human/proc/disguise_button)
+
 
 /datum/component/vampire_disguise/proc/cache_original_appearance(mob/living/carbon/human/H)
 	cache_skin = H.skin_tone
-	cache_eyes = H.get_eye_color()
+	var/obj/item/organ/eyes/eyes = H.getorganslot(ORGAN_SLOT_EYES)
+	cache_eyes = eyes.eye_color
+	cache_eye_secondary = eyes.second_color
+	cache_hetero = FALSE
+
 	cache_hair = H.get_hair_color()
 
 /datum/component/vampire_disguise/proc/handle_disguise_upkeep(mob/living/carbon/human/source)
@@ -67,7 +87,8 @@
 
 	var/obj/item/organ/eyes/eyes = H.getorganslot(ORGAN_SLOT_EYES)
 	if(eyes)
-		eyes.eye_color = cache_eyes
+		H.set_eye_color(cache_eye_secondary, cache_eye_secondary, FALSE)
+
 
 	H.update_organ_colors()
 	H.update_body()
@@ -88,7 +109,9 @@
 		var/datum/clan/vclan = H.clan
 		vclan.apply_vampire_look(H)
 
-	to_chat(H, span_warning("My true nature is revealed!"))
+	if(!disguise_status())
+		H.visible_message(H, span_bloody("[H]'s true nature is revealed!"), span_warning("My true nature is revealed!"), vision_distance = COMBAT_MESSAGE_RANGE)
+		H.vampire_detected(length(H.CheckEyewitness(H))-1) // -1 so it needs 2 people to qualify for detection
 	return TRUE
 
 /datum/component/vampire_disguise/proc/force_undisguise(mob/living/carbon/human/H)
@@ -100,4 +123,16 @@
 	return TRUE
 
 /datum/component/vampire_disguise/proc/disguise_status()
-	return disguised
+	return disguised || !is_human_part_visible(parent, HIDEFACE)
+
+/datum/component/vampire_disguise/proc/on_examine(mob/living/vampire, mob/living/user, list/examine_list, list/P)
+	if(!istype(user) || disguise_status())
+		return
+	if(user == vampire)
+		return
+	if(!user.affects_masquerade(FALSE))
+		LAZYADDASSOCLIST(., EXAMINE_SECT_FACE, span_warningbig("[P[THEYRE]] in [P[THEIR]] true form."))
+		return
+	user.add_stress(/datum/stress_event/vampire_seen)
+	LAZYADDASSOCLIST(., EXAMINE_SECT_FACE, span_boldannounce("MONSTER!"))
+	vampire.vampire_detected(length(vampire.CheckEyewitness(user)))

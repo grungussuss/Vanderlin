@@ -1,38 +1,51 @@
-//master farmer
+/datum/attribute_holder/sheet/job/pilgrim/farmermaster
+	attribute_variance = list(
+		/datum/attribute/skill/misc/swimming = list(0, 10)
+	)
+	raw_attribute_list = list(
+		STAT_STRENGTH = 2,
+		STAT_CONSTITUTION = 1,
+		STAT_ENDURANCE = 2,
+		STAT_INTELLIGENCE = -1,
+		/datum/attribute/skill/combat/wrestling = 20,
+		/datum/attribute/skill/combat/unarmed = 20,
+		/datum/attribute/skill/combat/knives = 10,
+		/datum/attribute/skill/combat/polearms = 20,
+		/datum/attribute/skill/combat/whipsflails = 10,
+		/datum/attribute/skill/craft/crafting = 30,
+		/datum/attribute/skill/misc/sewing = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/labor/farming = 60,
+		/datum/attribute/skill/craft/cooking = 20,
+		/datum/attribute/skill/misc/medicine = 10,
+		/datum/attribute/skill/labor/butchering = 20,
+		/datum/attribute/skill/craft/tanning = 10,
+		/datum/attribute/skill/misc/athletics = 40,
+		/datum/attribute/skill/labor/taming = 20,
+	)
 
 /datum/job/advclass/pilgrim/rare/farmermaster
 	title = "Master Farmer"
 	tutorial = "A veteran among the serfs that tend to cattle and fields of produce, \
 	able to handle almost every single task there is to do on a fief."
 	allowed_sexes = list(MALE, FEMALE)
-
-	outfit = /datum/outfit/adventurer/farmermaster
+	outfit = /datum/outfit/pilgrim/farmermaster
 	total_positions = 1
-	roll_chance = 15
+	roll_chance = 0
 	category_tags = list(CTAG_PILGRIM, CTAG_TOWNER)
 	apprentice_name = "Handyman"
 	cmode_music = 'sound/music/cmode/towner/CombatTowner.ogg'
 	is_recognized = TRUE
 
-/datum/outfit/adventurer/farmermaster/pre_equip(mob/living/carbon/human/H)
-	..()
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/knives, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/polearms, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/whipsflails, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/sewing, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/swimming, pick(0,1,1), TRUE)
-	H.adjust_skillrank(/datum/skill/misc/climbing, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/farming, 6, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/cooking, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/medicine, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/butchering, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/tanning, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/taming, 2, TRUE)
+	attribute_sheet = /datum/attribute_holder/sheet/job/pilgrim/farmermaster
 
+	traits = list(
+		TRAIT_DEADNOSE,
+		TRAIT_SEEDKNOW
+	)
+
+/datum/outfit/pilgrim/farmermaster
+	name = "Master Farmer (Pilgrim)"
 	belt = /obj/item/storage/belt/leather
 	shirt = /obj/item/clothing/shirt/undershirt/colored/random
 	pants = /obj/item/clothing/pants/trou
@@ -45,12 +58,14 @@
 	mouth = /obj/item/clothing/face/cigarette/pipe/westman
 	beltl = /obj/item/weapon/sickle
 	beltr = /obj/item/weapon/knife/hunting
-	var/obj/item/weapon/pitchfork/P = new()
-	H.put_in_hands(P, forced = TRUE)
-	backpack_contents = list(/obj/item/neuFarm/seed/wheat=1,/obj/item/neuFarm/seed/apple=1,/obj/item/neuFarm/seed/cabbage=1,/obj/item/neuFarm/seed/potato=1,/obj/item/neuFarm/seed/onion=1,/obj/item/fertilizer/ash=2,/obj/item/flint=1,/obj/item/storage/belt/pouch/coins/mid=1)
-	H.change_stat(STATKEY_STR, 2)
-	H.change_stat(STATKEY_CON, 1)
-	H.change_stat(STATKEY_END, 2)
-	H.change_stat(STATKEY_INT, -1)
-	ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)	//Peasants probably smell terrible. (:
-	ADD_TRAIT(H, TRAIT_SEEDKNOW, TRAIT_GENERIC)
+	l_hand = /obj/item/weapon/pitchfork
+	backpack_contents = list(
+		/obj/item/neuFarm/seed/wheat = 1,
+		/obj/item/neuFarm/seed/apple = 1,
+		/obj/item/neuFarm/seed/cabbage = 1,
+		/obj/item/neuFarm/seed/potato = 1,
+		/obj/item/neuFarm/seed/onion = 1,
+		/obj/item/fertilizer/ash = 2,
+		/obj/item/flint = 1,
+		/obj/item/storage/belt/pouch/coins/mid = 1
+	)

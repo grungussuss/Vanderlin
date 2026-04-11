@@ -1,5 +1,26 @@
+/datum/attribute_holder/sheet/job/grabber
+	raw_attribute_list = list(
+		STAT_STRENGTH = 1,
+		STAT_ENDURANCE = 1,
+		STAT_CONSTITUTION = 2,
+		STAT_SPEED = -1,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/shields = 10,
+		/datum/attribute/skill/combat/axesmaces = 20,
+		/datum/attribute/skill/combat/wrestling = 30,
+		/datum/attribute/skill/combat/unarmed = 30,
+		/datum/attribute/skill/combat/knives = 10,
+		/datum/attribute/skill/combat/firearms = 10,
+		/datum/attribute/skill/combat/crossbows = 10,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/misc/swimming = 40,
+		/datum/attribute/skill/misc/climbing = 30,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/labor/mathematics = 10
+	)
+
 /datum/job/grabber
-	title = "Stevedore"
+	title = JOB_STEVEDORE
 	tutorial = "A stevedore is the lowest yet essential position in the Merchant's employment, reserved for the strong and loyal. \
 	You are responsible for hauling materials and goods to-and-fro the docks and warehouses, protecting their transportation from conniving thieves. \
 	Keep your eye out for the security of the Merchant, and they will surely treat you like family."
@@ -9,7 +30,6 @@
 	faction = FACTION_TOWN
 	total_positions = 4
 	spawn_positions = 4
-	min_pq = -50
 	bypass_lastclass = TRUE
 
 	allowed_races = RACES_PLAYER_ALL
@@ -17,28 +37,17 @@
 	outfit = /datum/outfit/grabber
 	give_bank_account = TRUE
 	cmode_music = 'sound/music/cmode/towner/CombatTowner2.ogg'
+	exp_types_granted = list(EXP_TYPE_MERCHANT_COMPANY)
+	can_be_apprentice = TRUE
 
-/datum/outfit/grabber/pre_equip(mob/living/carbon/human/H)
-	..()
+	attribute_sheet = /datum/attribute_holder/sheet/job/grabber
 
-	H.adjust_skillrank(/datum/skill/combat/swords, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/shields, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/axesmaces, 2, TRUE) // You get a cudgel for nonlethal self defense and that's it.
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)//they can use the merchant machine and that's it
-	H.adjust_skillrank(/datum/skill/combat/knives, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/swimming, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/mathematics, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/firearms, 1, TRUE) // TALLY HO
-	H.adjust_skillrank(/datum/skill/combat/crossbows, 1, TRUE)
+	traits = list(
+		TRAIT_CRATEMOVER
+	)
 
-	H.change_stat(STATKEY_STR, 1)
-	H.change_stat(STATKEY_END, 1)
-	H.change_stat(STATKEY_CON, 1)
-	H.change_stat(STATKEY_SPD, -1)
+/datum/outfit/grabber
+	name = JOB_STEVEDORE
 	backr = /obj/item/storage/backpack/satchel
 	wrists = /obj/item/clothing/wrists/bracers/leather
 	gloves = /obj/item/clothing/gloves/fingerless
@@ -50,15 +59,16 @@
 	beltr = /obj/item/weapon/mace/cudgel
 	beltl = /obj/item/weapon/sword/sabre/cutlass
 	scabbards = list(/obj/item/weapon/scabbard/sword)
-	backpack_contents = list(/obj/item/storage/keyring/stevedore)
-	if(H.gender == MALE)
+
+	backpack_contents = list(
+		/obj/item/storage/keyring/stevedore = 1
+	)
+
+/datum/outfit/grabber/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
+	. = ..()
+	if(equipped_human.gender == MALE)
 		shoes = /obj/item/clothing/shoes/boots/leather
 		head = /obj/item/clothing/head/headband/colored/red
-		H.change_stat(STATKEY_CON, 1)
-		H.change_stat(STATKEY_STR, 1)//thug bodytype
 	else
 		shoes = /obj/item/clothing/shoes/gladiator
 		head = /obj/item/clothing/head/headband
-		H.change_stat(STATKEY_INT, 1)
-		H.change_stat(STATKEY_SPD, 1)
-	ADD_TRAIT(H, TRAIT_CRATEMOVER, type)

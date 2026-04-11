@@ -1,6 +1,6 @@
 /obj/item/clothing/armor/steam
 	name = "steamknight plate"
-	desc = "The center piece of the steamknight armor. Requires knowledge in engineering to operate."
+	desc = "The centerpiece of the steamknight armor. Requires knowledge in engineering to operate."
 
 	icon = 'icons/roguetown/clothing/steamknight.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/onmob/steamknight_onmob.dmi'
@@ -9,7 +9,7 @@
 	sleeved =  'icons/roguetown/clothing/onmob/steamknight_onmob.dmi'
 	sleevetype = "steamknight_chest"
 
-	anvilrepair = /datum/skill/craft/engineering
+	anvilrepair = /datum/attribute/skill/craft/engineering
 
 	clothing_flags = CANT_SLEEP_IN
 
@@ -21,7 +21,7 @@
 	body_parts_covered = COVERAGE_FULL
 	prevent_crits = ALL_EXCEPT_BLUNT
 	max_integrity = INTEGRITY_STRONGEST
-	item_weight = 25 * BRONZE_MULTIPLIER
+	item_weight = 24 KILOGRAMS
 	stand_speed_reduction = 1.4
 
 	smeltresult = /obj/item/ingot/bronze

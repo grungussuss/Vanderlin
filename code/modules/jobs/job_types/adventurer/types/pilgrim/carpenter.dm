@@ -1,36 +1,44 @@
+/datum/attribute_holder/sheet/job/pilgrim/carpenter
+	attribute_variance = list(
+		/datum/attribute/skill/misc/athletics = list(30, 40)
+	)
+	raw_attribute_list = list(
+		STAT_STRENGTH = 1,
+		STAT_ENDURANCE = 1,
+		STAT_INTELLIGENCE = 1,
+		STAT_CONSTITUTION = 1,
+		STAT_SPEED = -1,
+		/datum/attribute/skill/misc/medicine = 10,
+		/datum/attribute/skill/combat/axesmaces = 20,
+		/datum/attribute/skill/combat/wrestling = 10,
+		/datum/attribute/skill/combat/unarmed = 10,
+		/datum/attribute/skill/craft/crafting = 30,
+		/datum/attribute/skill/craft/cooking = 10,
+		/datum/attribute/skill/craft/carpentry = 50,
+		/datum/attribute/skill/misc/swimming = 10,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/sewing = 10,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/labor/lumberjacking = 30,
+	)
+
 /datum/job/advclass/carpenter
-	title = "Carpenter"
+	title = JOB_CARPENTER
 	tutorial = "As a woodsmen or women, you have dedicated your life to both felling \
 	trees and bending wood to your will. With enough practice, your only limit is your imagination."
 	allowed_sexes = list(MALE, FEMALE)
-
 	outfit = /datum/outfit/adventurer/carpenter
-
 	category_tags = list(CTAG_PILGRIM)
 	apprentice_name = "Carpenter Apprentice"
-	cmode_music = 'sound/music/cmode/towner/CombatBeggar.ogg' // pilgrims aren't towners, this fits them more for a combat on the woods
+	cmode_music = 'sound/music/cmode/towner/CombatBeggar.ogg'
 
-/datum/outfit/adventurer/carpenter/pre_equip(mob/living/carbon/human/H)
-	..()
-	H.adjust_skillrank(/datum/skill/misc/medicine, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/axesmaces, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/cooking, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/carpentry, 5, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/swimming, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/climbing, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/sewing, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, pick(3,3,4), TRUE)
-	H.adjust_skillrank(/datum/skill/labor/lumberjacking, 3, TRUE)
+	attribute_sheet = /datum/attribute_holder/sheet/job/pilgrim/carpenter
 
-	head = pick(/obj/item/clothing/head/hatfur, /obj/item/clothing/head/hatblu, /obj/item/clothing/head/brimmed)
+/datum/outfit/adventurer/carpenter
+	name = JOB_CARPENTER
 	neck = /obj/item/clothing/neck/coif
 	armor = /obj/item/clothing/armor/gambeson/light/striped
 	pants = /obj/item/clothing/pants/trou
-	shirt = pick(/obj/item/clothing/shirt/undershirt/colored/random, /obj/item/clothing/shirt/tunic/colored/random)
 	wrists = /obj/item/clothing/wrists/bracers/leather
 	shoes = /obj/item/clothing/shoes/boots/leather
 	belt = /obj/item/storage/belt/leather
@@ -38,9 +46,12 @@
 	beltl = /obj/item/weapon/hammer/steel
 	backr = /obj/item/weapon/axe/iron
 	backl = /obj/item/storage/backpack/backpack
-	backpack_contents = list(/obj/item/flint = 1, /obj/item/weapon/knife/villager = 1)
-	H.change_stat(STATKEY_STR, 1)
-	H.change_stat(STATKEY_END, 1) // Tree chopping builds endurance
-	H.change_stat(STATKEY_INT, 1)
-	H.change_stat(STATKEY_CON, 1)
-	H.change_stat(STATKEY_SPD, -1)
+	backpack_contents = list(
+		/obj/item/flint = 1,
+		/obj/item/weapon/knife/villager = 1
+	)
+
+/datum/outfit/adventurer/pilgrim/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
+	. = ..()
+	head = pick(/obj/item/clothing/head/hatfur, /obj/item/clothing/head/hatblu, /obj/item/clothing/head/brimmed)
+	shirt = pick(/obj/item/clothing/shirt/undershirt/colored/random, /obj/item/clothing/shirt/tunic/colored/random)

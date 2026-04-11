@@ -1,6 +1,6 @@
 /datum/antagonist/harlequinn
 	name = "Harlequinn"
-	roundend_category = "harlequinn"
+	roundend_category = "Harlequinn"
 	antagpanel_category = "Harlequinn"
 	job_rank = ROLE_HARLEQUINN
 	antag_hud_name = "harlequinn"
@@ -95,7 +95,7 @@
 	grid_width = 32
 	grid_height = 32
 
-/obj/item/harlequinn_disguise_kit/attack_self(mob/user, params)
+/obj/item/harlequinn_disguise_kit/attack_self(mob/user, list/modifiers)
 	var/list/options = list(
 		"Quick Disguise" = "quick",
 		"Detailed Disguise" = "detailed",

@@ -1,7 +1,7 @@
 
 /datum/blueprint_recipe/carpentry
 	abstract_type = /datum/blueprint_recipe/carpentry
-	skillcraft = /datum/skill/craft/carpentry
+	skillcraft = /datum/attribute/skill/craft/carpentry
 	category = "Carpentry"
 	construct_tool = /obj/item/weapon/hammer
 	craftsound = 'sound/foley/Building-01.ogg'
@@ -32,6 +32,18 @@
 	required_materials = list(/obj/item/grown/log/tree/small = 2)
 	supports_directions = TRUE
 	craftdiff = 0
+
+/datum/blueprint_recipe/carpentry/fish_mount
+	name = "Fish Mount"
+	desc = "Wooden mount to showoff your fish."
+	result_type = /obj/structure/fish_mount
+	required_materials = list(/obj/item/grown/log/tree/small = 2)
+	category = "Wall Fixtures"
+	floor_object = FALSE
+	check_adjacent_wall = TRUE
+	supports_directions = TRUE
+	place_on_wall = TRUE
+
 
 /datum/blueprint_recipe/carpentry/deadbolt_door
 	name = "wooden door (deadbolt)"
@@ -100,6 +112,17 @@
 	supports_directions = TRUE
 	craftdiff = 0
 
+/datum/blueprint_recipe/carpentry/stool/bar
+	name = "barstool"
+	desc = "Stool with a cloth cushion."
+	result_type = /obj/structure/chair/stool/bar
+	required_materials = list(
+		/obj/item/grown/log/tree/small = 1,
+		/obj/item/natural/cloth = 1
+	)
+	supports_directions = TRUE
+	craftdiff = 2
+
 /datum/blueprint_recipe/carpentry/loom
 	name = "loom"
 	desc = "A weaving loom for creating textiles."
@@ -164,8 +187,7 @@
 	craftdiff = 1
 
 /datum/blueprint_recipe/carpentry/wooden_stairs_down/check_craft_requirements(mob/user, turf/T, obj/structure/blueprint/blueprint)
-	var/turf/partner = get_step_multiz(get_turf(blueprint), DOWN)
-	partner = get_step(partner, turn(blueprint.blueprint_dir, 180))
+	var/turf/partner = get_step_multiz(get_turf(blueprint), turn(blueprint.blueprint_dir, 180)|DOWN)
 	if(!isopenturf(partner))
 		to_chat(user, span_warning("Need an openspace at the turf below!"))
 		return FALSE
@@ -457,16 +479,6 @@
 	)
 	craftdiff = 1
 
-/datum/blueprint_recipe/carpentry/noose
-	name = "noose"
-	desc = "hangs from the ceiling."
-	result_type = /obj/structure/noose
-	required_materials = list(
-		/obj/item/rope = 1
-	)
-	build_time = 4 SECONDS
-	requires_ceiling = TRUE
-
 /datum/blueprint_recipe/carpentry/apiary
 	name = "Apiary"
 	desc = "A home for bees."
@@ -477,3 +489,23 @@
 		/obj/item/natural/fibers = 2
 	)
 	craftdiff = 1
+
+/datum/blueprint_recipe/carpentry/dryclothes
+	name = "Clothline"
+	desc = "It can dry clothes well."
+	result_type = /obj/structure/dryclothes
+	required_materials = list(
+		/obj/item/grown/log/tree/small = 2,
+		/obj/item/rope = 2
+	)
+	craftdiff = 0
+
+/datum/blueprint_recipe/carpentry/keyrack
+	name = "key rack"
+	desc = "A cupboard for securing keys."
+	result_type = /obj/structure/closet/keyrack
+	required_materials = list(
+		/obj/item/natural/wood/plank = 2,
+		/obj/item/ingot/iron = 1
+	)
+	craftdiff = 2

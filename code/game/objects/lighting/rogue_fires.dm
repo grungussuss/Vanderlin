@@ -52,6 +52,11 @@
 	base_state = "stumpfireb"
 	bulb_colour = "#6cfdff"
 
+/obj/machinery/light/fueled/firebowl/stumpg
+	icon_state = "stumpfireg1"
+	base_state = "stumpfireg"
+	bulb_colour = "#23b25a"
+
 /obj/machinery/light/fueled/firebowl/blackfire
 	desc = "A fire, black as death."
 	icon_state = "blackfire1"
@@ -103,7 +108,7 @@
 			user.visible_message("<span class='warning'>[user] kicks [src]!</span>", \
 				"<span class='warning'>I kick [src]!</span>")
 			return
-		if(prob(L.STASTR * 8))
+		if(prob(GET_MOB_ATTRIBUTE_VALUE(L, STAT_STRENGTH) * 8))
 			playsound(src, 'sound/combat/hits/onwood/woodimpact (1).ogg', 100)
 			user.visible_message("<span class='warning'>[user] kicks over [src]!</span>", \
 				"<span class='warning'>I kick over [src]!</span>")
@@ -211,6 +216,7 @@
 	name = "candle lamp"
 	icon_state = "candle"
 	base_state = "candle"
+	plane = GAME_PLANE_UPPER
 	layer = WALL_OBJ_LAYER+0.1
 	light_power = 0.9
 	light_outer_range =  6
@@ -259,7 +265,7 @@
 		if(!on)
 			if(torchy.fuel > 0)
 				torchy.spark_act()
-				playsound(src.loc, 'sound/items/firelight.ogg', 100)
+				playsound(src, 'sound/items/firelight.ogg', 100)
 				on = TRUE
 				update()
 				update_appearance(UPDATE_ICON_STATE)
@@ -305,14 +311,14 @@
 		on = FALSE
 		update()
 		update_appearance(UPDATE_ICON_STATE)
-		playsound(src.loc, 'sound/foley/torchfixturetake.ogg', 70)
+		playsound(src, 'sound/foley/torchfixturetake.ogg', 70)
 
 /obj/machinery/light/fueled/torchholder/burn_out()
 	if(torchy && torchy.on)
 		torchy.turn_off()
 	..()
 
-/obj/machinery/light/fueled/torchholder/attackby(obj/item/W, mob/living/user, params)
+/obj/machinery/light/fueled/torchholder/attackby(obj/item/W, mob/living/user, list/modifiers)
 	if(istype(W, /obj/item/flashlight/flare/torch))
 		var/obj/item/flashlight/flare/torch/LR = W
 		if(torchy)
@@ -323,7 +329,7 @@
 				else
 					torchy.spark_act()
 					user.visible_message("<span class='info'>[user] lights [src].</span>")
-					playsound(src.loc, 'sound/items/firelight.ogg', 100)
+					playsound(src, 'sound/items/firelight.ogg', 100)
 					on = TRUE
 					update()
 					update_appearance(UPDATE_ICON_STATE)
@@ -346,7 +352,7 @@
 					return
 				torchy = LR
 				update_appearance(UPDATE_ICON_STATE)
-			playsound(src.loc, 'sound/foley/torchfixtureput.ogg', 70)
+			playsound(src, 'sound/foley/torchfixtureput.ogg', 70)
 		return
 	. = ..()
 
@@ -398,7 +404,7 @@
 	on = FALSE
 	cookonme = TRUE
 	soundloop = /datum/looping_sound/fireloop
-	temperature_change = 40
+	// temperature_change = 40
 	var/heat_time = 100
 	var/obj/item/attachment = null
 	var/obj/item/reagent_containers/food/snacks/food = null
@@ -410,10 +416,10 @@
 /obj/machinery/light/fueled/hearth/Destroy()
 	. = ..()
 
-/obj/machinery/light/fueled/hearth/attackby(obj/item/W, mob/living/user, params)
+/obj/machinery/light/fueled/hearth/attackby(obj/item/W, mob/living/user, list/modifiers)
 	if(!attachment)
-		if(istype(W, /obj/item/cooking/pan) || istype(W, /obj/item/reagent_containers/glass/bucket/pot) || istype(W, /obj/item/reagent_containers/glass/bottle/teapot))
-			playsound(get_turf(user), 'sound/foley/dropsound/shovel_drop.ogg', 40, TRUE, -1)
+		if(istype(W, /obj/item/cooking/pan) || istype(W, /obj/item/reagent_containers/glass/bucket/pot) || istype(W, /obj/item/reagent_containers/glass/carafe/teapot))
+			playsound(user, 'sound/foley/dropsound/shovel_drop.ogg', 40, TRUE, -1)
 
 			if(user.transferItemToLoc(W, src, silent = TRUE))
 				attachment = W
@@ -421,11 +427,9 @@
 			return
 
 	else
-		if(istype(W, /obj/item/reagent_containers/glass/bowl))
-			to_chat(user, "<span class='notice'>Remove the pot from the hearth first.</span>")
+		. = attachment.attackby(W, user, modifiers)
+		if(.)
 			return
-		else
-			SEND_SIGNAL(attachment, COMSIG_TRY_STORAGE_INSERT, W, user, null, FALSE)
 	. = ..()
 
 /obj/machinery/light/fueled/hearth/MouseDrop(mob/over, src_location, over_location, src_control, over_control, params)
@@ -441,13 +445,13 @@
 /obj/machinery/light/fueled/hearth/fire_act(added, maxstacks)
 	. = ..()
 	if(food)
-		playsound(src.loc, 'sound/misc/frying.ogg', 80, FALSE, extrarange = 2)
+		playsound(src, 'sound/misc/frying.ogg', 80, FALSE, extrarange = 2)
 
 /obj/machinery/light/fueled/hearth/update_overlays()
 	. = ..()
 	if(!attachment)
 		return
-	if(istype(attachment, /obj/item/cooking/pan) || istype(attachment, /obj/item/reagent_containers/glass/bucket/pot) || istype(attachment, /obj/item/reagent_containers/glass/bottle/teapot))
+	if(istype(attachment, /obj/item/cooking/pan) || istype(attachment, /obj/item/reagent_containers/glass/bucket/pot) || istype(attachment, /obj/item/reagent_containers/glass/carafe/teapot))
 		var/obj/item/I = attachment
 		I.pixel_x = I.base_pixel_x
 		I.pixel_y = I.base_pixel_y

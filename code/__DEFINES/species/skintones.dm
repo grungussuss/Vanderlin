@@ -32,32 +32,7 @@
 #define SKIN_COLOR_ARACHNID_ICHOR "2F2F38" //Black-blue
 #define SKIN_COLOR_GLOOMHAVEN "897489" //Pink
 
-//ELF SKIN TONES
-#define SKIN_COLOR_SNOW_ELF "fff0e9" //Pale as SHIT!
-#define SKIN_COLOR_PLAIN_ELF "fcccb3" //White 2
-#define SKIN_COLOR_MOUNTAIN_ELF "edc6b3" //White 3
-#define SKIN_COLOR_COASTAL_ELF "e2b9a3" //White 4
-#define SKIN_COLOR_WOOD_ELF "c9a893" //Mediterranean 1
-#define SKIN_COLOR_SEA_ELF "ba9882" //Mediterranean 2
-#define SKIN_COLOR_JUNGLE_ELF "ac8369" //Latin 2
-#define SKIN_COLOR_SAVANNAH_ELF "9c6f52" //Middle-east
-#define SKIN_COLOR_SAND_ELF "5d4c41" //Black 1
-#define SKIN_COLOR_CRIMSON_ELF "4e3729" //Black 2
-
-//HALF ELF SKIN TONES
-#define SKIN_COLOR_TIMBER_GRONN "ffe0d1" //Pale
-#define SKIN_COLOR_SOLAR_HUE "fcccb3" //White
-#define SKIN_COLOR_WALNUT_STINE "edc6b3" //White
-#define SKIN_COLOR_AMBER_STAINED "e2b9a3" //White
-#define SKIN_COLOR_REDWOOD_ROOTED "c9a893" //Mediterranean 1
-#define SKIN_COLOR_DRIFTED_WOOD "ba9882" //Mediterranean 2
-#define SKIN_COLOR_VINE_WRAPPED "ac8369" //Latin 2
-#define SKIN_COLOR_JOSHUA_ALIGNED "9c6f52" //Middle-east
-#define SKIN_COLOR_ARID_BIRTHED "5a4a41" //Black
-#define SKIN_COLOR_SAGE_BLOOMED "4e3729" //Black 2
-
 //HALF DROW SKIN TONES
-#define SKIN_COLOR_ZIZO_CURSED "fff0e9" //Pale as SHIT
 #define SKIN_COLOUR_PARASITE_TAINTED "a191a1" //Light purple
 #define SKIN_COLOR_MUSHROOM_MINDED "897489" //Mid purple
 #define SKIN_COLOR_CAVE_ATTUNED "5f5f70" // Dark purple
@@ -74,8 +49,13 @@
 #define SKIN_COLOR_SUBTROPICAL "c9a893" //Mediterranean 1
 #define SKIN_COLOR_TROPICALDRY "ba9882" //Mediterranean 2
 #define SKIN_COLOR_TROPICALWET "ac8369" //Latin
-#define SKIN_COLOR_DESERT "9c6f52" //Middle-east
+#define SKIN_COLOR_DESERT "9c6f52" //Middle-east 1
+#define SKIN_COLOR_OASIS "845a3a" //Middle-east 2
 #define SKIN_COLOR_CRIMSONLANDS "4e3729" //Black
+#define SKIN_COLOR_VOLCANIC "3a1e22" //Melanesian
+#define SKIN_COLOR_ISLAND "84674b" //Polynesian
+#define SKIN_COLOR_SWAMP "7b4f42" //Native American 1
+#define SKIN_COLOR_TAIGA "734c37" //Native American 2
 
 //AASIMAR SKIN TONES
 #define SKIN_COLOR_CORAL "ff96d6" //Pink
@@ -114,6 +94,7 @@
 #define SKIN_COLOR_SUNSTREAK "b77614" //White - Tan
 #define SKIN_COLOR_MOONSHADE "C0C0C0" //Middle-eastern
 #define SKIN_COLOR_SANDSWEPT "fcccb3" //White - Tan
+#define SKIN_COLOR_ICEPACK "3d496d" //Blurple
 
 // TRITON SKIN TONES
 /// Very Light Blue "#9cc2e2"
@@ -144,6 +125,12 @@
 #define SKIN_COLOR_WASTE "4f2d61"
 /// Pale Orange "#d69558"
 #define SKIN_COLOR_TOXIN "d69558"
+
+// RAKSHARI SKIN TONES
+/// Black "#41414e"
+#define SKIN_COLOR_NIGHTSHADE "41414e"
+/// Orange "#cc9552"
+#define SKIN_COLOR_QUICKSAND "cc9552" //Apparently sphynx cats can be orange, who knew!
 
 // SPECIAL SKIN TONES
 /// Sickly green

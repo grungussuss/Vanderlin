@@ -13,6 +13,7 @@
 		target = owner
 	owner.visible_message(span_notice("[target] appears invigorated."))
 	target.apply_status_effect(/datum/status_effect/buff/vigor, 60 SECONDS)
+	new /obj/effect/temp_visual/snake/twin_up(null, target)
 
 /atom/movable/screen/alert/status_effect/vigor
 	name = "Vigor"
@@ -23,17 +24,17 @@
 	id = "vigor"
 	alert_type = /atom/movable/screen/alert/status_effect/vigor
 	duration = 60 SECONDS
-	effectedstats = list("strength" = 1, "endurance" = 1)
+	effectedstats = list(STAT_STRENGTH = 1, STAT_ENDURANCE = 1)
 
 /datum/status_effect/buff/vigor/on_apply()
 	. = ..()
 	if(isliving(owner))
 		var/mob/living/L = owner
 		L.adjust_stamina(50)
-		ADD_TRAIT(owner, TRAIT_STRONG_GRABBER, MAGIC_TRAIT)
+		ADD_TRAIT(owner, TRAIT_STRONG_GRABBER, TRAIT_STATUS_EFFECT(id))
 		to_chat(owner, span_notice("You feel invigorated with supernatural strength."))
 
 /datum/status_effect/buff/vigor/on_remove()
 	. = ..()
-	REMOVE_TRAIT(owner, TRAIT_STRONG_GRABBER, MAGIC_TRAIT)
+	REMOVE_TRAIT(owner, TRAIT_STRONG_GRABBER, TRAIT_STATUS_EFFECT(id))
 	to_chat(owner, span_notice("The supernatural vigor fades."))

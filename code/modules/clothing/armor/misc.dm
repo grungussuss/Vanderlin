@@ -14,17 +14,21 @@
 	name = "corset"
 	desc = "A leather binding to constrict one's figure... and lungs."
 	icon_state = "corset"
-	armor = ARMOR_PADDED
+	armor = ARMOR_PADDED_BAD
 	body_parts_covered = COVERAGE_VEST
+	item_weight = 230 GRAMS
 
 //................ Amazon chainkini ............... //
 /obj/item/clothing/armor/amazon_chainkini
 	name = "amazonian armor"
-	desc = "Fur skirt and maille chest holder, typically worn by warrior women of the isle of Issa."
+	desc = "Fur skirt and maille chest holder, it doesn't cover very much."
 	icon_state = "chainkini"
 	item_state = "chainkini"
 	allowed_sex = list(FEMALE)
-	sewrepair = TRUE
+	sewrepair = /datum/attribute/skill/craft/tanning/patching
+	salvage_amount = 1
+	salvage_result = /obj/item/natural/fur
+	dyeable = TRUE
 	smeltresult = /obj/item/ingot/iron
 	sellprice = VALUE_IRON_ARMOR_UNUSUAL
 	// It looks better without these
@@ -33,8 +37,10 @@
 	armor = ARMOR_LEATHER_GOOD
 	body_parts_covered = COVERAGE_TORSO
 	prevent_crits = ALL_EXCEPT_BLUNT
-	item_weight = 7 * IRON_MULTIPLIER
+	item_weight = 3.2 KILOGRAMS
 	min_cold_protection_temperature = 5 //this is like fur but also its a fucking bikini like???
+
+	material_category = ARMOR_MAT_CHAINMAIL
 
 //................ Brigandine ............... //
 /obj/item/clothing/armor/brigandine
@@ -44,8 +50,9 @@
 	blocksound = SOFTHIT
 	equip_delay_self = 4 SECONDS
 	unequip_delay_self = 4 SECONDS
-	anvilrepair = /datum/skill/craft/armorsmithing
-	smeltresult = /obj/item/ingot/steel
+	anvilrepair = /datum/attribute/skill/craft/armor_repair
+	melt_amount = 75
+	melting_material = /datum/material/steel
 	sellprice = VALUE_BRIGANDINE
 	clothing_flags = CANT_SLEEP_IN
 
@@ -54,12 +61,25 @@
 	body_parts_covered = COVERAGE_ALL_BUT_LEGS
 	max_integrity = INTEGRITY_STRONGEST
 	prevent_crits = ALL_EXCEPT_BLUNT
-	item_weight = 3.2 * IRON_MULTIPLIER
+	item_weight = 6.24 KILOGRAMS
 	stand_speed_reduction = 1.15
 
 /obj/item/clothing/armor/brigandine/Initialize()
 	. = ..()
 	AddComponent(/datum/component/item_equipped_movement_rustle, custom_sounds = SFX_PLATE_COAT_STEP)
+
+//................ Abyssal Robe ............... //
+/obj/item/clothing/armor/brigandine/abyssor // This is only a brigandine subtype for balance reasons, it should be a cuirass variant.
+	name = "abyssal robe"
+	desc = "A bronze cuirass, its surface etched with swirling wave motifs. Beneath the armor hangs a flowing robe of deep blue cloth, reminiscent of the sea's endless depths. Salt has dulled its shine, but it still carries the dignity of those who serve Abyssor."
+	icon_state = "abyssal_robe"
+	item_state = "abyssal_robe"
+	smeltresult = /obj/item/ingot/bronze
+
+/obj/item/clothing/armor/brigandine/abyssor/Initialize()
+	. = ..()
+	AddComponent(/datum/component/item_equipped_movement_rustle, custom_sounds = SFX_PLATE_COAT_STEP)
+
 
 /obj/item/clothing/armor/brigandine/captain
 	name = "captain's brigandine"
@@ -73,8 +93,9 @@
 	blocksound = SOFTHIT
 	equip_delay_self = 4 SECONDS
 	unequip_delay_self = 4 SECONDS
-	anvilrepair = /datum/skill/craft/armorsmithing
-	smeltresult = /obj/item/ingot/steel
+	anvilrepair = /datum/attribute/skill/craft/armor_repair
+	melt_amount = 75
+	melting_material = /datum/material/steel
 	sellprice = VALUE_BRIGANDINE
 	clothing_flags = CANT_SLEEP_IN
 	armor_class = AC_HEAVY
@@ -82,7 +103,6 @@
 	body_parts_covered = COVERAGE_ALL_BUT_LEGS
 	max_integrity = INTEGRITY_STRONGEST
 	prevent_crits = ALL_EXCEPT_BLUNT
-	item_weight = 7 * STEEL_MULTIPLIER
 	uses_lord_coloring = LORD_PRIMARY
 	stand_speed_reduction = 1.15
 
@@ -104,13 +124,18 @@
 
 	max_integrity = INTEGRITY_STRONG
 
-/obj/item/clothing/shirt/vampire
-	slot_flags = ITEM_SLOT_SHIRT|ITEM_SLOT_ARMOR
-	name = "regal silks"
-	desc = ""
-	body_parts_covered = CHEST|GROIN|LEGS|VITALS
-	prevent_crits = list(BCLASS_BITE, BCLASS_TWIST)
-	icon_state = "vrobe"
-	item_state = "vrobe"
-	r_sleeve_status = SLEEVE_NORMAL
-	l_sleeve_status = SLEEVE_NORMAL
+/obj/item/clothing/armor/brigandine/light
+	slot_flags = ITEM_SLOT_ARMOR
+	name = "lightweight brigandine"
+	desc = "A light riveted coat with plates concealed inside an exterior fabric. Susceptible to daggers being shoved into your ribs."
+	icon_state = "light_brigandine"
+	blocksound = SOFTHIT
+	body_parts_covered = COVERAGE_TORSO
+	armor = ARMOR_BRIGANDINE
+	max_integrity = ARMOR_INT_CHEST_PLATE_BRIGANDINE
+	smeltresult = /obj/item/ingot/iron
+	equip_delay_self = 40
+	armor_class = AC_LIGHT//steel version of the studded leather armor now
+	w_class = WEIGHT_CLASS_BULKY
+	prevent_crits = ALL_EXCEPT_STAB
+	item_weight = 3.95 KILOGRAMS

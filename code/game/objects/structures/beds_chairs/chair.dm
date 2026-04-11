@@ -34,7 +34,7 @@
 	W.setDir(dir)
 	qdel(src)
 
-/obj/structure/chair/attackby(obj/item/W, mob/user, params)
+/obj/structure/chair/attackby(obj/item/W, mob/user, list/modifiers)
 	if(W.tool_behaviour == TOOL_WRENCH && !(flags_1&NODECONSTRUCT_1))
 		W.play_tool_sound(src)
 		deconstruct()
@@ -44,8 +44,7 @@
 /obj/structure/chair/proc/handle_rotation(direction)
 	handle_layer()
 	if(has_buckled_mobs())
-		for(var/m in buckled_mobs)
-			var/mob/living/buckled_mob = m
+		for(var/mob/living/buckled_mob as anything in buckled_mobs)
 			buckled_mob.setDir(direction)
 
 /obj/structure/chair/proc/handle_layer()
@@ -89,7 +88,7 @@
 /obj/structure/chair/stool
 	name = "stool"
 	desc = ""
-	icon_state = "barstool"
+	icon_state = "stool"
 	icon = 'icons/roguetown/misc/structure.dmi'
 	item_chair = /obj/item/chair/stool
 	max_integrity = 100
@@ -116,10 +115,11 @@
 		qdel(src)
 
 /obj/structure/chair/stool/bar
-	name = "bar stool"
+	name = "barstool"
 	desc = ""
-	icon_state = "bar"
+	icon_state = "barstool"
 	item_chair = /obj/item/chair/stool/bar
+	sleepy = 0.2
 
 /obj/item/chair
 	name = "chair"
@@ -171,7 +171,7 @@
 	W.setDir(dir)
 	qdel(src)
 
-/obj/item/chair/attack_self(mob/user, params)
+/obj/item/chair/attack_self(mob/user, list/modifiers)
 	plant(user)
 
 /obj/item/chair/proc/plant(mob/user)
@@ -196,7 +196,7 @@
 /obj/item/chair/proc/smash(mob/living/user)
 	qdel(src)
 
-/obj/item/chair/afterattack(atom/target, mob/living/carbon/user, proximity)
+/obj/item/chair/afterattack(atom/target, mob/living/carbon/user, proximity, list/modifiers)
 	. = ..()
 	if(!proximity)
 		return
@@ -209,15 +209,16 @@
 		smash(user)
 
 /obj/item/chair/stool
-	name = "bar stool"
-	icon_state = "bar_toppled"
-	item_state = "stool_bar"
+	name = "stool"
+	icon = 'icons/roguetown/misc/structure.dmi'
+	icon_state = "stoolover"
+	item_state = "stool"
 	origin_type = /obj/structure/chair/stool
 
 /obj/item/chair/stool/bar
-	name = "bar stool"
-	icon_state = "bar_toppled"
-	item_state = "stool_bar"
+	name = "barstool"
+	icon_state = "barstoolover"
+	item_state = "barstool"
 	origin_type = /obj/structure/chair/stool/bar
 
 /obj/item/chair/stool/narsie_act()

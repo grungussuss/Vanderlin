@@ -1,3 +1,5 @@
+#define LOCKER_FULL -1
+
 /obj/structure/closet
 	name = "closet"
 	desc = ""
@@ -11,6 +13,8 @@
 
 	var/icon_door = null
 	var/icon_door_override = FALSE //override to have open overlay use icon different to its base's
+	/// true whenever someone with the strong pull component is dragging this, preventing opening
+	var/strong_grab = FALSE
 	var/secure = FALSE //secure locker or not, also used if overriding a non-secure locker with a secure door overlay to add fancy lights
 	var/opened = FALSE
 	var/welded = FALSE
@@ -20,7 +24,6 @@
 	var/message_cooldown
 	var/can_weld_shut = TRUE
 	var/horizontal = FALSE
-	var/allow_objects = FALSE
 	var/allow_dense = FALSE
 	var/dense_when_open = FALSE //if it's dense when open or not
 	var/max_mob_size = MOB_SIZE_HUMAN //Biggest mob_size accepted by the container
@@ -49,21 +52,24 @@
 		base_icon_state = initial(icon_state)
 	update_appearance(UPDATE_ICON_STATE)
 
+/*
 /obj/structure/closet/get_save_vars()
 	. = ..()
+	spawn_contents = list()
 	for(var/obj/item/item in contents)
 		LAZYADD(spawn_contents, item.type)
 	. += NAMEOF(src, spawn_contents)
+*/
 
 /obj/structure/closet/Initialize(mapload)
 	if(length(spawn_contents))
 		for(var/atom/movable/spawning_atom as anything in spawn_contents)
 			new spawning_atom(get_turf(src))
 	if(mapload && !opened)		// if closed, any item at the crate's loc is put in the contents
-		addtimer(CALLBACK(src, PROC_REF(take_contents)), 0)
+		addtimer(CALLBACK(src, PROC_REF(take_contents), TRUE), 0)
 	. = ..()
 	update_appearance(UPDATE_ICON_STATE)
-	PopulateContents()
+	populate_contents()
 	var/static/list/loc_connections = list(
 		COMSIG_ATOM_MAGICALLY_UNLOCKED = PROC_REF(on_magic_unlock),
 	)
@@ -74,7 +80,7 @@
 	return ..()
 
 //USE THIS TO FILL IT, NOT INITIALIZE OR NEW
-/obj/structure/closet/proc/PopulateContents()
+/obj/structure/closet/proc/populate_contents()
 	return
 
 // TODO: REIMPLEMENT TG CLOSET AND CRATE OVERLAYS
@@ -92,10 +98,17 @@
 	if(wall_mounted)
 		return TRUE
 
-/obj/structure/closet/proc/can_open(mob/living/user)
+/obj/structure/closet/proc/can_open(mob/living/user, force = FALSE)
+	if(force)
+		return TRUE
 	if(welded || locked())
 		if(user)
-			to_chat(user, "<span class='warning'>Locked.</span>" )
+			to_chat(user, span_warning("Locked."))
+		return FALSE
+	//MONKESTATION EDIT START - Allow a strong grabber to open their own pulled closet
+	if(strong_grab && pulledby != user)
+		if(user)
+			to_chat(user, span_danger("[pulledby] has an incredibly strong grip on [src], preventing it from opening."))
 		return FALSE
 	return TRUE
 
@@ -111,10 +124,14 @@
 	if(throwing)
 		throwing.finalize(FALSE)
 
-/obj/structure/closet/proc/take_contents()
-	var/atom/L = drop_location()
-	for(var/atom/movable/AM in L)
-		if(AM != src && insert(AM) == -1) // limit reached
+/obj/structure/closet/proc/take_contents(mapload = FALSE)
+	var/atom/location = drop_location()
+	if(!location)
+		return
+	for(var/atom/movable/AM in location)
+		if(AM != src && insert(AM, mapload) == LOCKER_FULL) // limit reached
+			//if(mapload) // Yea, it's a mapping issue. Blame mappers.
+			//	log_mapping("Closet storage capacity of [type] exceeded on mapload at [AREACOORD(src)]") // sorry cheffie but this wasn't even running as a mapload in the first place
 			break
 
 /obj/structure/closet/proc/open(mob/living/user)
@@ -123,7 +140,7 @@
 	if(user)
 		if(!can_open(user))
 			return
-	playsound(loc, open_sound, open_sound_volume, FALSE, -3)
+	playsound(src, open_sound, open_sound_volume, FALSE, -3)
 	opened = TRUE
 	if(!dense_when_open)
 		density = FALSE
@@ -131,21 +148,23 @@
 	update_appearance(UPDATE_ICON_STATE)
 	return 1
 
-/obj/structure/closet/proc/insert(atom/movable/AM)
-	if(contents.len >= storage_capacity)
-		return -1
-	if(insertion_allowed(AM))
-		AM.forceMove(src)
-		return TRUE
-	else
+/obj/structure/closet/proc/insert(atom/movable/inserted, mapload = FALSE)
+	if(length(contents) >= storage_capacity)
+		if(!mapload)
+			return LOCKER_FULL
+		//For maploading, we only return LOCKER_FULL if the movable was otherwise insertable. This way we can avoid logging false flags.
+		return insertion_allowed(inserted) ? LOCKER_FULL : FALSE
+	if(!insertion_allowed(inserted))
 		return FALSE
+	inserted.forceMove(src)
+	return TRUE
 
 /obj/structure/closet/proc/insertion_allowed(atom/movable/AM)
 	if(ismob(AM))
-		if(!isliving(AM)) //let's not put ghosts or camera mobs inside closets...
+		if(!isliving(AM)) //let's not put ghosts or eye mobs inside closets...
 			return FALSE
 		var/mob/living/L = AM
-		if(L.anchored || (L.buckled && L.buckled != src) || L.incorporeal_move || L.has_buckled_mobs())
+		if(L.anchored || L.buckled || L.incorporeal_move || L.has_buckled_mobs())
 			return FALSE
 		if(L.mob_size > MOB_SIZE_TINY) // Tiny mobs are treated as items.
 			if(horizontal && L.density)
@@ -154,20 +173,18 @@
 				return FALSE
 			var/mobs_stored = 0
 			for(var/mob/living/M in contents)
-				if(++mobs_stored >= mob_storage_capacity)
-					return FALSE
-			for(var/obj/structure/closet/crate/C in contents)
-				if(C != src)
+				mobs_stored++
+				if(mobs_stored >= mob_storage_capacity)
 					return FALSE
 		L.stop_pulling()
 
+	else if(istype(AM, /obj/structure/closet))
+		return FALSE
 	else if(isobj(AM))
 		if((!allow_dense && AM.density) || AM.anchored || AM.has_buckled_mobs())
 			return FALSE
 		else if(isitem(AM) && !HAS_TRAIT(AM, TRAIT_NODROP))
 			return TRUE
-		else if(!allow_objects)
-			return FALSE
 	else
 		return FALSE
 
@@ -180,9 +197,9 @@
 		if(!can_close(user))
 			return FALSE
 	take_contents()
-	playsound(loc, close_sound, close_sound_volume, FALSE, -3)
+	playsound(src, close_sound, close_sound_volume, FALSE, -3)
 	opened = FALSE
-	density = TRUE
+	density = initial(density)
 	update_appearance(UPDATE_ICON_STATE)
 	return TRUE
 
@@ -202,7 +219,7 @@
 		bust_open()
 	. = ..()
 
-/obj/structure/closet/attackby(obj/item/I, mob/user, params)
+/obj/structure/closet/attackby(obj/item/I, mob/user, list/modifiers)
 	if(user in src)
 		return TRUE
 	if(tool_interact(I, user))
@@ -214,6 +231,9 @@
 	if(opened)
 		if(user.transferItemToLoc(I, drop_location())) // so we put in unlit welder too
 			return TRUE
+
+/obj/structure/closet/pre_lock_interact(mob/living/user)
+	return ..() && !opened
 
 /obj/structure/closet/MouseDrop_T(atom/movable/O, mob/living/user)
 	if(!istype(O) || O.anchored || istype(O, /atom/movable/screen))
@@ -263,8 +283,6 @@
 /obj/structure/closet/attack_hand(mob/living/user)
 	. = ..()
 	if(.)
-		return
-	if(user.body_position == LYING_DOWN && get_dist(src, user) > 0)
 		return
 	user.changeNext_move(CLICK_CD_MELEE)
 	toggle(user)
@@ -336,3 +354,16 @@
 
 	INVOKE_ASYNC(src, PROC_REF(unlock))
 	INVOKE_ASYNC(src, PROC_REF(open))
+
+#undef LOCKER_FULL
+
+/// Proc that searches inside an atom, specifically for sanctified coffins.
+/obj/structure/closet/proc/check_double_consecration(obj/structure/closet/dirthole/closed/grave_to_consecrate, mob/user)
+	var/double_consecrated = FALSE
+	if(!grave_to_consecrate)
+		return FALSE
+// If the grave contains a sanctified casket, mark the tomb as doubly-sanctified. This will make anyone trying to graverob regret it.
+	for(var/obj/structure/closet/crate/coffin/coffin in grave_to_consecrate.contents)
+		if (coffin.consecrated)
+			double_consecrated = TRUE
+	return double_consecrated

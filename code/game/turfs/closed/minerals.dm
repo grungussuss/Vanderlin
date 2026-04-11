@@ -11,7 +11,7 @@
 	wallclimb = TRUE
 	baseturfs = /turf/open/floor/naturalstone
 	above_floor = /turf/open/floor/naturalstone
-	opacity = 1
+	opacity = TRUE
 	density = TRUE
 	var/turf/open/floor/turf_type = /turf/open/floor/naturalstone
 	var/obj/item/mineralType = null
@@ -57,7 +57,7 @@
 				var/turf/T = get_step(src, dir)
 				if(istype(T, /turf/closed/mineral/random))
 					Spread(T)
-	var/turf/open/transparent/openspace/target = get_step_multiz(src, UP)
+	var/turf/open/openspace/target = GET_TURF_ABOVE(src)
 	if(istype(target))
 		target.ChangeTurf(/turf/open/floor/naturalstone)
 
@@ -69,7 +69,7 @@
 	return ..()
 
 
-/turf/closed/mineral/attackby(obj/item/I, mob/user, params)
+/turf/closed/mineral/attackby(obj/item/I, mob/user, list/modifiers)
 	if (!user.IsAdvancedToolUser())
 		to_chat(user, span_warning("I don't have the dexterity to do this!"))
 		return
@@ -88,23 +88,23 @@
 		var/obj/item/explo_mineral = mineralType
 		var/explo_mineral_amount = mineralAmt
 		var/obj/item/natural/rock/explo_rock = rockType
-		ScrapeAway()
-		GLOB.mined_resource_loc |= get_turf(src)
-		QUEUE_SMOOTH_NEIGHBORS(src)
-		new /obj/item/natural/stone(src)
+		var/turf/new_turf = ScrapeAway()
+		GLOB.mined_resource_loc |= new_turf
+		QUEUE_SMOOTH_NEIGHBORS(new_turf)
+		new /obj/item/natural/stone(new_turf)
 		if(prob(30))
-			new /obj/item/natural/stone(src)
+			new /obj/item/natural/stone(new_turf)
 		if (explo_mineral && (explo_mineral_amount > 0))
 			if(prob(33)) //chance to spawn ore directly
-				new explo_mineral(src)
+				new explo_mineral(new_turf)
 			if(explo_rock)
 				if(prob(23))
-					new explo_rock(src)
+					new explo_rock(new_turf)
 			SSblackbox.record_feedback("tally", "ore_mined", explo_mineral_amount, explo_mineral)
 		else
 			return
 	else
-		if(lastminer.stat_roll(STATKEY_LCK,2,10) && mineralType)
+		if(lastminer?.stat_roll(STAT_FORTUNE,2,10) && mineralType)
 	//		to_chat(lastminer, span_notice("Bonus ducks!"))
 			new mineralType(src)
 		gets_drilled(lastminer, give_exp = FALSE)
@@ -128,21 +128,22 @@
 				var/obj/item/natural/rock/bonus_rock = new rockType(src)
 				apply_mining_quality(bonus_rock, user)
 		SSblackbox.record_feedback("tally", "ore_mined", mineralAmt, mineralType)
-	else if(user?.stat_roll(STATKEY_LCK,2,10))
+	else if(user?.stat_roll(STAT_FORTUNE,2,10))
 		var/newthing = pickweight(list(/obj/item/natural/rock/salt = 2, /obj/item/natural/rock/iron = 1, /obj/item/natural/rock/coal = 2))
 		var/obj/item/bonus_item = new newthing(src)
 		apply_mining_quality(bonus_item, user)
 	var/flags = NONE
 	if(defer_change)
 		flags = CHANGETURF_DEFER_CHANGE
-	ScrapeAway(null, flags)
+	var/turf/new_turf = ScrapeAway(null, flags)
+	GLOB.mined_resource_loc |= new_turf
 	addtimer(CALLBACK(src, PROC_REF(AfterChange)), 1, TIMER_UNIQUE)
 
 /turf/closed/mineral/proc/apply_mining_quality(obj/item/item, mob/living/user)
 	if(!user || !istype(item, /obj/item/ore))
 		return
 
-	var/mining_skill = user.get_skill_level(/datum/skill/labor/mining) + user.get_inspirational_bonus()
+	var/mining_skill = GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/labor/mining) + user.get_inspirational_bonus()
 
 	// Base quality calculation - mainly chance-based with skill influence
 	var/base_chance = 5 // 5% chance for quality 2
@@ -150,7 +151,7 @@
 	var/luck_bonus = 0
 
 	// Check for luck bonus
-	if(user.stat_roll(STATKEY_LCK, 3, 15))
+	if(user.stat_roll(STAT_FORTUNE, 3, 15))
 		luck_bonus = 10
 
 	var/total_chance = base_chance + skill_bonus + luck_bonus
@@ -221,7 +222,7 @@
 	smoothing_list = SMOOTH_GROUP_MINERAL_WALLS
 	turf_type = /turf/open/floor/naturalstone
 	above_floor = /turf/open/floor/naturalstone
-	baseturfs = list(/turf/open/floor/naturalstone)
+	baseturfs = /turf/open/floor/naturalstone
 	wallclimb = TRUE
 	max_integrity = 400
 	///if this isn't empty, swaps to one of them via pickweight
@@ -235,7 +236,7 @@
 		var/path = pickweight(mineralSpawnChanceList)
 		var/turf/T = ChangeTurf(path,null,CHANGETURF_IGNORE_AIR)
 
-		if(T && ismineralturf(T))
+		if(ismineralturf(T))
 			var/turf/closed/mineral/M = T
 			M.mineralAmt = rand(1, 5)
 			M.turf_type = src.turf_type
@@ -492,7 +493,7 @@
 
 /turf/closed/mineral/bedrock
 	name = "rock"
-	desc = "Seems barren, and nigh indestructable."
+	desc = "Seems barren, and nigh-indestructible."
 	icon = MAP_SWITCH('icons/turf/smooth/walls/mineral.dmi', 'icons/turf/mining.dmi')
 	icon_state = MAP_SWITCH("mineral", "bedrock")
 	max_integrity = 10000000
@@ -503,7 +504,7 @@
 	icon = MAP_SWITCH('icons/turf/smooth/walls/mineral_blue.dmi', 'icons/turf/mining.dmi')
 	icon_state = MAP_SWITCH("mineral", "bedrock_ice")
 
-/turf/closed/mineral/bedrock/attackby(obj/item/I, mob/user, params)
+/turf/closed/mineral/bedrock/attackby(obj/item/I, mob/user, list/modifiers)
 	to_chat(user, span_warning("This is far too sturdy to be destroyed!"))
 	return FALSE
 

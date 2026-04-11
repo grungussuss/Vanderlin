@@ -31,11 +31,12 @@
 	qdel(src)
 
 /obj/effect/baseturf_helper/proc/replace_baseturf(turf/thing)
-	var/list/baseturf_cache = thing.baseturfs
-	if(length(baseturf_cache))
+	if(length(thing.baseturfs))
+		var/list/baseturf_cache = thing.baseturfs.Copy()
 		for(var/i in baseturf_cache)
 			if(baseturf_to_replace[i])
 				baseturf_cache -= i
+		thing.baseturfs = baseturfs_string_list(baseturf_cache, thing)
 		if(!baseturf_cache.len)
 			thing.assemble_baseturfs(baseturf)
 		else
@@ -165,6 +166,11 @@ INITIALIZE_IMMEDIATE(/obj/effect/mapping_helpers/no_lava)
 
 	for(var/obj/item/clothing/clothing in get_turf(src))
 		located.equip_to_appropriate_slot(clothing)
+
+	for(var/obj/item/storage/keyring/K in get_turf(src))
+		located.equip_to_appropriate_slot(K)
+	for(var/obj/item/key/K in get_turf(src))
+		located.equip_to_appropriate_slot(K)
 
 	for(var/obj/item/weapon/weapon in get_turf(src))
 		located.put_in_hands(weapon)

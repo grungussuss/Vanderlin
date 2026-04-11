@@ -6,11 +6,11 @@
 /area
 	level = null
 	name = "unknown"
-	icon = 'icons/turf/areas.dmi'
+	icon = 'icons/turf/areas/areas.dmi'
 	icon_state = "unknown"
 	layer = AREA_LAYER
 	//Keeping this on the default plane, GAME_PLANE, will make area overlays fail to render on FLOOR_PLANE.
-	plane = BLACKNESS_PLANE
+	plane = AREA_PLANE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	invisibility = INVISIBILITY_LIGHTING
 	flags_1 = CAN_BE_DIRTY_1 | CULT_PERMITTED_1
@@ -40,8 +40,6 @@
 	var/mood_bonus = 0
 	/// Mood message for being here, only shows up if mood_bonus != 0
 	var/mood_message = "<span class='nicegreen'>This area is pretty nice!\n</span>"
-
-	var/has_gravity = STANDARD_GRAVITY
 
 	var/parallax_movedir = 0
 
@@ -89,6 +87,9 @@
 	var/list/ambush_times
 
 	var/converted_type
+
+	var/threat_region = "" // Key used to look up threat region this area belongs to
+
 	var/delver_restrictions = FALSE
 	var/coven_protected = FALSE
 
@@ -266,28 +267,18 @@ GLOBAL_LIST_EMPTY(teleportlocs)
  * Register this area as belonging to a z level
  *
  * Ensures the item is added to the SSmapping.areas_in_z list for this z
- *
- * It also goes through every item in this areas contents and sets the area level z to it
- * breaking the exat first time it does this, this seems crazy but what would I know, maybe
- * areas don't have a valid z themself or something
  */
 /area/proc/reg_in_areas_in_z()
 	if(!has_contained_turfs())
-		var/list/areas_in_z = SSmapping.areas_in_z
-		var/z
-		update_areasize()
-		for(var/i in 1 to contents.len)
-			var/atom/thing = contents[i]
-			if(!thing)
-				continue
-			z = thing.z
-			break
-		if(!z)
-			WARNING("No z found for [src]")
-			return
-		if(!areas_in_z["[z]"])
-			areas_in_z["[z]"] = list()
-		areas_in_z["[z]"] += src
+		return
+	var/list/areas_in_z = SSmapping.areas_in_z
+	update_areasize()
+	if(!z)
+		WARNING("No z found for [src]")
+		return
+	if(!areas_in_z["[z]"])
+		areas_in_z["[z]"] = list()
+	areas_in_z["[z]"] += src
 
 /// Setup all ambience tracks
 /area/proc/setup_ambience()
@@ -338,33 +329,26 @@ GLOBAL_LIST_EMPTY(teleportlocs)
 	return ..()
 
 /**
- * Update the icon of the area (overridden to always be null for space
- */
-/area/space/update_icon_state()
-	icon_state = null
-	return ..()
-
-/**
  * Call back when an atom enters an area
  *
  * Sends signals COMSIG_AREA_ENTERED and COMSIG_ENTER_AREA (to the atom)
  *
  * If the area has ambience, then it plays some ambience music to the ambience channel
  */
-/area/Entered(atom/movable/M, atom/old_loc)
+/area/Entered(atom/movable/arrived, atom/old_loc, list/atom/old_locs)
 	set waitfor = FALSE
-	SEND_SIGNAL(src, COMSIG_AREA_ENTERED, M)
-	SEND_SIGNAL(M, COMSIG_ENTER_AREA, src) //The atom that enters the area
-	if(!isliving(M))
+
+	SEND_SIGNAL(src, COMSIG_AREA_ENTERED, arrived)
+	SEND_SIGNAL(arrived, COMSIG_ENTER_AREA, src) //The atom that enters the area
+
+	if(!isliving(arrived))
 		return
 
-	var/mob/living/L = M
+	var/mob/living/L = arrived
 	if(!L.ckey || L.stat == DEAD)
 		return
 
-	if(ismob(M))
-		var/mob/mob = M
-		mob.update_ambience_area(src)
+	L.update_ambience_area(src)
 
 	if(first_time_text)
 		L.intro_area(src)
@@ -384,7 +368,7 @@ GLOBAL_LIST_EMPTY(teleportlocs)
 	client.screen += T
 	T.maptext = MAPTEXT_BLACKMOOR("<span class='center' style='vertical-align:top; color: #820000;\
 		text-shadow: 1px 1px 2px black, 0 0 1em black, 0 0 0.2em black;'>[A.first_time_text]</span>")
-	T.maptext_width = 205
+	T.maptext_width = 230
 	T.maptext_height = 209
 	T.maptext_x = 12
 	T.maptext_y = 64
@@ -440,9 +424,9 @@ GLOBAL_LIST_EMPTY(teleportlocs)
  *
  * Sends signals COMSIG_AREA_EXITED and COMSIG_EXIT_AREA (to the atom)
  */
-/area/Exited(atom/movable/M)
-	SEND_SIGNAL(src, COMSIG_AREA_EXITED, M)
-	SEND_SIGNAL(M, COMSIG_EXIT_AREA, src) //The atom that exits the area
+/area/Exited(atom/movable/gone, atom/new_loc)
+	SEND_SIGNAL(src, COMSIG_AREA_EXITED, gone, new_loc)
+	SEND_SIGNAL(gone, COMSIG_EXIT_AREA, src, new_loc) //The atom that exits the area
 
 /**
  * Reset the played var to false on the client

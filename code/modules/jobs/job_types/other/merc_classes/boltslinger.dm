@@ -1,3 +1,29 @@
+/datum/attribute_holder/sheet/job/boltslinger
+	attribute_variance = list(
+		/datum/attribute/skill/combat/crossbows = list(0, 10),
+	)
+	raw_attribute_list = list(
+		STAT_PERCEPTION = 2,
+		STAT_ENDURANCE = 1,
+		STAT_STRENGTH = 1,
+		/datum/attribute/skill/combat/knives = 20,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/polearms = 10,
+		/datum/attribute/skill/combat/crossbows = 30,
+		/datum/attribute/skill/craft/tanning = 10,
+		/datum/attribute/skill/combat/wrestling = 10,
+		/datum/attribute/skill/combat/unarmed = 10,
+		/datum/attribute/skill/craft/crafting = 10,
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/riding = 30,
+		/datum/attribute/skill/misc/sewing = 30,
+		/datum/attribute/skill/misc/medicine = 20,
+		/datum/attribute/skill/craft/cooking = 10,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/misc/athletics = 30
+	)
+
 /datum/job/advclass/mercenary/boltslinger
 	title = "Boltslinger"
 	tutorial = "A cutthroat and a soldier of fortune, your mastery of the crossbow has brought you to many battlefields, all in pursuit of mammon."
@@ -6,9 +32,18 @@
 	category_tags = list(CTAG_MERCENARY)
 	total_positions = 5
 
+	attribute_sheet = /datum/attribute_holder/sheet/job/boltslinger
 
-/datum/outfit/mercenary/boltslinger/pre_equip(mob/living/carbon/human/H)
-	..()
+	traits = list(
+		TRAIT_MEDIUMARMOR
+	)
+
+/datum/job/advclass/mercenary/boltslinger/after_spawn(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+	spawned.merctype = 6
+
+/datum/outfit/mercenary/boltslinger
+	name = "Boltslinger (Mercenary)"
 	shoes = /obj/item/clothing/shoes/boots/leather
 	cloak = /obj/item/clothing/cloak/half
 	head = /obj/item/clothing/head/helmet/sallet
@@ -17,34 +52,13 @@
 	armor = /obj/item/clothing/armor/cuirass
 	beltr = /obj/item/weapon/sword/iron
 	beltl = /obj/item/ammo_holder/quiver/bolts
-	backr = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
+	backr = /obj/item/gun/ballistic/bow/cross
 	backl = /obj/item/storage/backpack/satchel
 	shirt = /obj/item/clothing/shirt/undershirt/colored/black
 	pants = /obj/item/clothing/pants/tights/colored/black
 	neck = /obj/item/clothing/neck/chaincoif
 	scabbards = list(/obj/item/weapon/scabbard/sword)
-	backpack_contents = list(/obj/item/storage/belt/pouch/coins/poor, /obj/item/weapon/knife/hunting)
-	if(H.mind)
-		H.adjust_skillrank(/datum/skill/combat/knives, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/swords, 3, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/polearms, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/shields, pick(0,0,1), TRUE)
-		H.adjust_skillrank(/datum/skill/combat/crossbows, 4, TRUE)
-		H.adjust_skillrank(/datum/skill/craft/tanning, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/unarmed, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/craft/crafting, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/swimming, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/climbing, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/riding, 3, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/sewing, 3, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/medicine, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/craft/cooking, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)
-
-		H.merctype = 6
-
-		H.change_stat(STATKEY_PER, 2)
-		H.change_stat(STATKEY_END, 1)
-		H.change_stat(STATKEY_STR, 1)
-	ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
+	backpack_contents = list(
+		/obj/item/storage/belt/pouch/coins/poor = 1,
+		/obj/item/weapon/knife/hunting = 1
+	)

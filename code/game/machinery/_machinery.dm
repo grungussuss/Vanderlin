@@ -152,7 +152,7 @@
 	if(!(stat & BROKEN) && !(flags_1 & NODECONSTRUCT_1))
 		stat |= BROKEN
 		SEND_SIGNAL(src, COMSIG_MACHINERY_BROKEN, damage_flag)
-		update_appearance()
+		update_appearance(UPDATE_ICON)
 		return TRUE
 
 /obj/machinery/contents_explosion(severity, target)
@@ -162,7 +162,7 @@
 /obj/machinery/handle_atom_del(atom/A)
 	if(A == occupant)
 		occupant = null
-		update_appearance()
+		update_appearance(UPDATE_ICON)
 		updateUsrDialog()
 
 /obj/proc/can_be_unfasten_wrench(mob/user, silent) //if we can unwrench this object; returns SUCCESSFUL_UNFASTEN and FAILED_UNFASTEN, which are both TRUE, or CANT_UNFASTEN, which isn't.
@@ -230,9 +230,9 @@
 /obj/machinery/proc/can_be_overridden()
 	. = 1
 
-/obj/machinery/Exited(atom/movable/AM, atom/newloc)
+/obj/machinery/Exited(atom/movable/gone, atom/new_loc)
 	. = ..()
-	if (AM == occupant)
+	if (gone == occupant)
 		occupant = null
 
 /obj/machinery/proc/adjust_item_drop_location(atom/movable/AM)	// Adjust item drop location to a 3x3 grid inside the tile, returns slot id from 0 to 8
@@ -288,7 +288,7 @@
 	var/adjusted_climb_time = climb_time
 	if(HAS_TRAIT(user, TRAIT_HANDS_BLOCKED)) //climbing takes twice as long when restrained.
 		adjusted_climb_time *= 2
-	adjusted_climb_time -= user.STASPD * 2
+	adjusted_climb_time -= GET_MOB_ATTRIBUTE_VALUE(user, STAT_SPEED) * 2
 	adjusted_climb_time = max(adjusted_climb_time, 0)
 
 	structureclimber = user

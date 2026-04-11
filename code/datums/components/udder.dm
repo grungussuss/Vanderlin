@@ -44,7 +44,7 @@
 			examine_list += span_notice("[parent]'s [udder.name] is round and full.")
 
 ///signal called on parent being attacked with an item
-/datum/component/udder/proc/on_attackby(datum/source, obj/item/milking_tool, mob/user)
+/datum/component/udder/proc/on_attackby(datum/source, obj/item/milking_tool, mob/user, list/modifiers)
 	SIGNAL_HANDLER
 
 	var/mob/living/milked = parent
@@ -105,7 +105,10 @@
 	return COMPONENT_NO_AFTERATTACK
 
 /obj/item/udder/proc/handle_consumption(atom/movable/food, mob/user)
-	COOLDOWN_START(src, require_consume_cooldown, require_consume_timer)
+	var/cooldown_time = require_consume_timer
+	if(HAS_TRAIT(udder_mob, TRAIT_ANIMAL_PRODUCTIVE))
+		cooldown_time *= 0.25
+	COOLDOWN_START(src, require_consume_cooldown, cooldown_time)
 
 /obj/item/udder/Destroy()
 	. = ..()
@@ -114,7 +117,7 @@
 	udder_mob = null
 	on_generate_callback = null
 
-/obj/item/udder/process(seconds_per_tick)
+/obj/item/udder/process()
 	if(isanimal(udder_mob))
 		var/mob/living/simple_animal/simple_animal = udder_mob
 		if(SEND_SIGNAL(simple_animal, COMSIG_MOB_RETURN_HUNGER) <= 0)

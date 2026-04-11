@@ -5,7 +5,7 @@
 
 /datum/outfit/artifact
 	head = /obj/item/clothing/head/leather/duelhat
-	//mask = /obj/item/clothing/face/mask/facemask/steel/harlequin
+	mask = /obj/item/clothing/face/facemask/steel/harlequin
 	armor = /obj/item/clothing/armor/plate/full/matthios
 	cloak = /obj/item/clothing/cloak/graggar
 	shirt = /obj/item/clothing/shirt/undershirt/artificer
@@ -22,7 +22,6 @@
 	initial_products = list()
 	max_custom_items = 1
 	custom_items = list(
-		/obj/item/weapon/mace/goden/steel/ravox = list(1, PRICE_SUBGOD_ARTIFACT, 1),
 		/obj/item/weapon/flail/peasantwarflail/matthios = list(1, PRICE_SUBGOD_ARTIFACT, 1),
 		/obj/item/weapon/sword/long/martyr = list(1, PRICE_SUBGOD_ARTIFACT, 1),
 		/obj/item/weapon/greataxe/dreamscape = list(1, PRICE_SUBGOD_ARTIFACT, 1),
@@ -30,7 +29,7 @@
 		/obj/item/weapon/polearm/woodstaff/naledi = list(1, PRICE_BOSS_ARTIFACT, 1),
 		/obj/item/weapon/polearm/halberd/bardiche/woodcutter/gorefeast = list(1, PRICE_GOD_ARTIFACT, 1),
 		/obj/item/weapon/polearm/neant = list(1, PRICE_GOD_ARTIFACT, 1),
-		/obj/item/gun/ballistic/revolver/grenadelauncher/bow/turbulenta = list(1, PRICE_GOD_ARTIFACT, 1),
+		/obj/item/gun/ballistic/bow/turbulenta = list(1, PRICE_GOD_ARTIFACT, 1),
 		/obj/item/weapon/sword/long/pleonexia = list(1, PRICE_GOD_ARTIFACT, 1),
 		/obj/item/flashlight/flare/torch/lantern/psycenser = list(1, PRICE_ARTIFACT, 1),
 	)

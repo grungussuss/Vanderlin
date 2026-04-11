@@ -16,8 +16,10 @@
 #define COMSIG_FRIENDSHIP_CHECK_LEVEL "friendship_check_level"
 #define COMSIG_FRIENDSHIP_CHANGE "friendship_change"
 #define COMSIG_FRIENDSHIP_PASS_FRIENDSHIP "friendship_passfriends"
+#define COMSIG_MOB_SET_HAPPINESS_MULTIPLIER "friendship_multiplier"
 
 #define COMSIG_CLIENT_HOVER_NEW "client_new_hover"
+#define COMSIG_CLIENT_CLICK_DIRTY "client_dirty_click"
 
 #define COMSIG_MOB_STOP_HUNGER "stop_hunger_mob"
 #define COMSIG_MOB_START_HUNGER "start_hunger_mob"

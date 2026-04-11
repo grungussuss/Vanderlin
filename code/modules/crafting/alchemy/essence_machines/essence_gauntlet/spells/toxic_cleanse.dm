@@ -17,6 +17,7 @@
 		M.reagents?.remove_all_type(/datum/reagent/toxin)
 		M.reagents?.remove_all_type(/datum/reagent/poison)
 		M.apply_status_effect(/datum/status_effect/buff/toxin_immunity, 300 SECONDS)
+		new /obj/effect/temp_visual/snake/twin_up(null, M)
 
 /atom/movable/screen/alert/status_effect/toxin_immunity
 	name = "Toxin Immunity"
@@ -30,9 +31,9 @@
 
 /datum/status_effect/buff/toxin_immunity/on_apply()
 	. = ..()
-	ADD_TRAIT(owner, TRAIT_TOXINLOVER, MAGIC_TRAIT)
+	ADD_TRAIT(owner, TRAIT_TOXINLOVER, TRAIT_STATUS_EFFECT(id))
 	to_chat(owner, span_notice("Toxins cannot harm you!"))
 
 /datum/status_effect/buff/toxin_immunity/on_remove()
 	. = ..()
-	REMOVE_TRAIT(owner, TRAIT_TOXINLOVER, MAGIC_TRAIT)
+	REMOVE_TRAIT(owner, TRAIT_TOXINLOVER, TRAIT_STATUS_EFFECT(id))

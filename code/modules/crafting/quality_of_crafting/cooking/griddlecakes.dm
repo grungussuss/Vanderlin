@@ -16,6 +16,7 @@
 	sound_volume = 100
 	crafting_message = "work egg into the dough"
 	extra_chance = 100
+	skillcraft = /datum/attribute/skill/craft/cooking/baking
 
 /datum/repeatable_crafting_recipe/cooking/unbaked_griddlecake
 	abstract_type = /datum/repeatable_crafting_recipe/cooking/unbaked_griddlecake
@@ -24,6 +25,7 @@
 	crafting_sound = 'sound/foley/dropsound/gen_drop.ogg'
 	extra_chance = 100
 	attacked_atom = /obj/item/reagent_containers/food/snacks/foodbase/griddlecake_raw
+	skillcraft = /datum/attribute/skill/craft/cooking/baking
 
 /datum/repeatable_crafting_recipe/cooking/unbaked_griddlecake/lemon
 	name = "Unbaked Lemon Griddlecake"
@@ -65,6 +67,7 @@
 		/obj/item/reagent_containers/food/snacks/produce/fruit/jacksberry = 1,
 		/obj/item/reagent_containers/food/snacks/foodbase/griddlecake_raw = 1,
 	)
+	subtypes_allowed = TRUE
 	starting_atom = /obj/item/reagent_containers/food/snacks/produce/fruit/jacksberry
 	output = /obj/item/reagent_containers/food/snacks/foodbase/berrygriddlecake_raw
 	crafting_message = "add jacksberry to the griddlecake"

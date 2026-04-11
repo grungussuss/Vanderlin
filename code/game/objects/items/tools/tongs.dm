@@ -3,8 +3,8 @@
 	desc = ""
 	icon = 'icons/roguetown/weapons/tools.dmi'
 	icon_state = "tongs"
-	force = 5
-	possible_item_intents = list(/datum/intent/mace/strike)
+	force = DAMAGE_CLUB / 3
+	possible_item_intents = list(MACE_STRIKE)
 	sharpness = IS_BLUNT
 	wlength = 10
 	slot_flags = ITEM_SLOT_HIP
@@ -12,8 +12,13 @@
 	smeltresult = /obj/item/ingot/iron
 	grid_width = 32
 	grid_height = 96
+	item_weight = 143 GRAMS
 	var/obj/item/held_item = null
 	var/hott = 0
+
+/obj/item/weapon/tongs/Initialize(mapload)
+	. = ..()
+	item_flags |= SURGICAL_TOOL // we lost a real one tbh
 
 /obj/item/weapon/tongs/examine(mob/user)
 	. = ..()
@@ -29,7 +34,7 @@
 	. = ..()
 	hott = world.time
 	update_appearance(UPDATE_ICON_STATE)
-	addtimer(CALLBACK(src, PROC_REF(make_unhot), world.time), 10 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(make_unhot), world.time), 30 SECONDS)
 
 /obj/item/weapon/tongs/update_icon_state()
 	. = ..()
@@ -60,34 +65,34 @@
 	else if(held_item)
 		to_chat(user, "<span class='warning'>Cannot place [held_item] here!</span>")
 
-/obj/item/weapon/tongs/attack_self(mob/user, params)
+/obj/item/weapon/tongs/attack_self(mob/user, list/modifiers)
 	place_item_to_atom(get_turf(user), user)
 
 /obj/item/weapon/tongs/dropped(mob/user)
 	. = ..()
 	place_item_to_atom(get_turf(src), user)
 
-/obj/item/weapon/tongs/pre_attack_secondary(atom/A, mob/living/user, params)
+/obj/item/weapon/tongs/pre_attack_secondary(atom/A, mob/living/user, list/modifiers)
 	. = ..()
 	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
 		return
 	place_item_to_atom(get_turf(A), user)
 	return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
-/obj/item/weapon/tongs/pre_attack(obj/item/A, mob/living/user, params)
+/obj/item/weapon/tongs/pre_attack(obj/item/A, mob/living/user, list/modifiers)
 	if(held_item?.tong_interaction(A, user))
-		return
+		return TRUE
 
 	if(!istype(A))
 		return ..()
 
-	if(A.tool_flags & TOOL_USAGE_TONGS)
+	if(A.tool_flags & TOOL_USAGE_TONGS || HAS_TRAIT(A, TRAIT_NEEDS_QUENCH))
 		if(!held_item)
 			user.visible_message("<span class='info'>[user] picks up [A] with [src].</span>")
 			held_item = A
 			A.forceMove(src)
 			update_appearance(UPDATE_ICON_STATE)
-			return
+			return TRUE
 	return ..()
 
 /obj/item/weapon/tongs/getonmobprop(tag)
@@ -105,7 +110,7 @@
 	force = 3
 	smeltresult = null
 	anvilrepair = null
-	max_integrity = 20
+	max_integrity = INTEGRITY_WORST / 5
 
 /atom/proc/tong_interaction(atom/target, mob/user)
 	return FALSE

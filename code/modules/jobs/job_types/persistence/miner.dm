@@ -1,3 +1,24 @@
+/datum/attribute_holder/sheet/job/persistant/miner
+	attribute_variance = list(
+		STAT_STRENGTH = list(0, 1),
+		STAT_CONSTITUTION = list(0, 1),
+		STAT_ENDURANCE = list(0, 1),
+	)
+	raw_attribute_list = list(
+		STAT_CONSTITUTION = 1,
+		STAT_ENDURANCE = 1,
+		/datum/attribute/skill/combat/knives = 10,
+		/datum/attribute/skill/combat/unarmed = 10,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/craft/crafting = 10,
+		/datum/attribute/skill/misc/climbing = 10,
+		/datum/attribute/skill/misc/swimming = 10,
+		/datum/attribute/skill/misc/athletics = 10,
+		/datum/attribute/skill/combat/axesmaces = 20,
+		/datum/attribute/skill/labor/mining = 40,
+		/datum/attribute/skill/craft/masonry = 20
+	)
+
 /datum/job/persistence/miner
 	title = "Mineworker"
 	tutorial = "You're a mineworker, ensure the settlement has stone and ores."
@@ -7,41 +28,33 @@
 	outfit = /datum/outfit/miner_p
 	cmode_music = 'sound/music/cmode/towner/CombatTowner.ogg'
 
-/datum/outfit/miner_p/pre_equip(mob/living/carbon/human/H)
-	..()
+	attribute_sheet = /datum/attribute_holder/sheet/job/persistant/miner
+
+/datum/job/persistence/miner/after_spawn(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
 	if(prob(50))
-		H.cmode_music = 'sound/music/cmode/towner/CombatTowner2.ogg'
-	//general skills
-	H.adjust_skillrank(/datum/skill/combat/knives, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/climbing, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/swimming, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 1, TRUE)
+		spawned.cmode_music = 'sound/music/cmode/towner/CombatTowner2.ogg'
 
-	//job specific skills
-	H.adjust_skillrank(/datum/skill/combat/axesmaces, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/mining, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/masonry, 2, TRUE)
 
-	//stats
-	H.change_stat(STATKEY_STR, pick(0,1))
-	H.change_stat(STATKEY_CON, pick(1,2))
-	H.change_stat(STATKEY_END, pick(1,2))
 
-	//traits
-
-	//gear
+/datum/outfit/miner_p
+	name = "Mineworker"
 	head = /obj/item/clothing/head/helmet/leather/minershelm
-	armor = pick(/obj/item/clothing/armor/leather/vest, /obj/item/clothing/armor/gambeson/light/striped)
 	shirt = /obj/item/clothing/shirt/undershirt/colored/random
-	pants = pick(/obj/item/clothing/pants/trou, /obj/item/clothing/pants/tights/colored/random)
 	shoes = /obj/item/clothing/shoes/boots/leather
-
-	belt = pick(/obj/item/storage/belt/leather, /obj/item/storage/belt/leather/rope)
 
 	beltl = /obj/item/weapon/pick
 	backr = /obj/item/weapon/shovel
 	backl = /obj/item/storage/backpack/satchel
-	backpack_contents = list(/obj/item/flint = 1, /obj/item/weapon/knife/villager = 1)
+
+	backpack_contents = list(
+		/obj/item/flint = 1,
+		/obj/item/weapon/knife/villager = 1
+	)
+
+
+/datum/outfit/miner_p/pre_equip(mob/living/carbon/human/equipped_human)
+	. = ..()
+	pants = pick(/obj/item/clothing/pants/trou, /obj/item/clothing/pants/tights/colored/random)
+	armor = pick(/obj/item/clothing/armor/leather/vest, /obj/item/clothing/armor/gambeson/light/striped)
+	belt = pick(/obj/item/storage/belt/leather, /obj/item/storage/belt/leather/rope)

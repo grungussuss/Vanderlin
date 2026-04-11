@@ -78,6 +78,14 @@
 	craftdiff = 3
 	category = "Cloak"
 
+/datum/repeatable_crafting_recipe/sewing/weaving/pantheoncloak
+	name = "pantheon cloak"
+	output = /obj/item/clothing/cloak/pantheon
+	requirements = list(/obj/item/natural/cloth = 1,
+				/obj/item/natural/silk = 1)
+	craftdiff = 3
+	category = "Cloak"
+
 /datum/repeatable_crafting_recipe/sewing/weaving/feld_hood
 	name = "hood (feldsher)"
 	output = /obj/item/clothing/head/roguehood/feld
@@ -375,6 +383,13 @@
 				/obj/item/natural/silk = 2)
 	craftdiff = 4
 
+/datum/repeatable_crafting_recipe/sewing/weaving/chasuble_psydonite
+	name = "chasuble"
+	output = /obj/item/clothing/cloak/chasuble/psydon
+	requirements = list(/obj/item/natural/cloth = 1,
+				/obj/item/natural/silk = 2)
+	craftdiff = 4
+
 /datum/repeatable_crafting_recipe/sewing/weaving/stole_gold
 	name = "stole (gold)"
 	output = /obj/item/clothing/cloak/stole
@@ -413,6 +428,14 @@
 /datum/repeatable_crafting_recipe/sewing/weaving/paddedgambeson
 	name = "padded gambeson"
 	output = /obj/item/clothing/armor/gambeson/heavy
+	requirements = list(/obj/item/natural/cloth = 6,
+				/obj/item/natural/fibers = 4)
+	craftdiff = 4
+	category = "Armor"
+
+/datum/repeatable_crafting_recipe/sewing/weaving/handgamb
+	name = "noble undercoat"
+	output = /obj/item/clothing/armor/gambeson/hand
 	requirements = list(/obj/item/natural/cloth = 6,
 				/obj/item/natural/fibers = 4)
 	craftdiff = 4
@@ -618,3 +641,75 @@
 				/obj/item/natural/cloth = 2)
 	craftdiff = 6
 	category = "Undershirt"
+
+/datum/repeatable_crafting_recipe/sewing/weaving/weddingdress
+	name = "wedding silk dress"
+	output = /obj/item/clothing/shirt/dress/silkdress/weddingdress
+	requirements = list(
+		/obj/item/natural/silk = 3
+	)
+	craftdiff = 3
+
+/datum/repeatable_crafting_recipe/sewing/weaving/absolver
+	name = "absolver's robe"
+	output = /obj/item/clothing/cloak/absolutionistrobe
+	requirements = list(
+		/obj/item/natural/silk = 3
+	)
+	craftdiff = 3
+
+/datum/repeatable_crafting_recipe/sewing/weaving/ordinatorcape
+	name = "ordinator cape"
+	output = /obj/item/clothing/cloak/ordinatorcape
+	requirements = list(
+		/obj/item/natural/silk = 3
+	)
+	craftdiff = 3
+
+/datum/repeatable_crafting_recipe/sewing/weaving/sanguinetrousers
+	name = "sanguine trousers"
+	output = /obj/item/clothing/pants/trou/courtphysician
+	requirements = list(
+		/obj/item/natural/silk = 3
+	)
+	craftdiff = 3
+
+/datum/repeatable_crafting_recipe/sewing/weaving/sanguinevest
+	name = "sanguine vest"
+	output = /obj/item/clothing/shirt/undershirt/courtphysician
+	requirements = list(
+		/obj/item/natural/silk = 3
+	)
+	craftdiff = 3
+
+/datum/repeatable_crafting_recipe/sewing/weaving/sanguineblouse
+	name = "sanguine blouse"
+	output = /obj/item/clothing/shirt/undershirt/courtphysician/female
+	requirements = list(
+		/obj/item/natural/silk = 3
+	)
+	craftdiff = 3
+
+/datum/repeatable_crafting_recipe/sewing/weaving/sanguineskirt
+	name = "sanguine skirt"
+	output = /obj/item/clothing/pants/skirt/courtphysician
+	requirements = list(
+		/obj/item/natural/silk = 3
+	)
+	craftdiff = 3
+
+/datum/repeatable_crafting_recipe/sewing/weaving/sanguinehat
+	name = "sanguine hat"
+	output = /obj/item/clothing/head/courtphysician/male
+	requirements = list(
+		/obj/item/natural/silk = 2
+	)
+	craftdiff = 3
+
+/datum/repeatable_crafting_recipe/sewing/weaving/sanguinecap
+	name = "sanguine cap"
+	output = /obj/item/clothing/head/courtphysician/female
+	requirements = list(
+		/obj/item/natural/silk = 2
+	)
+	craftdiff = 3

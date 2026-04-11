@@ -93,7 +93,7 @@
 	var/strength = 5
 	var/attached = 0
 
-/obj/item/clothing/face/goblin_mask/take_damage(damage_amount, damage_type = BRUTE, damage_flag = 0, sound_effect = 1, attack_dir)
+/obj/item/clothing/face/goblin_mask/take_damage(damage_amount, damage_type, damage_flag, sound_effect, attack_dir, armor_penetration)
 	..()
 	if(atom_integrity < 90)
 		Die()
@@ -169,7 +169,7 @@
 	. = ..()
 	HasProximity(target)
 
-/obj/item/clothing/face/goblin_mask/attack(mob/living/M, mob/user)
+/obj/item/clothing/face/goblin_mask/attack(mob/living/M, mob/user, list/modifiers)
 	..()
 	if(user.transferItemToLoc(src, get_turf(M)))
 		Leap(M)
@@ -226,7 +226,7 @@
 					span_danger("[src] tears [W] off of [target]'s face!"), \
 					"<span class='userdanger'>[src] tears [W] off of your face!</span>")
 		target.equip_to_slot_if_possible(src, ITEM_SLOT_MASK, 0, 1, 1)
-		var/datum/cb = CALLBACK(src,/obj/item/clothing/face/goblin_mask/proc/eat_head)
+		var/datum/cb = CALLBACK(src, TYPE_PROC_REF(/obj/item/clothing/face/goblin_mask, eat_head))
 		for(var/i in 1 to 10)
 			addtimer(cb, (i - 1) * 1.5 SECONDS)
 		spawn(16 SECONDS)
@@ -325,9 +325,7 @@
 	if(iscarbon(AM) && owner)
 		if(AM != owner)
 			var/mob/living/carbon/L = AM
-			for(var/obj/item/I in L.get_equipped_items(include_pockets = TRUE))
-				if(I)
-					L.dropItemToGround(I, TRUE)
+			L.drop_all_held_items()
 			qdel(src)
 
 //CHANJELIN WARD
@@ -405,7 +403,7 @@
 				if(RIDDLE)
 					if(RIDDLE.riddle_text == try_riddle)
 						actual_riddle = RIDDLE
-			target.add_movespeed_modifier("riddle", 5)
+			target.add_movespeed_modifier(MOVESPEED_ID_FAE_TRICKERY, multiplicative_slowdown = 5)
 			actual_riddle.ask(target)
 			owner.say(actual_riddle.riddle_text)
 	else
@@ -487,7 +485,7 @@
 					tongue.Remove(C)
 			to_chat(answerer,
 				span_danger("THE RIDDLE REMOVES YOUR LYING TONGUE AS IT FLEES."))
-			answerer.remove_movespeed_modifier("riddle")
+			answerer.remove_movespeed_modifier(MOVESPEED_ID_FAE_TRICKERY)
 			alert.bad_answers = 0
 			alert.riddle = null
 			answerer.clear_alert("riddle")
@@ -495,6 +493,6 @@
 		to_chat(answerer,
 			"<span class='nicegreen'>You feel the riddle's hold over you vanish.</span>")
 		alert.riddle = null
-		answerer.remove_movespeed_modifier("riddle")
+		answerer.remove_movespeed_modifier(MOVESPEED_ID_FAE_TRICKERY)
 		answerer.say(the_answer)
 		answerer.clear_alert("riddle")

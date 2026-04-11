@@ -33,7 +33,7 @@
 	toxpwr = 3
 
 /datum/reagent/toxin/plasma/reaction_mob(mob/living/M, method=TOUCH, reac_volume)//Splashing people with plasma is stronger than fuel!
-	if(method == TOUCH || method == VAPOR)
+	if((method & TOUCH) || (method & VAPOR))
 		M.adjust_fire_stacks(reac_volume / 5)
 		return
 	..()
@@ -66,11 +66,11 @@
 	alpha = 225
 
 /datum/reagent/medicine/soporpot/on_mob_life(mob/living/carbon/M)
-	M.confused += 1
-	M.dizziness += 1
+	M.adjust_confusion(2 SECONDS)
+	M.adjust_dizzy(2 SECONDS)
 	M.adjust_energy(-25)
 	if(M.stamina > 75)
-		M.drowsyness += 2
+		M.adjust_drowsiness(4 SECONDS)
 	else
 		M.adjust_stamina(15)
 	..()
@@ -78,7 +78,7 @@
 
 /datum/reagent/toxin/venom
 	name = "Venom"
-	description = "An exotic poison extracted from highly toxic fauna. Causes scaling amounts of toxin damage and bruising depending and dosage. Often decays into Histamine."
+	description = "An exotic poison extracted from highly toxic fauna. Causes scaling amounts of toxin damage and bruising depending on dosage. Often decays into Histamine."
 	reagent_state = LIQUID
 	color = "#F0FFF0"
 	metabolization_rate = 0.25 * REAGENTS_METABOLISM
@@ -128,7 +128,7 @@
 	reagent_state = LIQUID
 	color = "#d6d6d8"
 	metabolization_rate = 0.25 * REAGENTS_METABOLISM
-	toxpwr = 0.5
+	toxpwr = 0.25
 	taste_description = "bad cooking"
 
 
@@ -163,15 +163,15 @@
 	if(!istype(C))
 		return
 	reac_volume = round(reac_volume,0.1)
-	if(method == INGEST)
+	if(method & INGEST)
 		C.adjustBruteLoss(min(6*toxpwr, reac_volume * toxpwr))
 		return
-	if(method == INJECT)
+	if(method & INJECT)
 		C.adjustBruteLoss(1.5 * min(6*toxpwr, reac_volume * toxpwr))
 		return
 	C.acid_act(acidpwr, reac_volume)
 
-	if(method == TOUCH)
+	if(method & TOUCH)
 		C.try_skin_burn(reac_volume)
 
 /datum/reagent/toxin/acid/reaction_obj(obj/O, reac_volume)
@@ -188,7 +188,7 @@
 
 /datum/reagent/toxin/manabloom_juice
 	name = "Manabloom Juice"
-	description = "A potent mana regeneration extract, it however has the issue of stopping your bodies ability to naturally disperse mana."
+	description = "A potent mana regeneration extract, it however has the issue of stopping your body's ability to naturally disperse mana."
 	glows = TRUE
 	color = "#6eb9e4"
 	taste_description = "flowers"
@@ -213,3 +213,57 @@
 		return
 
 	L.mana_pool.restore_mana_disperse("manabloom")
+
+
+/datum/reagent/toxin/spidervenom_paralytic
+	name = "Aragn Essence"
+	description = "A strong neurotoxin that makes muscles stiffen up and spasm."
+	silent_toxin = TRUE
+	reagent_state = SOLID
+	color = "#99005e"
+	toxpwr = 0
+	taste_description = "raspberry"
+	metabolization_rate = 0.01
+	var/venom_resistance
+
+/obj/item/reagent_containers/glass/bottle/spidervenom_paralytic
+	list_reagents = list(/datum/reagent/toxin/spidervenom_paralytic = 1)
+	desc = "An ominous vial, filled with venom of the deadly Aragn spider. Feels hot to the touch."
+
+/datum/reagent/toxin/spidervenom_paralytic/on_mob_metabolize(mob/living/L)
+	..()
+	venom_resistance += ((GET_MOB_ATTRIBUTE_VALUE(L, STAT_CONSTITUTION) - 10) * 5)
+	venom_resistance += ((GET_MOB_ATTRIBUTE_VALUE(L, STAT_ENDURANCE) - 10) * 3)
+	venom_resistance += ((GET_MOB_ATTRIBUTE_VALUE(L, STAT_STRENGTH) - 10) * 2)
+	venom_resistance += (GET_MOB_ATTRIBUTE_VALUE(L, STAT_FORTUNE))
+
+	if(venom_resistance <= 0)
+		venom_resistance = 0
+		venom_resistance += (GET_MOB_ATTRIBUTE_VALUE(L, STAT_FORTUNE) * 5)
+
+/datum/reagent/toxin/spidervenom_paralytic/on_mob_end_metabolize(mob/living/L)
+	..()
+
+/datum/reagent/toxin/spidervenom_paralytic/on_mob_life(mob/living/carbon/M)
+	..()
+	if(!(current_cycle % 5) && !(prob(venom_resistance / 5)))
+		M.Paralyze(50)
+	if(current_cycle >= 60 && !(current_cycle % 5) && prob(venom_resistance))
+		M.reagents.remove_reagent(/datum/reagent/toxin/spidervenom_paralytic, 100)
+
+/datum/reagent/toxin/spidervenom_inert
+	name = "Inert Aragn Essence"
+	description = "Without the spider, the venom has weakened. It must be strengthened with a binding catalyst first."
+	silent_toxin = TRUE
+	reagent_state = SOLID
+	color = "#003d99"
+	toxpwr = 0
+	taste_description = "blueberry"
+	metabolization_rate = 10
+
+/obj/item/reagent_containers/spidervenom_inert
+	list_reagents = list(/datum/reagent/toxin/spidervenom_inert = 10)
+	name = "Pale spider gland"
+	desc = "A squishy pale gland, filled to the brim with venom of the deadly Aragn spider. Feels cold to the touch."
+	icon = 'icons/obj/webbing.dmi'
+	icon_state = "gland"

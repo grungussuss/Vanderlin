@@ -10,6 +10,8 @@
 
 	var/list/curse_effects = list()
 
+
+//Misfortune
 /datum/family_curse/misfortune
 	name = "Family Misfortune"
 	description = "Bad luck follows this bloodline"
@@ -18,17 +20,10 @@
 /datum/status_effect/misfortune
 	id = "family_misfortune"
 	duration = -1
-	alert_type = /atom/movable/screen/alert/status_effect/family_curse/mmisfortune
+	alert_type = /atom/movable/screen/alert/status_effect/family_curse/misfortune
+	effectedstats = list(STAT_FORTUNE = -2)
 
-/datum/status_effect/misfortune/on_apply()
-	. = ..()
-	owner.set_stat_modifier("[type]", STATKEY_LCK, -2)
-
-/datum/status_effect/misfortune/on_remove()
-	. = ..()
-	owner.remove_stat_modifier("[type]")
-
-/atom/movable/screen/alert/status_effect/family_curse/mmisfortune
+/atom/movable/screen/alert/status_effect/family_curse/misfortune
 	name = "Family Misfortune"
 	desc = "Your family's curse brings ill fortune to your steps."
 	icon_state = "debuff"
@@ -41,10 +36,52 @@
 		"Your ancestors' misdeeds continue to haunt you."
 	)
 
-/atom/movable/screen/alert/status_effect/family_curse/mmisfortune/Initialize(mapload, datum/hud/hud_owner)
+/atom/movable/screen/alert/status_effect/family_curse/misfortune/Initialize(mapload, datum/hud/hud_owner)
 	. = ..()
 	if(desc == initial(desc))
 		desc = "[initial(desc)] [pick(misfortune_tips)]"
+
+
+// Hunger
+/datum/family_curse/hunger
+	name = "Insatiable Appetite"
+	description = "This bloodline is voracious in its hunger."
+	curse_effects = list(/datum/status_effect/hunger)
+
+/datum/status_effect/hunger
+	id = "family_hunger"
+	duration = -1
+	alert_type = /atom/movable/screen/alert/status_effect/family_curse/hunger
+
+/datum/status_effect/hunger/on_apply()
+	. = ..()
+	if(ishuman(owner))
+		var/mob/living/carbon/human/H = owner
+		H.dna.species.nutrition_mod += 1.1
+
+/datum/status_effect/hunger/on_remove()
+	. = ..()
+	if(ishuman(owner))
+		var/mob/living/carbon/human/H = owner
+		H.dna.species.nutrition_mod -= 1.1
+
+
+/atom/movable/screen/alert/status_effect/family_curse/hunger
+	name = "Insatiable Appetite"
+	desc = "Your family is cursed with a hunger that is rarely sated."
+	icon_state = "debuff"
+
+	var/static/list/hunger_tips = list(
+		"Your stomach growls like a caged volf...",
+		"You feel the weight of your family's curse.",
+		"Even the grandest feast was never enough."
+	)
+
+/atom/movable/screen/alert/status_effect/family_curse/hunger/Initialize(mapload, datum/hud/hud_owner)
+	. = ..()
+	if(desc == initial(desc))
+		desc = "[initial(desc)] [pick(hunger_tips)]"
+
 
 /atom/movable/screen/alert/status_effect/family_curse/Click(location, control, params)
 	. = ..()
@@ -522,6 +559,7 @@
 
 	AddFamilyIcon(person)
 	LateJoinAddToUI(person)
+	LearnFamilyIdentites(person)
 
 	return new_member
 
@@ -547,6 +585,16 @@
 	to_chat(person, span_notice("You have been added to the [housename] family."))
 	InheritCurses(new_member)
 	return new_member
+
+/// Automatically learn the identity of anyone in your family.
+/datum/heritage/proc/LearnFamilyIdentites(mob/living/carbon/human/new_member)
+	for(var/datum/family_member/existing in members)
+		var/mob/living/carbon/human/family_member = existing.person
+		if(family_member == new_member)
+			continue
+		if(!new_member.mind || !family_member.mind)
+			continue
+		new_member.mind.share_identities(family_member.mind)
 
 /datum/heritage/proc/MarryMembers(datum/family_member/person1, datum/family_member/person2)
 	if(!person1 || !person2)

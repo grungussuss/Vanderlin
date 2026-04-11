@@ -7,8 +7,9 @@
 	drop_sound = 'sound/foley/dropsound/chain_drop.ogg'
 	pickup_sound = 'sound/foley/equip/equip_armor_chain.ogg'
 	equip_sound = 'sound/foley/equip/equip_armor_chain.ogg'
-	anvilrepair = /datum/skill/craft/armorsmithing
-	smeltresult = /obj/item/ingot/steel
+	anvilrepair = /datum/attribute/skill/craft/armor_repair
+	melt_amount = 75
+	melting_material = /datum/material/steel
 	sellprice = VALUE_STEEL_ARMOR
 
 	armor_class = AC_MEDIUM
@@ -16,7 +17,9 @@
 	body_parts_covered = COVERAGE_ALL_BUT_LEGS
 	prevent_crits = ALL_EXCEPT_BLUNT
 	max_integrity = INTEGRITY_STRONG
-	item_weight = 6 * STEEL_MULTIPLIER
+	item_weight = 13 KILOGRAMS
+
+	material_category = ARMOR_MAT_CHAINMAIL
 
 /obj/item/clothing/armor/chainmail/iron
 	name = "iron haubergeon"
@@ -28,8 +31,8 @@
 
 	armor = ARMOR_MAILLE_IRON
 	body_parts_covered = COVERAGE_ALL_BUT_LEGS
-	max_integrity = INTEGRITY_STANDARD
-	item_weight = 6 * IRON_MULTIPLIER
+	max_integrity = INTEGRITY_STRONG
+	item_weight = 13 KILOGRAMS
 
 //................ Hauberk ............... //
 /obj/item/clothing/armor/chainmail/hauberk
@@ -40,11 +43,17 @@
 	sellprice = VALUE_STEEL_ARMOR_FINE
 
 	body_parts_covered = COVERAGE_FULL
-	item_weight = 6 * STEEL_MULTIPLIER
+	item_weight = 11 KILOGRAMS
 
 /obj/item/clothing/armor/chainmail/hauberk/Initialize()
 	. = ..()
 	AddComponent(/datum/component/item_equipped_movement_rustle)
+
+/obj/item/clothing/armor/chainmail/hauberk/fluted
+	name = "fluted hauberk"
+	desc = "A steel maille, of a pattern popularized by Psydonian templars."
+	icon_state = "ornatehauberk"
+	item_state = "ornatehauberk"
 
 /obj/item/clothing/armor/chainmail/hauberk/iron
 	name = "iron hauberk"
@@ -54,17 +63,6 @@
 	sellprice = VALUE_IRON_ARMOR_UNUSUAL
 
 	armor = ARMOR_MAILLE_IRON
-	max_integrity = INTEGRITY_STANDARD
-	item_weight = 6 * IRON_MULTIPLIER
+	max_integrity = INTEGRITY_STRONG
+	item_weight = 11 KILOGRAMS
 
-//................ Ancient Haubergon ............... //
-/obj/item/clothing/armor/chainmail/hauberk/vampire
-	name = "ancient haubergeon"
-	desc = "A style of armor long out of use, rests easy on the shoulders. Has sleeves but doesn't cover the legs."
-	icon_state = "vunder"
-	sellprice = VALUE_STEEL_ARMOR_FINE
-
-	armor_class = AC_LIGHT
-	armor = ARMOR_SCALE
-	body_parts_covered = COVERAGE_ALL_BUT_LEGS
-	item_weight = 7 * STEEL_MULTIPLIER

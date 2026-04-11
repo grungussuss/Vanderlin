@@ -47,6 +47,8 @@ There are several things that need to be remembered:
 
 
 */
+GLOBAL_LIST_INIT(no_child_icons, list(/obj/item/clothing/head, /obj/item/clothing/face, /obj/item/clothing/cloak, /obj/item/clothing/gloves, /obj/item/clothing/neck))
+GLOBAL_PROTECT(no_child_icons)
 
 /mob/living/carbon/proc/get_limbloss_index(limbr, limbl)
 	var/jazz = 1
@@ -120,6 +122,7 @@ There are several things that need to be remembered:
 	var/list/limb_overlaysa = list()
 	var/list/limb_overlaysb = list()
 	var/list/limb_overlaysc = list()
+	var/bloodcolor = get_blood_type().color
 	for(var/obj/item/bodypart/BP as anything in bodyparts)
 		var/list/damage_overlays = list()
 		var/list/legdam_overlays = list()
@@ -131,17 +134,23 @@ There are several things that need to be remembered:
 		if(!BP.skeletonized)
 			if(BP.brutestate)
 				var/mutable_appearance/damage_overlay = mutable_appearance(limb_icon, "[BP.body_zone]_[BP.brutestate]0", -DAMAGE_LAYER)
+				damage_overlay.color = bloodcolor
 				damage_overlays += damage_overlay
 				var/mutable_appearance/legdam_overlay = mutable_appearance(limb_icon, "legdam_[BP.body_zone]_[BP.brutestate]0", -LEG_DAMAGE_LAYER)
+				legdam_overlay.color = bloodcolor
 				legdam_overlays += legdam_overlay
 				var/mutable_appearance/armdam_overlay = mutable_appearance(limb_icon, "armdam_[BP.body_zone]_[BP.brutestate]0", -ARM_DAMAGE_LAYER)
+				armdam_overlay.color = bloodcolor
 				armdam_overlays += armdam_overlay
 			if(BP.burnstate)
 				var/mutable_appearance/damage_overlay = mutable_appearance(limb_icon, "[BP.body_zone]_0[BP.burnstate]", -DAMAGE_LAYER)
+				damage_overlay.color = bloodcolor
 				damage_overlays += damage_overlay
 				var/mutable_appearance/legdam_overlay = mutable_appearance(limb_icon, "legdam_[BP.body_zone]_0[BP.burnstate]", -LEG_DAMAGE_LAYER)
+				legdam_overlay.color = bloodcolor
 				legdam_overlays += legdam_overlay
 				var/mutable_appearance/armdam_overlay = mutable_appearance(limb_icon, "armdam_[BP.body_zone]_0[BP.burnstate]", -ARM_DAMAGE_LAYER)
+				armdam_overlay.color = bloodcolor
 				armdam_overlays += armdam_overlay
 			if(BP.get_bleed_rate())
 				bleed_checker = TRUE
@@ -155,18 +164,29 @@ There are several things that need to be remembered:
 					var/mutable_appearance/armdam_overlay = mutable_appearance(limb_icon, "armdam_[BP.body_zone]_b", -ARM_DAMAGE_LAYER)
 					armdam_overlay.color = BP.bandage.color
 					armdam_overlays += armdam_overlay
-			wound_overlays = list()
-			for(var/datum/wound/wound as anything in BP.wounds)
-				if(!wound.mob_overlay)
-					continue
-				wound_overlays |= wound.mob_overlay
-			for(var/wound_overlay in wound_overlays)
-				var/mutable_appearance/damage_overlay = mutable_appearance(limb_icon, "[BP.body_zone]_[wound_overlay]", -DAMAGE_LAYER)
-				damage_overlays += damage_overlay
-				var/mutable_appearance/legdam_overlay = mutable_appearance(limb_icon, "legdam_[BP.body_zone]_[wound_overlay]", -LEG_DAMAGE_LAYER)
-				legdam_overlays += legdam_overlay
-				var/mutable_appearance/armdam_overlay = mutable_appearance(limb_icon, "armdam_[BP.body_zone]_[wound_overlay]", -ARM_DAMAGE_LAYER)
-				armdam_overlays += armdam_overlay
+		wound_overlays = list()
+		for(var/datum/wound/wound as anything in BP.wounds)
+			if(!wound.mob_overlay)
+				continue
+			if(!BP.skeletonized || wound.overlay_on_skeleton)
+				wound_overlays[wound.mob_overlay] = list(
+					isnum(wound.layer_override) ? wound.layer_override : DAMAGE_LAYER,
+					isnum(wound.legdam_override) ? wound.legdam_override : LEG_DAMAGE_LAYER,
+					isnum(wound.armdam_override) ? wound.armdam_override : ARM_DAMAGE_LAYER,
+					wound.use_blood_color
+				)
+		for(var/wound_overlay in wound_overlays)
+			var/mutable_appearance/damage_overlay = mutable_appearance(limb_icon, "[BP.body_zone]_[wound_overlay]", -wound_overlays[wound_overlay][1])
+			damage_overlays += damage_overlay
+			var/mutable_appearance/legdam_overlay = mutable_appearance(limb_icon, "legdam_[BP.body_zone]_[wound_overlay]", -wound_overlays[wound_overlay][2])
+			legdam_overlays += legdam_overlay
+			var/mutable_appearance/armdam_overlay = mutable_appearance(limb_icon, "armdam_[BP.body_zone]_[wound_overlay]", -wound_overlays[wound_overlay][3])
+			armdam_overlays += armdam_overlay
+			if(wound_overlays[wound_overlay][4])
+				damage_overlay.color = bloodcolor
+				legdam_overlay.color = bloodcolor
+				armdam_overlay.color = bloodcolor
+
 		if(!bleed_checker && BP.bandage)
 			var/mutable_appearance/damage_overlay = mutable_appearance(limb_icon, "[BP.body_zone]_b", -DAMAGE_LAYER)
 			damage_overlay.color = BP.bandage.color
@@ -181,17 +201,23 @@ There are several things that need to be remembered:
 			if(!BP.skeletonized)
 				if(BP.brutestate)
 					var/mutable_appearance/damage_overlay = mutable_appearance(limb_icon, "[BP.aux_zone]_[BP.brutestate]0", -DAMAGE_LAYER)
+					damage_overlay.color = bloodcolor
 					damage_overlays += damage_overlay
 					var/mutable_appearance/legdam_overlay = mutable_appearance(limb_icon, "legdam_[BP.aux_zone]_[BP.brutestate]0", -LEG_DAMAGE_LAYER)
+					legdam_overlay.color = bloodcolor
 					legdam_overlays += legdam_overlay
 					var/mutable_appearance/armdam_overlay = mutable_appearance(limb_icon, "armdam_[BP.aux_zone]_[BP.brutestate]0", -ARM_DAMAGE_LAYER)
+					armdam_overlay.color = bloodcolor
 					armdam_overlays += armdam_overlay
 				if(BP.burnstate)
 					var/mutable_appearance/damage_overlay = mutable_appearance(limb_icon, "[BP.aux_zone]_0[BP.burnstate]", -DAMAGE_LAYER)
+					damage_overlay.color = bloodcolor
 					damage_overlays += damage_overlay
 					var/mutable_appearance/legdam_overlay = mutable_appearance(limb_icon, "legdam_[BP.aux_zone]_0[BP.burnstate]", -LEG_DAMAGE_LAYER)
+					legdam_overlay.color =bloodcolor
 					legdam_overlays += legdam_overlay
 					var/mutable_appearance/armdam_overlay = mutable_appearance(limb_icon, "armdam_[BP.aux_zone]_0[BP.burnstate]", -ARM_DAMAGE_LAYER)
+					armdam_overlay.color = bloodcolor
 					armdam_overlays += armdam_overlay
 				if(bleed_checker)
 					if(BP.bandage)
@@ -204,14 +230,19 @@ There are several things that need to be remembered:
 						var/mutable_appearance/armdam_overlay = mutable_appearance(limb_icon, "armdam_[BP.aux_zone]_b", -ARM_DAMAGE_LAYER)
 						armdam_overlay.color = BP.bandage.color
 						armdam_overlays += armdam_overlay
-				//We got the wound overlays before, it's all good
-				for(var/wound_overlay in wound_overlays)
-					var/mutable_appearance/damage_overlay = mutable_appearance(limb_icon, "[BP.aux_zone]_[wound_overlay]", -DAMAGE_LAYER)
-					damage_overlays += damage_overlay
-					var/mutable_appearance/legdam_overlay = mutable_appearance(limb_icon, "legdam_[BP.aux_zone]_[wound_overlay]", -LEG_DAMAGE_LAYER)
-					legdam_overlays += legdam_overlay
-					var/mutable_appearance/armdam_overlay = mutable_appearance(limb_icon, "armdam_[BP.aux_zone]_[wound_overlay]", -ARM_DAMAGE_LAYER)
-					armdam_overlays += armdam_overlay
+			//We got the wound overlays before, it's all good
+			for(var/wound_overlay in wound_overlays)
+				var/mutable_appearance/damage_overlay = mutable_appearance(limb_icon, "[BP.aux_zone]_[wound_overlay]", -wound_overlays[wound_overlay][1])
+				damage_overlays += damage_overlay
+				var/mutable_appearance/legdam_overlay = mutable_appearance(limb_icon, "legdam_[BP.aux_zone]_[wound_overlay]", -wound_overlays[wound_overlay][2])
+				legdam_overlays += legdam_overlay
+				var/mutable_appearance/armdam_overlay = mutable_appearance(limb_icon, "armdam_[BP.aux_zone]_[wound_overlay]", -wound_overlays[wound_overlay][3])
+				armdam_overlays += armdam_overlay
+				if(wound_overlays[wound_overlay][4])
+					damage_overlay.color = bloodcolor
+					legdam_overlay.color = bloodcolor
+					armdam_overlay.color = bloodcolor
+
 			if(!bleed_checker && BP.bandage)
 				var/mutable_appearance/damage_overlay = mutable_appearance(limb_icon, "[BP.aux_zone]_b", -DAMAGE_LAYER)
 				damage_overlay.color = BP.bandage.color
@@ -331,7 +362,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_NECK) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	if(wear_neck)
 		update_hud_neck(wear_neck)
@@ -363,7 +394,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_RING) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	if(wear_ring)
 		wear_ring.screen_loc = rogueui_ringr
@@ -399,7 +430,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_GLOVES) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	var/datum/species/species = dna?.species
 	var/use_female_sprites = FALSE
@@ -469,7 +500,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_WRISTS) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	if(wear_wrists)
 		wear_wrists.screen_loc = rogueui_wrists
@@ -527,7 +558,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_SHOES) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	if(shoes)
 		shoes.screen_loc = rogueui_shoes
@@ -586,7 +617,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_HEAD) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	if(head)
 		if(hide_nonstandard && (head.worn_x_dimension != 32 || head.worn_y_dimension != 32))
@@ -625,11 +656,11 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_BELT) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 		inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_BELT_R) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 		inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_BELT_L) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	var/datum/species/species = dna?.species
 	var/use_female_sprites = FALSE
@@ -759,8 +790,8 @@ There are several things that need to be remembered:
 		return
 
 	if(client && hud_used)
-		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_GLOVES) + 1]
-		inv?.update_icon()
+		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_MASK) + 1]
+		inv?.update_appearance(UPDATE_ICON)
 
 	if(wear_mask)
 		update_hud_wear_mask(wear_mask)
@@ -795,9 +826,9 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_BACK_R) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 		inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_BACK_L) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	var/datum/species/species = dna?.species
 
@@ -908,7 +939,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_CLOAK) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	var/list/cloaklays
 	var/datum/species/species = dna?.species
@@ -1002,7 +1033,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_SHIRT) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	if(wear_shirt)
 		wear_shirt.screen_loc = rogueui_shirt					//move the item to the appropriate screen loc
@@ -1016,6 +1047,8 @@ There are several things that need to be remembered:
 		if(wear_armor?.flags_inv & HIDEBOOB)
 			hideboob = TRUE
 		if(cloak?.flags_inv & HIDEBOOB)
+			hideboob = TRUE
+		if(species?.no_boobs)
 			hideboob = TRUE
 		var/use_female_sprites = FALSE
 		if(species?.sexes)
@@ -1066,7 +1099,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_ARMOR) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	if(wear_armor)
 		wear_armor.screen_loc = rogueui_armor					//move the item to the appropriate screen loc
@@ -1078,6 +1111,8 @@ There are several things that need to be remembered:
 		var/armsindex = get_limbloss_index(ARM_RIGHT, ARM_LEFT)
 		var/hideboob = FALSE
 		if(cloak?.flags_inv & HIDEBOOB)
+			hideboob = TRUE
+		if(species?.no_boobs)
 			hideboob = TRUE
 		var/use_female_sprites = FALSE
 		if(species?.sexes)
@@ -1128,7 +1163,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_PANTS) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	if(wear_pants)
 		wear_pants.screen_loc = rogueui_pants					//move the item to the appropriate screen loc
@@ -1188,7 +1223,7 @@ There are several things that need to be remembered:
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[TOBITSHIFT(ITEM_SLOT_MOUTH) + 1]
-		inv?.update_appearance()
+		inv?.update_appearance(UPDATE_ICON_STATE)
 
 	if(mouth)
 		update_hud_mouth(mouth)
@@ -1346,9 +1381,8 @@ generate/load female uniform sprites matching all previously decided variables
 		if(sleevejazz)
 			sleevejazz += "_[customi]"
 	var/t_icon = mob_overlay_icon
-	if(age == AGE_CHILD)
-		if(!istype(src, /obj/item/clothing/head) && !istype(src, /obj/item/clothing/face) && !istype(src, /obj/item/clothing/cloak) && !istype(src, /obj/item/clothing/gloves) && !istype(src, /obj/item/clothing/neck))
-			t_state += "_child"
+	if(age == AGE_CHILD && !is_type_in_list(src, GLOB.no_child_icons))
+		t_state += "_child"
 	if(!t_icon)
 		t_icon = default_icon_file
 
@@ -1454,13 +1488,15 @@ generate/load female uniform sprites matching all previously decided variables
 		if(sleeveindex == 4 || sleeveindex == 3)
 			sleeveindex -= 2
 
-	var/racecustom
+	var/index = I.icon_state
+	var/mob/living/carbon/human/HM = src
+	if(istype(HM) && HM.age == AGE_CHILD && !is_type_in_list(I, GLOB.no_child_icons))
+		index += "_child"
+	else if(gender == FEMALE ^ dna.species.swap_female_clothes)
+		index += "_f"
 	if(dna.species.custom_clothes)
-		if(dna.species.custom_id)
-			racecustom = dna.species.custom_id
-		else
-			racecustom = dna.species.id
-	var/index = "[I.icon_state][((gender == FEMALE && !dna.species.swap_female_clothes) || dna.species.swap_male_clothes) ? "_f" : ""][racecustom ? "_[racecustom]" : ""]"
+		index += "_[dna.species.custom_id ? dna.species.custom_id : dna.species.id]"
+
 	var/static/list/bloody_r = list()
 	var/static/list/bloody_l = list()
 	if(I.nodismemsleeves && sleeveindex) //armor pauldrons that show up above arms but don't get dismembered
@@ -1554,34 +1590,36 @@ generate/load female uniform sprites matching all previously decided variables
 
 //produces a key based on the human's limbs
 /mob/living/carbon/human/generate_icon_render_key()
-	. = "[dna.species.limbs_id]"
-
+	. = list(dna.species.limbs_id)
 	if(dna.species.use_skintones)
-		. += "-coloured-[skin_tone]"
+		. += "coloured"
+		. += skin_tone
 	else
-		. += "-not_coloured"
+		. += "not_coloured"
 
-	. += "-[gender]"
-	. += "-[age]"
+	. += gender
+	. += age
 
 	for(var/obj/item/bodypart/BP as anything in bodyparts)
-		. += "-[BP.body_zone]"
+		. += BP.body_zone
 		if(BP.status == BODYPART_ORGANIC)
-			. += "-organic"
+			. += "organic"
 		else
-			. += "-robotic"
+			. += "robotic"
 		if(BP.rotted)
-			. += "-rotted"
+			. += "rotted"
 		if(BP.skeletonized)
-			. += "-skeletonized"
+			. += "skeletonized"
 		if(BP.dmg_overlay_type)
-			. += "-[BP.dmg_overlay_type]"
+			. += BP.dmg_overlay_type
 
 		for(var/datum/bodypart_feature/feature as anything in BP.bodypart_features)
-			. += "-[feature.accessory_type]-[feature.accessory_colors]"
+			. += feature.accessory_type
+			. += feature.accessory_colors
 
 	if(HAS_TRAIT(src, TRAIT_HUSK))
-		. += "-husk"
+		. += "husk"
+	return jointext(., "-")
 
 /mob/living/carbon/human/load_limb_from_cache()
 	..()

@@ -6,7 +6,10 @@
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/forest_guard.dmi'
 	icon_state = "foresthide"
 	prevent_crits = ALL_EXCEPT_STAB
-	sewrepair = TRUE
+	sewrepair = /datum/attribute/skill/craft/tanning/patching
+	salvage_amount = 1
+	salvage_result = /obj/item/natural/hide/cured
+	dyeable = TRUE
 
 /obj/item/clothing/cloak/forrestercloak
 	name = "forrester's cloak"
@@ -20,7 +23,10 @@
 	sleevetype = "shirt"
 	nodismemsleeves = TRUE
 	inhand_mod = TRUE
-	sewrepair = TRUE
+	sewrepair = /datum/attribute/skill/craft/tanning/patching
+	salvage_amount = 1
+	salvage_result = /obj/item/natural/hide/cured
+	dyeable = TRUE
 
 /obj/item/clothing/cloak/forrestercloak/snow
 	icon_state = "snowcloak"
@@ -54,6 +60,7 @@
 	worn_x_dimension = 64
 	worn_y_dimension = 64
 	icon_state = "wardenhelm"
+	item_weight = 3.25 KILOGRAMS
 
 /obj/item/clothing/head/helmet/medium
 	abstract_type = /obj/item/clothing/head/helmet/medium
@@ -77,8 +84,9 @@
 	icon = 'icons/roguetown/clothing/special/forest_guard.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/forest_guard.dmi'
 	icon_state = "skullmet_volf"
+	item_weight = 1.45 KILOGRAMS
 
-/obj/item/clothing/head/helmet/medium/decorated/skullmet/attack_hand_secondary(mob/user, params)
+/obj/item/clothing/head/helmet/medium/decorated/skullmet/attack_hand_secondary(mob/user, list/modifiers)
 	. = ..()
 	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
 		return
@@ -93,3 +101,11 @@
 			var/mob/living/carbon/H = user
 			H.update_inv_head()
 		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
+
+/obj/item/clothing/head/helmet/medium/decorated/rousskullmet
+	name = "rous skullmet"
+	desc = "A crude helmet constructed with the skull of a rous, typically used by the problem children sent to the Foresters."
+	icon = 'icons/roguetown/clothing/special/forest_guard.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/forest_guard.dmi'
+	icon_state = "skullmet_ruffian"
+	item_weight = 1.45 KILOGRAMS

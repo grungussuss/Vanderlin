@@ -5,6 +5,7 @@
 	icon_state = "tights"
 	item_state = "tights"
 	color = CLOTHING_LINEN
+	item_weight = 65 GRAMS
 
 /obj/item/clothing/pants/tights/colored
 	misc_flags = CRAFTING_TEST_EXCLUDE
@@ -18,6 +19,9 @@
 
 /obj/item/clothing/pants/tights/colored/black
 	color = CLOTHING_SOOT_BLACK
+
+/obj/item/clothing/pants/tights/colored/white
+	color = CLOTHING_CHALK_WHITE
 
 /obj/item/clothing/pants/tights/colored/red
 	color = CLOTHING_BLOOD_RED

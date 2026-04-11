@@ -1,5 +1,24 @@
+/datum/attribute_holder/sheet/job/undertaker
+	raw_attribute_list = list(
+		STAT_STRENGTH = 1,
+		STAT_INTELLIGENCE = 2,
+		STAT_ENDURANCE = 2,
+		STAT_PERCEPTION = -1,
+		STAT_FORTUNE = -1,
+		/datum/attribute/skill/misc/sewing = 20,
+		/datum/attribute/skill/misc/medicine = 20,
+		/datum/attribute/skill/combat/polearms = 20,
+		/datum/attribute/skill/combat/unarmed = 10,
+		/datum/attribute/skill/combat/wrestling = 20, //Wrestling the deadites
+		/datum/attribute/skill/craft/crafting = 10,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/reading = 30,
+		/datum/attribute/skill/magic/holy = 30,
+		/datum/attribute/skill/labor/mathematics = 20
+	)
+
 /datum/job/undertaker
-	title = "Gravetender"
+	title = JOB_GRAVETENDER
 	tutorial = "As a servant of Necra, you embody the sanctity of her domain, \
 	ensuring the dead rest peacefully within the earth. \
 	You are the bane of grave robbers and necromancers, \
@@ -11,21 +30,43 @@
 	faction = FACTION_TOWN
 	total_positions = 3
 	spawn_positions = 3
-	min_pq = -10
 	bypass_lastclass = TRUE
 
 	allowed_races = RACES_PLAYER_NONHERETICAL
+	allowed_patrons = list(/datum/patron/divine/necra)
 
 	outfit = /datum/outfit/undertaker
 	give_bank_account = TRUE
 	cmode_music = 'sound/music/cmode/church/CombatGravekeeper.ogg'
+	can_be_apprentice = TRUE
 
 	job_bitflag = BITFLAG_CHURCH
 
-/datum/outfit/undertaker/pre_equip(mob/living/carbon/human/H)
-	..()
+	exp_types_granted = list(EXP_TYPE_CHURCH, EXP_TYPE_CLERIC)
+
+	attribute_sheet = /datum/attribute_holder/sheet/job/undertaker
+
+	traits = list(
+		TRAIT_DEADNOSE,
+		TRAIT_STEELHEARTED,
+		TRAIT_GRAVEROBBER
+	)
+
+	languages = list(/datum/language/celestial)
+
+/datum/job/undertaker/after_spawn(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+	// Apply devotion holder
+	var/holder = spawned.patron?.devotion_holder
+	if (holder)
+		var/datum/devotion/devotion = new holder()
+		devotion.make_acolyte()
+		devotion.grant_to(spawned)
+
+/datum/outfit/undertaker
+	name = JOB_GRAVETENDER
 	head = /obj/item/clothing/head/padded/deathshroud
-	neck = /obj/item/clothing/neck/psycross/silver/necra
+	neck = /obj/item/clothing/neck/psycross/silver/divine/necra
 	pants = /obj/item/clothing/pants/trou/leather/mourning
 	armor = /obj/item/clothing/shirt/robe/necra
 	shoes = /obj/item/clothing/shoes/boots
@@ -33,34 +74,9 @@
 	beltl = /obj/item/storage/keyring/gravetender
 	beltr = /obj/item/storage/belt/pouch/coins/poor
 	backr = /obj/item/weapon/shovel
+	backpack_contents = list(/obj/item/inqarticles/tallowpot, /obj/item/reagent_containers/food/snacks/tallow/red) // Needed for coffin sanctification, they get enough for one, the rest they must source themselves.
 
-	if(H.patron != /datum/patron/divine/necra)
-		H.set_patron(/datum/patron/divine/necra)
-
-	H.adjust_skillrank(/datum/skill/misc/sewing, 2, TRUE) // these are basically the acolyte skills with a bit of other stuff
-	H.adjust_skillrank(/datum/skill/misc/medicine, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/polearms, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/magic/holy, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/mathematics, 2, TRUE)
-	H.change_stat(STATKEY_STR, 1)
-	H.change_stat(STATKEY_INT, 2)
-	H.change_stat(STATKEY_END, 2)
-	H.change_stat(STATKEY_PER, -1) // similar to acolyte's stats
-	H.change_stat(STATKEY_LCK, -1) // Tradeoff for never being cursed when unearthing graves.
-	if(!H.has_language(/datum/language/celestial)) // For discussing church matters with the other Clergy
-		H.grant_language(/datum/language/celestial)
-		to_chat(H, "<span class='info'>I can speak Celestial with ,c before my speech.</span>")
-	ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_STEELHEARTED, TRAIT_GENERIC) // Operating with corpses every day.
-	ADD_TRAIT(H, TRAIT_GRAVEROBBER, TRAIT_GENERIC) // In case they need to move tombs or anything.
-
-	var/holder = H.patron?.devotion_holder
-	if(holder)
-		var/datum/devotion/devotion = new holder()
-		devotion.make_acolyte()
-		devotion.grant_to(H)
+/datum/outfit/undertaker/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
+	. = ..()
+	if(equipped_human.age == AGE_OLD)
+		l_hand = /obj/item/weapon/mace/cane/necran

@@ -1,5 +1,30 @@
+/datum/attribute_holder/sheet/job/farmer
+	raw_attribute_list = list(
+		STAT_STRENGTH = 1,
+		STAT_CONSTITUTION = 2,
+		STAT_ENDURANCE = 1,
+		STAT_INTELLIGENCE = -1,
+		/datum/attribute/skill/combat/wrestling = 10,
+		/datum/attribute/skill/combat/unarmed = 20,
+		/datum/attribute/skill/combat/knives = 20,
+		/datum/attribute/skill/combat/polearms = 20,
+		/datum/attribute/skill/combat/whipsflails = 10,
+		/datum/attribute/skill/craft/crafting = 20,
+		/datum/attribute/skill/misc/sewing = 10,
+		/datum/attribute/skill/labor/farming = 40,
+		/datum/attribute/skill/labor/taming = 50,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/craft/cooking = 10,
+		/datum/attribute/skill/craft/carpentry = 10,
+		/datum/attribute/skill/misc/medicine = 10,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/craft/tanning = 20,
+		/datum/attribute/skill/misc/riding = 10,
+		/datum/attribute/skill/labor/butchering = 40
+	)
+
 /datum/job/farmer
-	title = "Soilson"
+	title = JOB_SOILSON
 	f_title = "Soilbride"
 	tutorial = "It is a simple life you live. \
 	Your basic understanding of life is something many would be envious of if they knew how perfect it was. \
@@ -12,7 +37,6 @@
 	faction = FACTION_TOWN
 	total_positions = 12
 	spawn_positions = 12
-	min_pq = -100
 	bypass_lastclass = TRUE
 	selection_color = "#553e01"
 
@@ -21,53 +45,44 @@
 	outfit = /datum/outfit/farmer
 	give_bank_account = 20
 	cmode_music = 'sound/music/cmode/towner/CombatTowner.ogg'
+	can_be_apprentice = TRUE
 
 	job_bitflag = BITFLAG_CONSTRUCTOR
 
-/datum/outfit/farmer/pre_equip(mob/living/carbon/human/H)
-	..()
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/knives, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/polearms, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/whipsflails, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, pick(2,3), TRUE)
-	H.adjust_skillrank(/datum/skill/misc/sewing, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/farming, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/taming, 5, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE) // TODO! A way for them to operate submission holes without reading skill. Soilsons shouldn't be able to read.
-	H.adjust_skillrank(/datum/skill/craft/cooking, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/carpentry, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/medicine, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/tanning, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/riding, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/butchering, 4, TRUE)
-	if(prob(5))
-		H.adjust_skillrank(/datum/skill/combat/wrestling, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/unarmed, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/knives, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/polearms, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/sewing, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/swimming, pick(0,1,1), TRUE)
-		H.adjust_skillrank(/datum/skill/misc/climbing, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/labor/farming, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/craft/cooking, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/labor/butchering, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/athletics, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/labor/taming, 2, TRUE)
-		H.change_stat(STATKEY_STR, 1)
-		H.change_stat(STATKEY_END, 1)
-	H.change_stat(STATKEY_STR, 1)
-	H.change_stat(STATKEY_CON, 1)
-	H.change_stat(STATKEY_END, 1)
-	H.change_stat(STATKEY_INT, -1)
-	ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_SEEDKNOW, TRAIT_GENERIC)
-	backpack_contents = list(/obj/item/recipe_book/cooking = 1, /obj/item/bottle_kit = 1, /obj/item/recipe_book/agriculture = 1)
+	attribute_sheet = /datum/attribute_holder/sheet/job/farmer
 
+	traits = list(
+		TRAIT_DEADNOSE,
+		TRAIT_SEEDKNOW
+	)
+
+/datum/outfit/farmer/map_override(mob/living/carbon/human/H)
+	if(SSmapping.config.map_name != "Voyage")
+		return
+	head = /obj/item/clothing/head/armingcap
+	shirt = /obj/item/clothing/shirt/undershirt/sailor
+	pants = /obj/item/clothing/pants/tights/sailor
+	wrists = null
+	shoes = /obj/item/clothing/shoes/boots
+
+/datum/outfit/farmer
+	name = JOB_SOILSON
 	neck = /obj/item/storage/belt/pouch/coins/poor
-	if(H.gender == MALE)
+	shoes = /obj/item/clothing/shoes/simpleshoes
+	belt = /obj/item/storage/belt/leather/rope
+	beltr = /obj/item/key/soilson
+	beltl = /obj/item/weapon/knife/villager
+	backl = /obj/item/storage/backpack/satchel/cloth
+
+	backpack_contents = list(
+		/obj/item/recipe_book/cooking = 1,
+		/obj/item/bottle_kit = 1,
+		/obj/item/recipe_book/agriculture = 1
+	)
+
+/datum/outfit/farmer/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
+	. = ..()
+	if(equipped_human.gender == MALE)
 		head = /obj/item/clothing/head/strawhat
 		pants = /obj/item/clothing/pants/tights/colored/random
 		armor = /obj/item/clothing/armor/gambeson/light/striped
@@ -76,15 +91,29 @@
 		head = /obj/item/clothing/head/armingcap
 		armor = /obj/item/clothing/shirt/dress/gen/colored/random
 		shirt = /obj/item/clothing/shirt/undershirt
-	shoes = /obj/item/clothing/shoes/simpleshoes
-	belt = /obj/item/storage/belt/leather/rope
-	beltr = /obj/item/key/soilson
-	beltl = /obj/item/weapon/knife/villager
-	backl = /obj/item/storage/backpack/satchel/cloth
+
+/datum/attribute_holder/sheet/job/soilchild
+	raw_attribute_list = list(
+		STAT_STRENGTH = -1,
+		STAT_CONSTITUTION = 1,
+		STAT_ENDURANCE = -1,
+		STAT_INTELLIGENCE = 1,
+		/datum/attribute/skill/combat/wrestling = 10,
+		/datum/attribute/skill/combat/unarmed = 10,
+		/datum/attribute/skill/combat/polearms = 10,
+		/datum/attribute/skill/craft/crafting = 10,
+		/datum/attribute/skill/labor/farming = 20,
+		/datum/attribute/skill/labor/taming = 10,
+		/datum/attribute/skill/misc/athletics = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/swimming = 10,
+		/datum/attribute/skill/craft/tanning = 10,
+		/datum/attribute/skill/labor/butchering = 10
+	)
 
 /datum/job/soilchild
-	title = "Soilchild"
-	f_title = "Soilchild"
+	title = JOB_SOILCHILD
+	f_title = JOB_SOILCHILD
 	tutorial = "Born to the soil, raised by the land. \
 	Your parents teach you the ways of farming while you still find time to play. \
 	Though young, you already know the feel of dirt between your fingers and the joy of seeing seeds sprout. \
@@ -97,68 +126,41 @@
 	total_positions = 6
 	spawn_positions = 6
 	allowed_ages = list(AGE_CHILD)
-	min_pq = -100
 	bypass_lastclass = TRUE
 	selection_color = "#553e01"
-
 	allowed_races = RACES_PLAYER_ALL
-
 	outfit = /datum/outfit/soilchild
 	give_bank_account = 10
 	cmode_music = 'sound/music/cmode/towner/CombatTowner.ogg'
-
 	job_bitflag = BITFLAG_CONSTRUCTOR
 
-/datum/outfit/soilchild/pre_equip(mob/living/carbon/human/H)
-	..()
-	// Reduced skill levels compared to adult Soilson
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/polearms, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/farming, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/taming, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/climbing, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/swimming, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/tanning, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/butchering, 1, TRUE)
+	attribute_sheet = /datum/attribute_holder/sheet/job/soilchild
 
-	// Random chance for additional skills
-	if(prob(5))
-		H.adjust_skillrank(/datum/skill/labor/farming, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/craft/cooking, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/athletics, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/labor/taming, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/craft/tanning, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/labor/butchering, 1, TRUE)
+	traits = list(
+		TRAIT_DEADNOSE,
+		TRAIT_SEEDKNOW
+	)
 
-	H.change_stat(STATKEY_STR, -1)
-	H.change_stat(STATKEY_CON, 1)
-	H.change_stat(STATKEY_END, -1)
-	H.change_stat(STATKEY_INT, 1)
-
-	ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_SEEDKNOW, TRAIT_GENERIC)
-
+/datum/outfit/soilchild
+	name = JOB_SOILCHILD
 	neck = /obj/item/storage/belt/pouch/coins/poor
+	shoes = /obj/item/clothing/shoes/simpleshoes
+	belt = /obj/item/storage/belt/leather/rope
+	beltr = /obj/item/key/soilson
+	beltl = /obj/item/weapon/knife/villager
 
-	if(H.gender == MALE)
+/datum/outfit/soilchild/pre_equip(mob/living/carbon/human/equipped_human)
+	. = ..()
+	if(equipped_human.gender == MALE)
 		head = /obj/item/clothing/head/roguehood/colored/random
 		if(prob(50))
 			head = /obj/item/clothing/head/strawhat
 		pants = /obj/item/clothing/pants/tights/colored/random
 		armor = /obj/item/clothing/armor/gambeson/light/striped
 		shirt = /obj/item/clothing/shirt/undershirt/colored/random
-		shoes = /obj/item/clothing/shoes/simpleshoes
-		belt = /obj/item/storage/belt/leather/rope
-		beltr = /obj/item/key/soilson
-		beltl = /obj/item/weapon/knife/villager
 	else
 		head = /obj/item/clothing/head/armingcap
 		armor = /obj/item/clothing/shirt/dress/gen/colored/random
 		shirt = /obj/item/clothing/shirt/undershirt
-		shoes = /obj/item/clothing/shoes/simpleshoes
-		belt = /obj/item/storage/belt/leather/rope
-		beltr = /obj/item/key/soilson
-		beltl = /obj/item/weapon/knife/villager
+
+

@@ -7,6 +7,14 @@
 	icon = 'icons/roguetown/mob/facial.dmi'
 	gender = MALE
 
+/datum/sprite_accessory/hair/facial/rakshari
+	icon = 'icons/mob/sprite_accessory/hair/facial/rakshari.dmi'
+	gender = MALE
+
+/datum/sprite_accessory/hair/facial/triton
+	icon = 'icons/mob/sprite_accessory/hair/facial/triton.dmi'
+	gender = FEMALE || MALE
+
 /datum/sprite_accessory/hair/facial/none
 	name = "None"
 	icon_state = ""
@@ -17,7 +25,7 @@
 	name = "None"
 	icon_state = "facial_shaven"
 	gender = MALE
-	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC, SPEC_ID_RAKSHARI, SPEC_ID_TRITON)
 
 /datum/sprite_accessory/hair/facial/brew
 	name = "Brew"
@@ -120,3 +128,84 @@
 	icon_state = "facial_moonshiner"
 	gender = MALE
 	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/facial/bushyburns
+	name = "Bushy Sideburns"
+	icon_state = "facial_bushyburns"
+	gender = MALE
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF,  SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/facial/gnomish
+	name = "Gnomish"
+	icon_state = "facial_gnomish"
+	gender = MALE
+	specuse = list(SPEC_ID_DWARF)
+
+/datum/sprite_accessory/hair/facial/newlywed
+	name = "Newlywed (Feminine)"
+	icon_state = "facial_newlywed"
+	gender = FEMALE
+	specuse = list(SPEC_ID_DWARF)
+
+/datum/sprite_accessory/hair/facial/anniversary
+	name = "Anniversary (Feminine)"
+	icon_state = "facial_anniversary"
+	gender = FEMALE
+	specuse = list(SPEC_ID_DWARF)
+
+/datum/sprite_accessory/hair/facial/longbraid
+	name = "Longbraid"
+	icon_state = "facial_longbraid"
+	specuse = list(SPEC_ID_DWARF)
+
+/datum/sprite_accessory/hair/facial/pinnacle
+	name = "Pinnacle (Masculine)"
+	icon_state = "facial_pinnacle"
+	gender = MALE
+	specuse = list(SPEC_ID_DWARF)
+
+/datum/sprite_accessory/hair/facial/enchanter
+	name = "Enchanter"
+	icon_state = "facial_enchanter"
+	specuse = list(SPEC_ID_DWARF)
+
+/datum/sprite_accessory/hair/facial/curlypom
+	name = "Curlypom"
+	icon_state = "facial_curlypom"
+	specuse = list(SPEC_ID_DWARF)
+
+/datum/sprite_accessory/hair/facial/rakshari/kesh
+	name = "Kesh"
+	icon_state = "kesh"
+	gender = MALE
+	specuse = list(SPEC_ID_RAKSHARI)
+
+/datum/sprite_accessory/hair/facial/rakshari/spry
+	name = "Spry"
+	icon_state = "spry"
+	gender = MALE
+	specuse = list(SPEC_ID_RAKSHARI)
+
+/datum/sprite_accessory/hair/facial/rakshari/whiskered
+	name = "Whiskered"
+	icon_state = "whiskered"
+	gender = MALE
+	specuse = list(SPEC_ID_RAKSHARI)
+
+/datum/sprite_accessory/hair/facial/rakshari/jinni
+	name = "Jinni"
+	icon_state = "jinni"
+	gender = MALE
+	specuse = list(SPEC_ID_RAKSHARI)
+
+/datum/sprite_accessory/hair/facial/triton/seaqueen
+	name = "Seaqueen"
+	icon_state = "seaqueen"
+	gender = FEMALE
+	specuse = list(SPEC_ID_TRITON)
+
+/datum/sprite_accessory/hair/facial/triton/catfish
+	name = "Catfish"
+	icon_state = "catfish"
+	gender = FEMALE
+	specuse = list(SPEC_ID_TRITON)

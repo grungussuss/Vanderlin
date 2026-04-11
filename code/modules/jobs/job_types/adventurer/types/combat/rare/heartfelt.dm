@@ -1,48 +1,61 @@
+/datum/attribute_holder/sheet/job/heartfeltlord
+	raw_attribute_list = list(
+		STAT_STRENGTH = 1,
+		STAT_INTELLIGENCE = 3,
+		STAT_ENDURANCE = 3,
+		STAT_SPEED = 1,
+		STAT_PERCEPTION = 2,
+		STAT_FORTUNE = 5,
+		/datum/attribute/skill/combat/axesmaces = 20,
+		/datum/attribute/skill/combat/crossbows = 30,
+		/datum/attribute/skill/combat/wrestling = 20,
+		/datum/attribute/skill/combat/unarmed = 10,
+		/datum/attribute/skill/combat/swords = 40,
+		/datum/attribute/skill/combat/knives = 30,
+		/datum/attribute/skill/misc/swimming = 10,
+		/datum/attribute/skill/misc/climbing = 10,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/reading = 40,
+		/datum/attribute/skill/misc/riding = 30,
+		/datum/attribute/skill/craft/cooking = 10,
+	)
+
 /datum/job/advclass/combat/heartfeltlord
 	title = "Lord of Heartfelt"
-	tutorial = "You are the proud lord of Heartfelt, \
-	but why have you come to Vanderlin?"
-	allowed_sexes = list(MALE)
+	tutorial = "You are the lord of Heartfelt, \
+	your kingdom lies in ruins ever since it's mechanical servants rose up. \
+	You have since fled to the kingdom of Vanderlin, \
+	the exact reason of your stay here are up to you."
+	allowed_sexes = list(MALE, FEMALE)
 	allowed_races = list(SPEC_ID_HUMEN)
 	outfit = /datum/outfit/adventurer/heartfeltlord
-	min_pq = 2
 	total_positions = 1
 	roll_chance = 50
+	cmode_music = 'sound/music/cmode/adventurer/CombatDream.ogg'
 
-/datum/outfit/adventurer/heartfeltlord/pre_equip(mob/living/carbon/human/H)
-	..()
+	attribute_sheet = /datum/attribute_holder/sheet/job/heartfeltlord
+
+	traits = list(
+		TRAIT_NOBLE_BLOOD,
+		TRAIT_NOBLE_POWER,
+		TRAIT_HEAVYARMOR,
+	)
+
+/datum/outfit/adventurer/heartfeltlord
+	name = "Lord of Heartfelt (Adventurer)"
+
 	shirt = /obj/item/clothing/shirt/undershirt
 	belt = /obj/item/storage/belt/leather/black
-	neck = /obj/item/clothing/neck/gorget
 	head = /obj/item/clothing/head/helmet
 	shoes = /obj/item/clothing/shoes/nobleboot
 	pants = /obj/item/clothing/pants/tights/colored/black
 	cloak = /obj/item/clothing/cloak/heartfelt
 	armor = /obj/item/clothing/armor/medium/surcoat/heartfelt
 	beltr = /obj/item/storage/belt/pouch/coins/rich
-	beltl = /obj/item/scomstone
+	beltl = /obj/item/weapon/sword/long
 	gloves = /obj/item/clothing/gloves/leather/black
 	neck = /obj/item/clothing/neck/chaincoif
-	beltl = /obj/item/weapon/sword/long
-	if(H.mind)
-		H.adjust_skillrank(/datum/skill/combat/axesmaces, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/crossbows, 3, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/unarmed, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/knives, 3, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/swimming, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/climbing, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/athletics, 4, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/reading, 4, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/riding, 3, TRUE)
-		H.adjust_skillrank(/datum/skill/craft/cooking, 1, TRUE)
-		H.change_stat(STATKEY_STR, 1)
-		H.change_stat(STATKEY_INT, 3)
-		H.change_stat(STATKEY_END, 3)
-		H.change_stat(STATKEY_SPD, 1)
-		H.change_stat(STATKEY_PER, 2)
-		H.change_stat(STATKEY_LCK, 5)
+	backpack_contents = list(/obj/item/scomstone = 1)
 
-	ADD_TRAIT(H, TRAIT_NOBLE, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
+
+

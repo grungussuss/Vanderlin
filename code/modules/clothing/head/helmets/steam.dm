@@ -1,11 +1,11 @@
 /obj/item/clothing/head/helmet/heavy/steam
 	name = "steamknight helmet"
-	desc = "Part of the the steamknight armor. Requires knowledge in engineering to operate."
+	desc = "Part of the steamknight armor. Requires knowledge in engineering to operate."
 	icon_state = "steamknight_helm"
 	icon = 'icons/roguetown/clothing/steamknight.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/onmob/steamknight_onmob.dmi'
-	anvilrepair = /datum/skill/craft/engineering
-	item_weight = 9 * BRONZE_MULTIPLIER
+	anvilrepair = /datum/attribute/skill/craft/engineering
+	item_weight = 9 KILOGRAMS
 	block2add = FOV_RIGHT|FOV_LEFT
 	smeltresult = /obj/item/ingot/bronze
 

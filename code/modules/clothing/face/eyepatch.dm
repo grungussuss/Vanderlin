@@ -8,6 +8,7 @@
 	body_parts_covered = RIGHT_EYE
 	resistance_flags = FLAMMABLE
 	salvage_amount = 1
+	item_weight = 20 GRAMS
 
 /obj/item/clothing/face/eyepatch/left
 	desc = "An eyepatch, fitted for the left eye."
@@ -17,7 +18,7 @@
 
 /obj/item/clothing/face/eyepatch/fake
 	name = "eyepatch"
-	desc = "A see through-eyepatch, fitted for the right eye."
+	desc = "A see-through eyepatch, fitted for the right eye."
 	icon_state = "eyepatch"
 	max_integrity = 20
 	integrity_failure = 0.5

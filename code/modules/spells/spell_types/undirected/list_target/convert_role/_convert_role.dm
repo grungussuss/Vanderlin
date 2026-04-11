@@ -3,11 +3,13 @@
 	desc = "Recruit someone to your cause."
 	button_icon_state = "recruit_bog"
 	/// Role given if recruitment is accepted
-	var/new_role = "Beggar"
+	var/new_role = JOB_BEGGAR
 	/// Faction shown to the user in the recruitment prompt
 	var/recruitment_faction = "Beggars"
 	/// Message the recruiter gives
-	var/recruitment_message = "Serve the beggars, %RECRUIT!"
+	var/recruitment_message = "Join the Beggars, %RECRUIT!"
+	/// Even offer them a choice to become this?
+	var/give_choice = TRUE
 	/// Say message when the recruit accepts
 	var/accept_message = "I will serve!"
 	/// Say message when the recruit refuses
@@ -43,13 +45,14 @@
 	. = ..()
 	owner.say(replacetext(recruitment_message, "%RECRUIT", "[cast_on]"), forced = "Convert spell ([src])")
 
-	var/answer = browser_alert(cast_on, "Do you wish to become a [new_role]?", "[recruitment_faction] recruitment.", DEFAULT_INPUT_CONFIRMATIONS)
-	if(QDELETED(src) || QDELETED(owner) || QDELETED(cast_on) || !can_cast_spell())
-		return
-	if(answer != CHOICE_CONFIRM)
-		if(refuse_message)
-			cast_on.say(refuse_message, forced = "Convert spell ([src])")
-		return
+	if(give_choice)
+		var/answer = tgui_alert(cast_on, "Do you wish to become a [new_role]?", "[recruitment_faction] recruitment.", DEFAULT_INPUT_CONFIRMATIONS)
+		if(QDELETED(src) || QDELETED(owner) || QDELETED(cast_on) || !can_cast_spell())
+			return
+		if(answer != CHOICE_CONFIRM)
+			if(refuse_message)
+				cast_on.say(refuse_message, forced = "Convert spell ([src])")
+			return
 	if(accept_message)
 		cast_on.say(accept_message, forced = "Convert spell ([src])")
 	on_conversion(cast_on)
@@ -59,5 +62,8 @@
 
 	ADD_TRAIT(cast_on, TRAIT_RECRUITED, TRAIT_GENERIC)
 	cast_on.job = new_role
+	var/datum/job/job_real = SSjob.GetJob(new_role)
+	if(job_real)
+		cast_on.mind?.set_assigned_role(new_role)
 
 	SEND_SIGNAL(SSdcs, COMSIG_GLOBAL_ROLE_CONVERTED, owner, cast_on, new_role)

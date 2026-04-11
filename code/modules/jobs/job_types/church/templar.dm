@@ -1,5 +1,89 @@
+/datum/attribute_holder/sheet/job/templar
+	raw_attribute_list = list(
+		STAT_STRENGTH = 2,
+		STAT_CONSTITUTION = 2,
+		STAT_ENDURANCE = 2,
+		STAT_SPEED = -1,
+		/datum/attribute/skill/combat/wrestling = 30,
+		/datum/attribute/skill/combat/unarmed = 20,
+		/datum/attribute/skill/combat/shields = 30,
+		/datum/attribute/skill/misc/climbing = 10,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/reading = 20,
+		/datum/attribute/skill/magic/holy = 20,
+		/datum/attribute/skill/misc/medicine = 10,
+		/datum/attribute/skill/misc/sewing = 20
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/astrata
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/swords = 40
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/noc
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/swords = 40,
+		/datum/attribute/skill/labor/mathematics = 20
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/dendor
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/polearms = 40
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/necra
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/whipsflails = 40
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/pestra
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/knives = 40,
+		/datum/attribute/skill/craft/alchemy = 20
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/ravox
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/swords = 40
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/malum
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/axesmaces = 40
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/abyssor
+	raw_attribute_list = list(
+		/datum/attribute/skill/labor/fishing = 20
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/xylix
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/whipsflails = 40
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/eora/rapier
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/swords = 40
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/eora/knuckles
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/unarmed = 20
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/abyssor/spear
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/polearms = 40
+	)
+
+/datum/attribute_holder/sheet/job/templar/patron/abyssor/katars
+	raw_attribute_list = list(
+		/datum/attribute/skill/combat/unarmed = 20
+	)
+
 /datum/job/templar
-	title = "Templar"
+	title = JOB_TEMPLAR
 	tutorial = "Templars are warriors who have forsaken wealth and station in the service of the church, either from fervent zeal or remorse for past sins.\
 	They are vigilant sentinels, guarding priest and altar, steadfast against heresy and shadow-beasts that creep in darkness. \
 	But in the quiet of troubled sleep, there is a question left. Does the blood they spill sanctify them, or stain them forever? If service ever demanded it, whose blood would be the price?"
@@ -9,167 +93,176 @@
 	faction = FACTION_TOWN
 	total_positions = 2
 	spawn_positions = 2
-	min_pq = 8
 	bypass_lastclass = TRUE
 
-	allowed_races = RACES_PLAYER_NONDISCRIMINATED
+	allowed_races = RACES_TEMPLAR
 	allowed_patrons = ALL_TEMPLAR_PATRONS
 
 	outfit = /datum/outfit/templar
 	give_bank_account = 0
 
-	allowed_patrons = ALL_TEMPLAR_PATRONS
 	job_bitflag = BITFLAG_CHURCH
 
-/datum/outfit/templar
-	name = "Templar"
+	exp_type = list(EXP_TYPE_CHURCH, EXP_TYPE_COMBAT)
+	exp_types_granted = list(EXP_TYPE_CHURCH, EXP_TYPE_COMBAT, EXP_TYPE_CLERIC)
+	exp_requirements = list(
+		EXP_TYPE_CHURCH = 900,
+		EXP_TYPE_COMBAT = 900
+	)
 
-/datum/outfit/templar/pre_equip(mob/living/carbon/human/H)
-	..()
-	head = /obj/item/clothing/head/helmet/heavy/necked
-	cloak = /obj/item/clothing/cloak/tabard/crusader/tief
-	armor = /obj/item/clothing/armor/brigandine
-	shirt = /obj/item/clothing/armor/chainmail //hauberk > haubergeon, requested by Tyger
-	pants = /obj/item/clothing/pants/chainlegs
-	shoes = /obj/item/clothing/shoes/boots/armor/light
-	backl = /obj/item/storage/backpack/satchel
-	//neck = /obj/item/clothing/neck/chaincoif //requested by Tyger
-	backpack_contents = list(/obj/item/storage/keyring/priest = 1)
-	backr = /obj/item/weapon/shield/tower/metal
-	belt = /obj/item/storage/belt/leather/black
-	beltl = /obj/item/storage/belt/pouch/coins/poor
-	ring = /obj/item/clothing/ring/silver
-	gloves = /obj/item/clothing/gloves/chain
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/shields, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/climbing, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/magic/holy, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/medicine, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/sewing, 2, TRUE)
-	H.change_stat(STATKEY_STR, 2)
-	H.change_stat(STATKEY_CON, 2)
-	H.change_stat(STATKEY_END, 2)
-	H.change_stat(STATKEY_SPD, -1)
-	if(!H.has_language(/datum/language/celestial)) // For discussing church matters with the other Clergy
-		H.grant_language(/datum/language/celestial)
-		to_chat(H, "<span class='info'>I can speak Celestial with ,c before my speech.</span>")
-	switch(H.patron?.type) //this is a ridiculous way of doing it and it is annoying.
-		if(/datum/patron/divine/astrata)
-			wrists = /obj/item/clothing/neck/psycross/silver/astrata
-			head = /obj/item/clothing/head/helmet/heavy/necked/astrata
-			cloak = /obj/item/clothing/cloak/stabard/templar/astrata
-			H.cmode_music = 'sound/music/cmode/church/CombatAstrata.ogg'
-			H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE)
-		if(/datum/patron/divine/noc)
-			wrists = /obj/item/clothing/neck/psycross/silver/noc
-			head = /obj/item/clothing/head/helmet/heavy/necked/noc
-			cloak = /obj/item/clothing/cloak/stabard/templar/noc
-			H.cmode_music = 'sound/music/cmode/adventurer/CombatMonk.ogg'
-			H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE)
-			H.adjust_skillrank(/datum/skill/labor/mathematics, 2, TRUE)
-			ADD_TRAIT(H, TRAIT_DUALWIELDER, TRAIT_GENERIC)
-		if(/datum/patron/divine/dendor)
-			wrists = /obj/item/clothing/neck/psycross/silver/dendor
-			head = /obj/item/clothing/head/helmet/heavy/necked/dendorhelm
-			cloak = /obj/item/clothing/cloak/stabard/templar/dendor
-			H.cmode_music = 'sound/music/cmode/garrison/CombatForestGarrison.ogg'
-			H.adjust_skillrank(/datum/skill/combat/polearms, 4, TRUE)
-		if(/datum/patron/divine/necra)
-			wrists = /obj/item/clothing/neck/psycross/silver/necra
-			head = /obj/item/clothing/head/helmet/heavy/necked/necra
-			cloak = /obj/item/clothing/cloak/stabard/templar/necra
-			H.cmode_music = 'sound/music/cmode/church/CombatGravekeeper.ogg'
-			H.adjust_skillrank(/datum/skill/combat/whipsflails, 4, TRUE)
-			ADD_TRAIT(H, TRAIT_DEADNOSE, TRAIT_GENERIC)//accustomed to death
-		if(/datum/patron/divine/pestra)
-			wrists = /obj/item/clothing/neck/psycross/silver/pestra
-			head = /obj/item/clothing/head/helmet/heavy/necked/pestrahelm
-			cloak = /obj/item/clothing/cloak/stabard/templar/pestra
-			H.cmode_music = 'sound/music/cmode/adventurer/CombatMonk.ogg'
-			beltr = /obj/item/reagent_containers/glass/bottle/poison //Jackberry poison, Pestrans are Alchemists, Physicians.
-			ADD_TRAIT(H, TRAIT_DUALWIELDER, TRAIT_GENERIC)
-			H.adjust_skillrank(/datum/skill/combat/knives, 4, TRUE)
-			H.adjust_skillrank(/datum/skill/craft/alchemy, 2, TRUE)
-		if(/datum/patron/divine/eora)
-			head = /obj/item/clothing/head/helmet/sallet/eoran
-			wrists = /obj/item/clothing/neck/psycross/silver/eora
-			cloak = /obj/item/clothing/cloak/stabard/templar/eora
-			H.cmode_music = 'sound/music/cmode/church/CombatEora.ogg'
-			H.virginity = FALSE
-			ADD_TRAIT(H, TRAIT_BEAUTIFUL, TRAIT_GENERIC)
-			H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE)
-		if(/datum/patron/divine/ravox)
-			wrists = /obj/item/clothing/neck/psycross/silver/ravox
-			head = /obj/item/clothing/head/helmet/heavy/necked/ravox
-			cloak = /obj/item/clothing/cloak/stabard/templar/ravox
-			H.cmode_music = 'sound/music/cmode/adventurer/CombatOutlander2.ogg'
-			H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE)
-		if(/datum/patron/divine/malum)
-			wrists = /obj/item/clothing/neck/psycross/silver/malum
-			head = /obj/item/clothing/head/helmet/heavy/necked/malumhelm
-			cloak = /obj/item/clothing/cloak/stabard/templar/malum
-			H.cmode_music = 'sound/music/cmode/adventurer/CombatOutlander2.ogg'
-			H.adjust_skillrank(/datum/skill/combat/axesmaces, 4, TRUE)
-		if(/datum/patron/divine/abyssor)
-			wrists = /obj/item/clothing/neck/psycross/silver/abyssor
-			cloak = /obj/item/clothing/cloak/stabard/templar/abyssor
-			H.cmode_music = 'sound/music/cmode/adventurer/CombatMonk.ogg'
-			H.adjust_skillrank(/datum/skill/labor/fishing, 2, TRUE)
-			H.adjust_skillrank(/datum/skill/combat/polearms, 4, TRUE)
-		if(/datum/patron/divine/xylix)
-			wrists = /obj/item/clothing/neck/psycross/silver/xylix
-			head = /obj/item/clothing/head/helmet/heavy/necked/xylix
-			cloak = /obj/item/clothing/cloak/stabard/templar/xylix
-			H.cmode_music = 'sound/music/cmode/adventurer/CombatMonk.ogg'
-			H.adjust_skillrank(/datum/skill/combat/whipsflails, 4, TRUE)
-	ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_STEELHEARTED, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_KNOWBANDITS, TRAIT_GENERIC)
+	attribute_sheet = /datum/attribute_holder/sheet/job/templar
 
-	var/holder = H.patron?.devotion_holder
+	traits = list(
+		TRAIT_HEAVYARMOR,
+		TRAIT_STEELHEARTED,
+	)
+	mind_traits = list(TRAIT_KNOWBANDITS)
+
+	languages = list(/datum/language/celestial)
+
+/datum/job/templar/after_spawn(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+
+	var/holder = spawned.patron?.devotion_holder
 	if(holder)
 		var/datum/devotion/devotion = new holder()
 		devotion.make_templar()
-		devotion.grant_to(H)
-	if(H.dna?.species)
-		if(H.dna.species.id == SPEC_ID_HUMEN)
-			H.dna.species.soundpack_m = new /datum/voicepack/male/knight()
+		devotion.grant_to(spawned)
 
-/datum/outfit/templar/post_equip(mob/living/carbon/human/H, visuals_only)
+	if(spawned.dna?.species?.id == SPEC_ID_HUMEN && spawned.gender == MALE)
+		spawned.dna.species.soundpack_m = new /datum/voicepack/male/knight()
+
+/datum/job/templar/on_roundstart(mob/living/carbon/human/spawned, client/player_client)
 	. = ..()
-	switch(H.patron?.type) //this is a ridiculous way of doing it and it is annoying.
+
+	switch(spawned.patron?.type)
 		if(/datum/patron/divine/astrata)
-			var/obj/item/weapon/sword/long/exe/astrata/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/astrata)
+			spawned.cmode_music = 'sound/music/cmode/church/CombatAstrata.ogg'
 		if(/datum/patron/divine/noc)
-			var/obj/item/weapon/sword/sabre/noc/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/noc)
+			ADD_TRAIT(spawned, TRAIT_DUALWIELDER, TRAIT_GENERIC)
+			spawned.cmode_music = 'sound/music/cmode/church/CombatNoc.ogg'
 		if(/datum/patron/divine/dendor)
-			var/obj/item/weapon/polearm/halberd/bardiche/dendor/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/dendor)
+			spawned.cmode_music = 'sound/music/cmode/church/CombatDendor.ogg'
 		if(/datum/patron/divine/necra)
-			var/obj/item/weapon/flail/sflail/necraflail/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/necra)
+			ADD_TRAIT(spawned, TRAIT_DEADNOSE, TRAIT_GENERIC)
+			ADD_TRAIT(spawned, TRAIT_GRAVEROBBER, TRAIT_GENERIC)
+			spawned.cmode_music = 'sound/music/cmode/church/CombatGravekeeper.ogg'
 		if(/datum/patron/divine/pestra)
-			var/obj/item/weapon/knife/dagger/steel/pestrasickle/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
-			var/obj/item/weapon/knife/dagger/steel/pestrasickle/L = new(get_turf(src))
-			H.equip_to_appropriate_slot(L)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/pestra)
+			ADD_TRAIT(spawned, TRAIT_DUALWIELDER, TRAIT_GENERIC)
+			spawned.cmode_music = 'sound/music/cmode/adventurer/CombatMonk.ogg'
 		if(/datum/patron/divine/eora)
-			var/obj/item/weapon/sword/rapier/eora/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
+			spawned.virginity = FALSE
+			ADD_TRAIT(spawned, TRAIT_BEAUTIFUL, TRAIT_GENERIC)
+			spawned.cmode_music = 'sound/music/cmode/church/CombatEora.ogg'
+			var/static/list/selectable = list(
+				"Heartstring (Rapier)" = /obj/item/weapon/sword/rapier/eora,
+				"Close Caress (Knuckles)" = /obj/item/weapon/knuckles/eora,
+			)
+			var/choice = spawned.select_equippable(player_client, selectable, message = "Choose Your Specialisation", title = "TEMPLAR")
+			if(!choice)
+				return
+			switch(choice)
+				if("Heartstring (Rapier)")
+					spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/eora/rapier)
+				if("Close Caress (Knuckles)")
+					spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/eora/knuckles)
 		if(/datum/patron/divine/ravox)
-			var/obj/item/weapon/sword/long/ravox/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/ravox)
+			spawned.cmode_music = 'sound/music/cmode/church/CombatRavox.ogg'
 		if(/datum/patron/divine/malum)
-			var/obj/item/weapon/hammer/sledgehammer/war/malum/P = new(get_turf(src))
-			H.put_in_hands(P, forced = TRUE)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/malum)
+			spawned.cmode_music = 'sound/music/cmode/adventurer/CombatOutlander2.ogg'
 		if(/datum/patron/divine/abyssor)
-			var/obj/item/weapon/polearm/spear/abyssor/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/abyssor)
+			spawned.cmode_music = 'sound/music/cmode/church/CombatAbyssor.ogg'
+			var/static/list/selectable = list(
+				"DepthSeeker (Spear)" = /obj/item/weapon/polearm/spear/abyssor,
+				"Barotrauma (Katars)" = /obj/item/weapon/katar/abyssor,
+			)
+			var/choice = spawned.select_equippable(player_client, selectable, message = "Choose Your Specialisation", title = "TEMPLAR")
+			if(!choice)
+				return
+			switch(choice)
+				if("DepthSeeker (Spear)")
+					spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/abyssor/spear)
+				if("Barotrauma (Katars)")
+					spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/abyssor/katars)
 		if(/datum/patron/divine/xylix)
-			var/obj/item/weapon/whip/xylix/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/templar/patron/xylix)
+			spawned.cmode_music = 'sound/music/cmode/church/CombatXylix.ogg'
+
+/datum/outfit/templar
+	name = JOB_TEMPLAR
+	head = /obj/item/clothing/head/helmet/heavy/necked
+	cloak = /obj/item/clothing/cloak/tabard/crusader/tief
+	armor = /obj/item/clothing/armor/brigandine
+	shirt = /obj/item/clothing/armor/chainmail
+	pants = /obj/item/clothing/pants/chainlegs
+	shoes = /obj/item/clothing/shoes/boots/armor/light
+	backl = /obj/item/storage/backpack/satchel
+	backpack_contents = list(/obj/item/storage/keyring/priest = 1,  /obj/item/storage/belt/pouch/coins/poor = 1)
+	belt = /obj/item/storage/belt/leather/black
+	ring = /obj/item/clothing/ring/silver
+	gloves = /obj/item/clothing/gloves/chain
+	l_hand = /obj/item/weapon/shield/tower/metal
+
+/datum/outfit/templar/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
+	. = ..()
+	switch(equipped_human.patron?.type)
+		if(/datum/patron/divine/astrata)
+			wrists = /obj/item/clothing/neck/psycross/silver/divine/astrata
+			head = /obj/item/clothing/head/helmet/heavy/necked/astrata
+			cloak = /obj/item/clothing/cloak/stabard/templar/astrata
+			backr = /obj/item/weapon/sword/long/exe/astrata
+		if(/datum/patron/divine/noc)
+			wrists = /obj/item/clothing/neck/psycross/silver/divine/noc
+			head = /obj/item/clothing/head/helmet/heavy/necked/noc
+			cloak = /obj/item/clothing/cloak/stabard/templar/noc
+			beltl = /obj/item/weapon/sword/sabre/noc
+		if(/datum/patron/divine/dendor)
+			wrists = /obj/item/clothing/neck/psycross/silver/divine/dendor
+			head = /obj/item/clothing/head/helmet/heavy/necked/dendorhelm
+			cloak = /obj/item/clothing/cloak/stabard/templar/dendor
+			backr = /obj/item/weapon/polearm/halberd/bardiche/dendor
+		if(/datum/patron/divine/necra)
+			wrists = /obj/item/clothing/neck/psycross/silver/divine/necra
+			head = /obj/item/clothing/head/helmet/heavy/necked/necra
+			cloak = /obj/item/clothing/cloak/stabard/templar/necra
+			beltl = /obj/item/weapon/flail/sflail/necraflail
+		if(/datum/patron/divine/pestra)
+			wrists = /obj/item/clothing/neck/psycross/silver/divine/pestra
+			head = /obj/item/clothing/head/helmet/heavy/necked/pestrahelm
+			cloak = /obj/item/clothing/cloak/stabard/templar/pestra
+			backpack_contents += /obj/item/reagent_containers/glass/bottle/poison
+			beltr = /obj/item/weapon/knife/dagger/steel/pestrasickle
+			beltl = /obj/item/weapon/knife/dagger/steel/pestrasickle
+		if(/datum/patron/divine/eora)
+			head = /obj/item/clothing/head/helmet/sallet/eoran
+			mask = /obj/item/clothing/head/roguehood/eora
+			wrists = /obj/item/clothing/neck/psycross/silver/divine/eora
+			cloak = /obj/item/clothing/cloak/stabard/templar/eora
+		if(/datum/patron/divine/ravox)
+			wrists = /obj/item/clothing/neck/psycross/silver/divine/ravox
+			head = /obj/item/clothing/head/helmet/heavy/necked/ravox
+			cloak = /obj/item/clothing/cloak/stabard/templar/ravox
+			backr = /obj/item/weapon/sword/long/ravox
+		if(/datum/patron/divine/malum)
+			wrists = /obj/item/clothing/neck/psycross/silver/divine/malum
+			head = /obj/item/clothing/head/helmet/heavy/necked/malumhelm
+			cloak = /obj/item/clothing/cloak/stabard/templar/malum
+			backr = /obj/item/weapon/hammer/sledgehammer/war/malum
+		if(/datum/patron/divine/abyssor)
+			head = /obj/item/clothing/head/helmet/heavy/necked/abyssor
+			armor = /obj/item/clothing/armor/brigandine/abyssor
+			wrists = /obj/item/clothing/neck/psycross/silver/divine/abyssor
+			cloak = /obj/item/clothing/cloak/stabard/templar/abyssor
+		if(/datum/patron/divine/xylix)
+			wrists = /obj/item/clothing/neck/psycross/silver/divine/xylix
+			head = /obj/item/clothing/head/helmet/heavy/necked/xylix
+			cloak = /obj/item/clothing/cloak/stabard/templar/xylix
+			beltl = /obj/item/weapon/whip/xylix

@@ -3,6 +3,28 @@
 	greet_text = "You are the mayor of Rockhill, you've come to Vanderlin to discuss important matters with their Monarch."
 	migrant_job = /datum/job/migrant/rockhill/mayor
 
+/datum/attribute_holder/sheet/job/migrant/mayor
+	raw_attribute_list = list(
+		STAT_STRENGTH = 1,
+		STAT_INTELLIGENCE = 2,
+		STAT_ENDURANCE = 2,
+		STAT_PERCEPTION = 2,
+		STAT_FORTUNE = 2,
+		/datum/attribute/skill/combat/axesmaces = 20,
+		/datum/attribute/skill/combat/crossbows = 30,
+		/datum/attribute/skill/combat/wrestling = 30,
+		/datum/attribute/skill/combat/unarmed = 10,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/knives = 30,
+		/datum/attribute/skill/misc/swimming = 10,
+		/datum/attribute/skill/misc/climbing = 10,
+		/datum/attribute/skill/misc/athletics = 20,
+		/datum/attribute/skill/misc/reading = 40,
+		/datum/attribute/skill/misc/riding = 30,
+		/datum/attribute/skill/craft/cooking = 10,
+		/datum/attribute/skill/labor/mathematics = 30,
+	)
+
 /datum/job/migrant/rockhill/mayor
 	title = "Mayor of Rockhill"
 	tutorial = "You are the mayor of Rockhill, you've come to Vanderlin to discuss important matters with their Monarch."
@@ -10,33 +32,13 @@
 	allowed_sexes = list(MALE, FEMALE)
 	allowed_races = RACES_PLAYER_NONDISCRIMINATED
 	is_recognized = TRUE
+	honorary = "Mayor"
 
-	jobstats = list(
-		STATKEY_STR = 1,
-		STATKEY_INT = 2,
-		STATKEY_END = 2,
-		STATKEY_PER = 2,
-		STATKEY_LCK = 2,
-	)
-
-	skills = list(
-		/datum/skill/combat/axesmaces = 2,
-		/datum/skill/combat/crossbows = 3,
-		/datum/skill/combat/wrestling = 3,
-		/datum/skill/combat/unarmed = 1,
-		/datum/skill/combat/swords = 4,
-		/datum/skill/combat/knives = 3,
-		/datum/skill/misc/swimming = 1,
-		/datum/skill/misc/climbing = 1,
-		/datum/skill/misc/athletics = 2,
-		/datum/skill/misc/reading = 4,
-		/datum/skill/misc/riding = 3,
-		/datum/skill/craft/cooking = 1,
-		/datum/skill/labor/mathematics = 3,
-	)
+	attribute_sheet = /datum/attribute_holder/sheet/job/migrant/mayor
 
 	traits = list(
-		TRAIT_NOBLE,
+		TRAIT_NOBLE_BLOOD,
+		TRAIT_NOBLE_POWER,
 		TRAIT_HEAVYARMOR,
 		TRAIT_MEDIUMARMOR,
 	)
@@ -44,7 +46,7 @@
 	cmode_music = 'sound/music/cmode/nobility/combat_noble.ogg'
 
 /datum/outfit/rockhill/mayor
-	name = "Mayor of Rockhill"
+	name = "Mayor of Rockhill (Migrant Wave)"
 	shirt = /obj/item/clothing/shirt/undershirt
 	belt = /obj/item/storage/belt/leather/black
 	neck = /obj/item/clothing/neck/gorget
@@ -82,39 +84,44 @@
 	greet_text = "You are a Knight of Rockhill, the notable of said town has taken the journey to your liege, you are to ensure their safety."
 	migrant_job = /datum/job/migrant/rockhill/knight
 
+/datum/attribute_holder/sheet/job/migrant/knight
+	raw_attribute_list = list(
+		STAT_STRENGTH = 2,
+		STAT_PERCEPTION = 1,
+		STAT_CONSTITUTION = 2,
+		STAT_ENDURANCE = 2,
+		STAT_SPEED = -1,
+		/datum/attribute/skill/combat/polearms = 40,
+		/datum/attribute/skill/combat/swords = 40,
+		/datum/attribute/skill/combat/whipsflails = 40,
+		/datum/attribute/skill/combat/axesmaces = 40,
+		/datum/attribute/skill/combat/wrestling = 40,
+		/datum/attribute/skill/combat/unarmed = 30,
+		/datum/attribute/skill/combat/crossbows = 30,
+		/datum/attribute/skill/combat/bows = 30,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/climbing = 10,
+		/datum/attribute/skill/misc/reading = 30,
+		/datum/attribute/skill/misc/riding = 40,
+		/datum/attribute/skill/labor/mathematics = 30,
+	)
+
 /datum/job/migrant/rockhill/knight
 	title = "Knight of Rockhill"
 	tutorial = "You are a Knight of Rockhill, the notable of said town has taken the journey to your liege, you are to ensure their safety."
 	outfit = /datum/outfit/rockhill/knight
 	allowed_races = RACES_PLAYER_NONDISCRIMINATED
 	is_recognized = TRUE
+	exp_types_granted  = list(EXP_TYPE_COMBAT)
+	honorary = "Sir"
+	honorary_f = "Dame"
 
-	jobstats = list(
-		STATKEY_STR = 2,
-		STATKEY_PER = 1,
-		STATKEY_CON = 2,
-		STATKEY_END = 2,
-		STATKEY_SPD = -1,
-	)
 
-	skills = list(
-		/datum/skill/combat/polearms = 4,
-		/datum/skill/combat/swords = 4,
-		/datum/skill/combat/whipsflails = 4,
-		/datum/skill/combat/axesmaces = 4,
-		/datum/skill/combat/wrestling = 4,
-		/datum/skill/combat/unarmed = 3,
-		/datum/skill/combat/crossbows = 3,
-		/datum/skill/combat/bows = 3,
-		/datum/skill/misc/athletics = 3,
-		/datum/skill/misc/climbing = 1,
-		/datum/skill/misc/reading = 3,
-		/datum/skill/misc/riding = 4,
-		/datum/skill/labor/mathematics = 3,
-	)
+	attribute_sheet = /datum/attribute_holder/sheet/job/migrant/knight
 
 	traits = list(
-		TRAIT_NOBLE,
+		TRAIT_NOBLE_BLOOD,
+		TRAIT_NOBLE_POWER,
 		TRAIT_HEAVYARMOR,
 		TRAIT_MEDIUMARMOR,
 		TRAIT_STEELHEARTED,
@@ -135,16 +142,8 @@
 			index = spawned.real_name
 		S.name = "knight tabard ([index])"
 
-	var/prev_real_name = spawned.real_name
-	var/prev_name = spawned.name
-	var/honorary = "Sir"
-	if(spawned.gender == FEMALE)
-		honorary = "Dame"
-	spawned.real_name = "[honorary] [prev_real_name]"
-	spawned.name = "[honorary] [prev_name]"
-
 /datum/outfit/rockhill/knight
-	name = "Knight of Rockhill"
+	name = "Knight of Rockhill (Migrant Wave)"
 	head = /obj/item/clothing/head/helmet
 	gloves = /obj/item/clothing/gloves/plate
 	pants = /obj/item/clothing/pants/platelegs
@@ -171,35 +170,62 @@
 	greet_text = "The Mayor of Rockhill has conscripted you and your mens to go see the rulers of Vanderlin."
 	migrant_job = /datum/job/migrant/rockhill/serjeant_at_arms
 
+/datum/attribute_holder/sheet/job/migrant/rockhill_serjeant_at_arms
+	raw_attribute_list = list(
+		STAT_STRENGTH = 2,
+		STAT_INTELLIGENCE = 2,
+		STAT_ENDURANCE = 2,
+		/datum/attribute/skill/combat/axesmaces = 30,
+		/datum/attribute/skill/combat/bows = 20,
+		/datum/attribute/skill/combat/crossbows = 20,
+		/datum/attribute/skill/combat/wrestling = 30,
+		/datum/attribute/skill/combat/unarmed = 20,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/polearms = 20,
+		/datum/attribute/skill/combat/whipsflails = 20,
+		/datum/attribute/skill/combat/knives = 30,
+		/datum/attribute/skill/combat/shields = 30,
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/misc/riding = 30,
+	)
+
+/datum/attribute_holder/sheet/job/migrant/rockhill_serjeant_at_arms/old
+	raw_attribute_list = list(
+		STAT_STRENGTH = 5,
+		STAT_INTELLIGENCE = 4,
+		STAT_ENDURANCE = 4,
+		STAT_PERCEPTION = 1,
+		STAT_SPEED = 1,
+		/datum/attribute/skill/combat/axesmaces = 30,
+		/datum/attribute/skill/combat/bows = 20,
+		/datum/attribute/skill/combat/crossbows = 20,
+		/datum/attribute/skill/combat/wrestling = 30,
+		/datum/attribute/skill/combat/unarmed = 20,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/polearms = 20,
+		/datum/attribute/skill/combat/whipsflails = 20,
+		/datum/attribute/skill/combat/knives = 30,
+		/datum/attribute/skill/combat/shields = 30,
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/misc/riding = 30,
+	)
+
 /datum/job/migrant/rockhill/serjeant_at_arms
 	title = "Rockhill Serjeant"
 	tutorial = "The Mayor of Rockhill has conscripted you and your mens to go see the rulers of Vanderlin."
 	outfit = /datum/outfit/rockhill/serjeant_at_arms
 	allowed_races = RACES_PLAYER_NONDISCRIMINATED
+	exp_types_granted  = list(EXP_TYPE_COMBAT)
+	honorary = "Serjeant"
 
-	jobstats = list(
-		STATKEY_STR = 2,
-		STATKEY_INT = 2,
-		STATKEY_END = 2,
-	)
-
-	skills = list(
-		/datum/skill/combat/axesmaces = 3,
-		/datum/skill/combat/bows = 2,
-		/datum/skill/combat/crossbows = 2,
-		/datum/skill/combat/wrestling = 3,
-		/datum/skill/combat/unarmed = 2,
-		/datum/skill/combat/swords = 4,
-		/datum/skill/combat/polearms = 2,
-		/datum/skill/combat/whipsflails = 2,
-		/datum/skill/combat/knives = 3,
-		/datum/skill/combat/shields = 3,
-		/datum/skill/misc/swimming = 2,
-		/datum/skill/misc/climbing = 2,
-		/datum/skill/misc/athletics = 3,
-		/datum/skill/misc/reading = 1,
-		/datum/skill/misc/riding = 3,
-	)
+	attribute_sheet = /datum/attribute_holder/sheet/job/migrant/rockhill_serjeant_at_arms
+	attribute_sheet_old = /datum/attribute_holder/sheet/job/migrant/rockhill_serjeant_at_arms/old
 
 	traits = list(
 		TRAIT_HEAVYARMOR,
@@ -208,20 +234,8 @@
 
 	cmode_music = 'sound/music/cmode/garrison/CombatGarrison.ogg'
 
-/datum/job/migrant/rockhill/serjeant_at_arms/after_spawn(mob/living/carbon/human/spawned, client/player_client)
-	. = ..()
-	if(spawned.age == AGE_OLD)
-		var/list/old_stats = list(
-			STATKEY_STR = 3,
-			STATKEY_INT = 2,
-			STATKEY_END = 2,
-			STATKEY_PER = 1,
-			STATKEY_SPD = 1,
-		)
-		spawned.adjust_stat_modifier_list("job_stats", old_stats)
-
 /datum/outfit/rockhill/serjeant_at_arms
-	name = "Rockhill Serjeant"
+	name = "Rockhill Serjeant (Migrant Wave)"
 	head = /obj/item/clothing/head/helmet/leather
 	pants = /obj/item/clothing/pants/trou/leather
 	cloak = /obj/item/clothing/cloak/half/vet
@@ -239,12 +253,12 @@
 
 /datum/migrant_role/footman_guard
 	name = "Guardsmen of Rockhill"
-	greet_text = "Your Serjeant has been ordered by the mayor of rockhill to guard them as they visit the rulers of Vanderlin. Ensure they live."
+	greet_text = "Your Serjeant has been ordered by the mayor of Rockhill to guard them as they visit the rulers of Vanderlin. Ensure they live."
 	migrant_job = /datum/job/migrant/footman_bannerman/rockhill
 
 /datum/job/migrant/footman_bannerman/rockhill
 	title = "Guardsmen of Rockhill"
-	tutorial = "Your Serjeant has been ordered by the mayor of rockhill to guard them as they visit the rulers of Vanderlin. Ensure they live."
+	tutorial = "Your Serjeant has been ordered by the mayor of Rockhill to guard them as they visit the rulers of Vanderlin. Ensure they live."
 	is_foreigner = TRUE
 
 /datum/migrant_wave/rockhill_wave

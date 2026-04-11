@@ -1,5 +1,5 @@
 /datum/job/adventurer/courtagent
-	title = "Court Agent"
+	title = JOB_COURT_AGENT
 	tutorial = "Whether acquired by merit, shrewd negotiation or fulfilled bounties, \
 	you have found yourself under the underhanded employ of the Hand. \
 	Fulfill desires and whims of the court that they would rather not be publicly known. \
@@ -8,7 +8,9 @@
 	job_flags = (JOB_EQUIP_RANK | JOB_NEW_PLAYER_JOINABLE)
 	total_positions = 0
 	spawn_positions = 2
-	min_pq = 10
+	department_flag = NOBLEMEN
+
+	job_bitflag = BITFLAG_GARRISON // counts for antag shit
 
 	outfit = null
 	outfit_female = null
@@ -19,7 +21,7 @@
 	can_have_apprentices = FALSE
 	scales = FALSE
 
-/datum/job/adventurer/courtagent
+	exp_types_granted = list(EXP_TYPE_COMBAT)
 
 //Hooking in here does not mess with their equipment procs
 /datum/job/adventurer/courtagent/after_spawn(mob/living/spawned, client/player_client)

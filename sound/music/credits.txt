@@ -11,6 +11,10 @@ combat_assassin2.ogg: Fear & Hunger 2: Termina - Monologue With The Moon
 combat_noble.ogg: Aram Khachaturian - Masquerade Suite - Waltz
 combatskeleton.ogg: Storkrieg - Genocide Of The Fittest
 combat_evilwizard.ogg: Burialgoods - Low Income Barony
+credits2.ogg: Burialgoods - Nocturnal Trespass
+title4.ogg: Burialgoods - Undertones No.1
+title5.ogg: Burialgoods - Exit
+
 
 roundend.ogg: Fear & Hunger 2: Termina - Dark Outside Extended
 accord (8).ogg: Tchaikovsky - Dance of the Sugar Plum Fairy. Cover by Amy Turk
@@ -24,11 +28,12 @@ spice2.ogg: The Appolo Stars - Power Of The Source
 churchnight.ogg: Fear & Hunger 2: Termina - Cathedral Whispers
 
 CombatRogueMage.ogg : (APAB) All Paladins Are Bastards - Burialgoods (He gave us permission, god bless you Burialgoods - https://www.youtube.com/watch?v=3Z_cOxF1o48)
+CombatBeest.ogg : Last Day As A Man (First Night As A Beast) - Burialgoods - https://youtu.be/zznEa8EhpuQ
 
 
 TRACKS MADE FOR VANDERLIN:
 
-    T87-Sulfurhead (https://www.youtube.com/@T87-Sulfurhead)
+T87-Sulfurhead (https://www.youtube.com/@T87-Sulfurhead)
 Slums202 - Title2
 DURANDAL - Royal Knight
 The Reckoning - Bulwark
@@ -63,6 +68,17 @@ Ready or Not - Man-at-Arms
 OZYMANDIAS - Dungeon Track 3
 Black Powder - Grenzelhoft
 mechadh - Gaffer
+TRINITY (You Cant Kill Me) - Sacresants
+Good Men Die Young - Gaffer
+(BRASS) - Sling Blade - Xylixian theme
+(BRASS) - Triumph Over Evil - Ravoxian theme
+(BRASS) - Phases of the moon - Noccite theme
+(BRASS) - Four-Man Party - Town Elder (other than Mayor & Acolyte)
+(BRASS) - Thread Softly - Veteran
+(BRASS) - Turncoat - Abyssorian theme
+SALON (BETA) - Combat Dream
+Meeting Ravox In Two Minutes - Grandmaster Ult
+
 
     SeanPhillips (https://youtube.com/@seanphillipsmusic / www.seanphillipsmusic.co.uk)
     Dungeon Track 1 - Unnamed(?)

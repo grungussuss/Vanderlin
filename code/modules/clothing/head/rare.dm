@@ -9,8 +9,9 @@
 	equip_delay_self = 3 SECONDS
 	unequip_delay_self = 3 SECONDS
 	resistance_flags = FIRE_PROOF // These are all metallic DELETE AFTER REPATH
-	anvilrepair = /datum/skill/craft/armorsmithing	//DELETE AFTER REPATH
-	smeltresult = /obj/item/ingot/steel
+	anvilrepair = /datum/attribute/skill/craft/armor_repair	//DELETE AFTER REPATH
+	melt_amount = 75
+	melting_material = /datum/material/steel
 	sellprice = VALUE_STEEL_HELMET+BONUS_VALUE_SMALL
 
 	armor = ARMOR_PLATE_GOOD
@@ -28,12 +29,15 @@
 	clothing_flags = CANT_SLEEP_IN
 	armor_class = AC_MEDIUM
 	body_parts_covered = HEAD|HAIR|NOSE
+	item_weight = 3.5 KILOGRAMS
+
 
 /obj/item/clothing/head/rare/elfplate/welfplate // Unique Bladesinger kit
 	desc = "A bizarrely lightweight helmet of alloyed elven steel, offering unparalleled protection for elite bladesingers."
 	icon_state = "welfhead"
 
 	body_parts_covered = HEAD|HAIR|NOSE|EYES
+	item_weight = 3.5 KILOGRAMS
 
 
 //............... Langobard Helmet ............... //
@@ -46,6 +50,7 @@
 	flags_inv = HIDEEARS
 	clothing_flags = CANT_SLEEP_IN
 	body_parts_covered = HEAD_EXCEPT_MOUTH
+	item_weight = 3.5 KILOGRAMS
 
 //............... Swordmaster Helmet ............... //
 /obj/item/clothing/head/rare/grenzelplate // Unique Swordmaster kit
@@ -58,6 +63,7 @@
 	flags_inv = HIDEEARS
 	clothing_flags = CANT_SLEEP_IN
 	body_parts_covered = HEAD|EARS|HAIR
+	item_weight = 3.5 KILOGRAMS
 
 
 //............... Kataphract/bastion/spear/zaladin Helmet ............... //
@@ -73,6 +79,7 @@
 	flags_inv = HIDEEARS|HIDEFACE
 	clothing_flags = CANT_SLEEP_IN
 	body_parts_covered = HEAD|EARS|HAIR|NOSE|MOUTH
+	item_weight = 3.5 KILOGRAMS
 
 //............... Hoplite Helmet ............... //
 /obj/item/clothing/head/rare/hoplite // Unique Hoplite kit
@@ -89,3 +96,4 @@
 	clothing_flags = CANT_SLEEP_IN
 	body_parts_covered = HEAD|EARS|HAIR
 	smeltresult = /obj/item/ingot/bronze
+	item_weight = 2.9 KILOGRAMS

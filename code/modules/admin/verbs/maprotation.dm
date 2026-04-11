@@ -1,7 +1,7 @@
 /client/proc/forcerandomrotate()
 	set category = "Server"
 	set name = "Trigger Random Map Rotation"
-	var/rotate = alert("Force a random map rotation to trigger?", "Rotate map?", "Yes", "Cancel")
+	var/rotate = tgui_alert(usr, "Force a random map rotation to trigger?", "Rotate map?", list("Yes", "Cancel"))
 	if (rotate != "Yes")
 		return
 	message_admins("[key_name_admin(usr)] is forcing a random map rotation.")
@@ -71,9 +71,9 @@
 
 		qdel(M)
 
-		VM.map_path = "custom"
+		VM.map_path = CUSTOM_MAP_PATH
 		VM.map_file = "[map_file]"
-		VM.config_filename = "data/next_map.json"
+		VM.config_filename = PATH_TO_NEXT_MAP_JSON
 		var/json_value = list(
 			"map_name" = VM.map_name,
 			"map_path" = VM.map_path,
@@ -81,9 +81,9 @@
 		)
 
 		// If the file isn't removed text2file will just append.
-		if(fexists("data/next_map.json"))
-			fdel("data/next_map.json")
-		text2file(json_encode(json_value), "data/next_map.json")
+		if(fexists(PATH_TO_NEXT_MAP_JSON))
+			fdel(PATH_TO_NEXT_MAP_JSON)
+		text2file(json_encode(json_value), PATH_TO_NEXT_MAP_JSON)
 
 		if(SSmapping.changemap(VM))
 			message_admins("[key_name_admin(usr)] has changed the map to [VM.map_name]")

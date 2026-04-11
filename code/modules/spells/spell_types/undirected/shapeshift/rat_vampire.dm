@@ -1,5 +1,5 @@
 /datum/action/cooldown/spell/undirected/shapeshift/rat_vampire
-	name = "Rat Form"
+	name = "Vampiric Rat Form"
 	desc = "Transform into a small rat. Damage is not inherited between forms."
 
 	attunements = list(
@@ -25,4 +25,4 @@
 	if(!.)
 		return
 	var/mob/living/new_shape = .
-	new_shape.adjust_stat_modifier("[REF(src)]", STATKEY_SPD, 15 - new_shape.base_speed)
+	new_shape.adjust_stat_modifier("[REF(src)]", list(STAT_SPEED = -5))

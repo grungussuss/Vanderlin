@@ -16,18 +16,22 @@ LINEN BINS
 	throwforce = 0
 	throw_speed = 1
 	throw_range = 2
-	w_class = WEIGHT_CLASS_TINY
+	w_class = WEIGHT_CLASS_SMALL
+	grid_width = 64
+	grid_height = 64
 	resistance_flags = FLAMMABLE
 	dying_key = DYE_REGISTRY_BEDSHEET
+	item_weight = 540 GRAMS //not weighted blankets but higher end heavy since cold
 
 	var/list/dream_messages = list("white")
 	var/datum/weakref/signal_sleeper //this is our goldylocks
+	var/bed_tucked = FALSE
 
 /obj/item/bedsheet/Initialize()
 	. = ..()
 	AddElement(/datum/element/bed_tuckable, 0, 0, 0)
 
-/obj/item/bedsheet/attack_self(mob/living/user, params)
+/obj/item/bedsheet/attack_self(mob/living/user, list/modifiers)
 	if(!user.CanReach(src))		//No telekenetic grabbing.
 		return
 	if(!user.resting)
@@ -77,6 +81,17 @@ LINEN BINS
 	UnregisterSignal(sleeper, COMSIG_PARENT_QDELETING)
 	signal_sleeper = null
 
+/obj/item/bedsheet/attack_hand(mob/user, list/modifiers)
+	if(!bed_tucked)
+		return ..()
+	if(do_after(user, 2 SECONDS, src))
+		var/obj/structure/bed/bed = locate() in loc
+		if(bed)
+			to_chat(user, span_notice("You start to remove \the [src] from \the [bed]."))
+			bed.sheet_tucked = FALSE
+			bed.sheet_on = FALSE
+			bed_tucked = FALSE
+		return ..()
 /obj/item/bedsheet/cloth
 	desc = ""
 	icon = 'icons/roguetown/misc/structure.dmi'

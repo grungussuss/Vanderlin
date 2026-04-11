@@ -11,6 +11,7 @@
 	owner.visible_message(span_notice("[owner] harmonizes with the natural cycles."))
 	var/mob/living/L = owner
 	L.apply_status_effect(/datum/status_effect/buff/seasonal_attunement, 600 SECONDS)
+	new /obj/effect/temp_visual/snake/twin_up(null, L)
 
 /datum/status_effect/buff/seasonal_attunement
 	id = "seasonal_attunement"
@@ -20,14 +21,14 @@
 /datum/status_effect/buff/seasonal_attunement/on_apply()
 	. = ..()
 	// Minor resistances based on current season/time
-	ADD_TRAIT(owner, TRAIT_RESISTCOLD, MAGIC_TRAIT)
-	ADD_TRAIT(owner, TRAIT_RESISTHEAT, MAGIC_TRAIT)
+	ADD_TRAIT(owner, TRAIT_RESISTCOLD, TRAIT_STATUS_EFFECT(id))
+	ADD_TRAIT(owner, TRAIT_RESISTHEAT, TRAIT_STATUS_EFFECT(id))
 	to_chat(owner, span_notice("You harmonize with the natural cycles."))
 
 /datum/status_effect/buff/seasonal_attunement/on_remove()
 	. = ..()
-	REMOVE_TRAIT(owner, TRAIT_RESISTCOLD, MAGIC_TRAIT)
-	REMOVE_TRAIT(owner, TRAIT_RESISTHEAT, MAGIC_TRAIT)
+	REMOVE_TRAIT(owner, TRAIT_RESISTCOLD, TRAIT_STATUS_EFFECT(id))
+	REMOVE_TRAIT(owner, TRAIT_RESISTHEAT, TRAIT_STATUS_EFFECT(id))
 	to_chat(owner, span_notice("Your connection to natural cycles fades."))
 
 /atom/movable/screen/alert/status_effect/seasonal_attunement

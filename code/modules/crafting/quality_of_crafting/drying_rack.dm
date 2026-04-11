@@ -28,6 +28,7 @@
 		/obj/item/reagent_containers/food/snacks/meat/sausage = 1,
 		/obj/item/reagent_containers/powder/salt = 1
 	)
+	subtypes_allowed = TRUE
 	attacked_atom = /obj/machinery/tanningrack
 
 	craft_time = 1.5 SECONDS
@@ -42,6 +43,7 @@
 		/obj/item/reagent_containers/food/snacks/meat/steak = 1,
 		/obj/item/reagent_containers/powder/salt = 1
 	)
+	subtypes_allowed = TRUE
 	attacked_atom = /obj/machinery/tanningrack
 
 	craft_time = 1.5 SECONDS
@@ -88,28 +90,13 @@
 		/obj/item/reagent_containers/food/snacks/produce/fruit/jacksberry = 1,
 	)
 	attacked_atom = /obj/machinery/tanningrack
+	subtypes_allowed = TRUE //poison berries
 
 	craft_time = 1.5 SECONDS
 	crafting_message = "starts drying some jacksberries"
 	craftdiff = 0
 	pass_types_in_end = list(
 		/obj/item/reagent_containers/food/snacks/produce/fruit/jacksberry, //old craft blacklisted poison berries, cowards
-	)
-
-/datum/repeatable_crafting_recipe/raisins_poison
-	name = "raisins"
-	output = /obj/item/reagent_containers/food/snacks/raisins/poison
-	starting_atom = /obj/item/reagent_containers/food/snacks/produce/fruit/jacksberry/poison
-	requirements = list(
-		/obj/item/reagent_containers/food/snacks/produce/fruit/jacksberry/poison = 1,
-	)
-	attacked_atom = /obj/machinery/tanningrack
-
-	craft_time = 1.5 SECONDS
-	crafting_message = "starts drying some jacksberries"
-	craftdiff = 0
-	pass_types_in_end = list(
-		/obj/item/reagent_containers/food/snacks/produce/fruit/jacksberry/poison,
 	)
 
 /datum/repeatable_crafting_recipe/driedstrawberry
@@ -261,4 +248,32 @@
 
 	craft_time = 2.5 SECONDS
 	crafting_message = "starts mixing the blood"
+	craftdiff = 1
+
+/datum/repeatable_crafting_recipe/capillusfiber
+	name = "dried capillus mort fibers"
+	output = /obj/item/natural/fibers
+	output_amount = 3
+	starting_atom = /obj/item/reagent_containers/food/snacks/produce/mushroom/capillus
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/produce/mushroom/capillus = 1
+	)
+	attacked_atom = /obj/machinery/tanningrack
+
+	craft_time = 1.5 SECONDS
+	crafting_message = "starts extracting some fibers"
+	craftdiff = 0
+
+/datum/repeatable_crafting_recipe/driedwaddle
+	name = "dried waddle"
+	output = /obj/item/reagent_containers/food/snacks/waddle_dried
+	output_amount = 1
+	starting_atom = /obj/item/reagent_containers/food/snacks/produce/mushroom/waddle
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/produce/mushroom/waddle = 1
+	)
+	attacked_atom = /obj/machinery/tanningrack
+
+	craft_time = 1.5
+	crafting_message = "starts drying a waddle"
 	craftdiff = 1

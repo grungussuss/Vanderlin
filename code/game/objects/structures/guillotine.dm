@@ -70,7 +70,7 @@
 
 		unbuckle_all_mobs()
 
-/obj/structure/guillotine/attack_hand_secondary(mob/user, params)
+/obj/structure/guillotine/attack_hand_secondary(mob/user, list/modifiers)
 	. = ..()
 	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
 		return
@@ -139,8 +139,6 @@
 			unbuckle_all_mobs()
 			kill_count += 1
 
-//			H.adjust_triumphs(-1)
-
 			var/blood_overlay = "bloody"
 
 			if (kill_count == 2)
@@ -171,7 +169,7 @@
 	blade_status = GUILLOTINE_BLADE_DROPPED
 	icon_state = "guillotine"
 
-/obj/structure/guillotine/attackby(obj/item/W, mob/user, params)
+/obj/structure/guillotine/attackby(obj/item/W, mob/user, list/modifiers)
 	if (istype(W, /obj/item/natural/stone))
 		add_fingerprint(user)
 		if (blade_status == GUILLOTINE_BLADE_SHARPENING)

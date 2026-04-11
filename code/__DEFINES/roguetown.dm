@@ -1,8 +1,12 @@
 #define ALL_TEMPLE_PATRONS 		list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/dendor, /datum/patron/divine/abyssor, /datum/patron/divine/necra, /datum/patron/divine/ravox, /datum/patron/divine/xylix, /datum/patron/divine/pestra, /datum/patron/divine/malum, /datum/patron/divine/eora)
+#define UNDIVIDED_TEMPLE_PATRONS list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/dendor, /datum/patron/divine/abyssor, /datum/patron/divine/necra, /datum/patron/divine/ravox, /datum/patron/divine/xylix, /datum/patron/divine/pestra, /datum/patron/divine/malum, /datum/patron/divine/eora, /datum/patron/divine/centrist)
 #define ALL_CLERIC_PATRONS 		list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/dendor, /datum/patron/divine/abyssor, /datum/patron/divine/necra, /datum/patron/divine/ravox, /datum/patron/divine/xylix, /datum/patron/divine/pestra, /datum/patron/divine/malum, /datum/patron/divine/eora)
-#define ALL_PALADIN_PATRONS 	list(/datum/patron/psydon, /datum/patron/psydon/progressive, /datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/dendor, /datum/patron/divine/abyssor, /datum/patron/divine/necra, /datum/patron/divine/ravox, /datum/patron/divine/xylix, /datum/patron/divine/pestra, /datum/patron/divine/malum, /datum/patron/divine/eora)
 #define ALL_TEMPLAR_PATRONS 	list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/eora, /datum/patron/divine/necra, /datum/patron/divine/ravox, /datum/patron/divine/pestra, /datum/patron/divine/dendor, /datum/patron/divine/abyssor, /datum/patron/divine/malum, /datum/patron/divine/xylix)
 #define ALL_PROFANE_PATRONS 	list(/datum/patron/inhumen/graggar, /datum/patron/inhumen/zizo, /datum/patron/inhumen/matthios, /datum/patron/inhumen/baotha)
+#define ALL_ICONOCLAST_PATRONS  list(/datum/patron/psydon, /datum/patron/psydon/extremist, /datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/dendor, /datum/patron/divine/abyssor, /datum/patron/divine/necra, /datum/patron/divine/ravox, /datum/patron/divine/xylix, /datum/patron/divine/pestra, /datum/patron/divine/malum, /datum/patron/divine/eora, /datum/patron/inhumen/graggar, /datum/patron/inhumen/zizo, /datum/patron/inhumen/matthios, /datum/patron/inhumen/baotha)
+
+#define COLORFUL_PATRONS		list("Psydon", "Astrata", "Noc", "Dendor", "Abyssor", "Necra", "Ravox", "Xylix", "Pestra", "Malum", "Eora", "Graggar", "Zizo", "Matthios", "Baotha", "The Great Hunt", "The Black Briar")
+#define TEMPLE_PATRON_NAMES		list("Astrata", "Noc", "Dendor", "Abyssor", "Necra", "Ravox", "Xylix", "Pestra", "Malum", "Eora")
 
 GLOBAL_LIST_INIT(curse_names, list())
 
@@ -63,6 +67,9 @@ GLOBAL_LIST_INIT(curse_names, list())
 				return pick('sound/combat/hits/armor/light_blunt (1).ogg','sound/combat/hits/armor/light_blunt (2).ogg','sound/combat/hits/armor/light_blunt (3).ogg')
 
 GLOBAL_LIST_EMPTY(confessors)
+GLOBAL_LIST_EMPTY(indexed)
+GLOBAL_LIST_EMPTY(cursedsamples)
+GLOBAL_LIST_EMPTY(accused)
 
 //preference stuff
 #define FAMILY_NONE "None"
@@ -91,117 +98,38 @@ GLOBAL_LIST_EMPTY(job_respawn_delays)
 #define STRESS_GOOD 1
 #define STRESS_VGOOD -4
 
-/*	........   Nutrition defines   ................ */
-#define MEAL_FILLING 30
-#define MEAL_GOOD 24
-#define MEAL_AVERAGE 18
-#define MEAL_MEAGRE 15
-#define SNACK_CHUNKY 12
-#define SNACK_NUTRITIOUS 9
-#define SNACK_DECENT 6
-#define SNACK_POOR 3
-
-
-#define MEATPIE_NUTRITION (MINCE_NUTRITION * 3) + BUTTERDOUGH_NUTRITION
-#define FRUITPIE_NUTRITION (SNACK_POOR * 3) + BUTTERDOUGH_NUTRITION
-#define BREADSLICE_NUTRITION SNACK_POOR
-#define DOUGH_NUTRITION BREADSLICE_NUTRITION * 6
-#define SMALLDOUGH_NUTRITION (MEAL_MEAGRE / 2)
-#define BUTTERDOUGH_NUTRITION DOUGH_NUTRITION + BUTTER_NUTRITION
-#define BUTTERDOUGHSLICE_NUTRITION (BUTTERDOUGH_NUTRITION / 2)
-#define BUTTER_NUTRITION SNACK_POOR
-#define RAWMEAT_NUTRITION SNACK_DECENT
-#define COOKED_MEAT_NUTRITION SNACK_NUTRITIOUS
-#define MINCE_NUTRITION SNACK_DECENT
-#define SAUSAGE_NUTRITION MINCE_NUTRITION + COOKED_FAT_NUTRITION
-#define CHEESE_NUTRITION SNACK_DECENT
-#define EGG_NUTRITION SNACK_DECENT
-#define FRYVEGGIE_NUTRITION SNACK_POOR
-#define COOKED_FAT_NUTRITION SNACK_DECENT
-
-/*	........   Rotting Food defines   ................ */
-#define SHELFLIFE_EXTREME 90 MINUTES
-#define SHELFLIFE_LONG 50 MINUTES
-#define SHELFLIFE_DECENT 30 MINUTES
-#define SHELFLIFE_SHORT 20 MINUTES
-#define SHELFLIFE_TINY 12 MINUTES
-
 /*
 	Formerly bitflags, now we are strings
 	Currently used for classes, I could have used these for drifters tho
 */
 
-#define CTAG_ALLCLASS		"CAT_ALLCLASS"		// jus a define for allclass to not deal with actively typing strings
-#define CTAG_PILGRIM 		"CAT_PILGRIM"  		// Pilgrim classes
-#define CTAG_ADVENTURER 	"CAT_ADVENTURER"  	// Adventurer classes
-#define CTAG_TOWNER 		"CAT_TOWNER"  		// Villager class - Villagers can use it
-#define CTAG_ANTAG 			"CAT_ANTAG"  		// Antag class - results in an antag
-#define CTAG_BANDIT			"CAT_BANDIT"		// Bandit class - Tied to the bandit antag really	<- Disabled; bandits got stuck with class selection
-#define CTAG_CHALLENGE 		"CAT_CHALLENGE"  	// Challenge class - Meant to be free for everyone
-#define CTAG_MERCENARY		"CAT_MERCENARY"
-#define CTAG_GARRISON		"CAT_GARRISON"
-#define CTAG_FORGARRISON	"CAT_FORGARRISON"
-#define CTAG_ADEPT			"CAT_ADEPT" // Used for Adept class selection
-#define CTAG_SQUIRE 		"CAT_SQUIRE" // Squire Love, Classes, as above.
-#define CTAG_MAGIE			"CAT_MAGIE" //for Mage Associate
-#define CTAG_HEIR			"CAT_HEIR"
-#define CTAG_HAND			"CAT_HAND"			// Hand class - Handles Hand class selector
-#define CTAG_CONSORT 		"CAT_CONSORT" 		// Consort classes
-#define CTAG_VETERAN		"CAT_VETERAN"		// Veteran class - Handles Veteran class selector
-#define CTAG_TOWN_ELDER		"CAT_TOWN_ELDER"		// Town Elder class - Handles Town Elder class selector
-#define CTAG_ROYALKNIGHT	"CAT_ROYAL_KNIGHT"
-#define CTAG_MENATARMS		"CAT_MENATARMS"
-#define CTAG_SERVANT		"CAT_SERVANT" 		// Servant class - 4 type of servant to fill in someplace.
-#define CTAG_GATEMASTER		"CAT_GATEMASTER"
-#define CTAG_WRETCH			"CAT_WRETCH"
-
-// Character category and its buys
-#define TRIUMPH_CAT_CHARACTER "CHARACTER"
-
-#define TRIUMPH_BUY_RACE_ALL "race_all"
-#define TRIUMPH_BUY_ANY_CLASS "pick_any"
-#define TRIUMPH_BUY_ADOPTION "adoption"
-#define TRIUMPH_BUY_FART "fart"
-#define TRIUMPH_BUY_SECRET_OFFICIANT "secret_officiant"
-
-// Character category and its buys
-#define TRIUMPH_CAT_CHALLENGES "CHALLENGES"
-
-#define TRIUMPH_BUY_LEPROSY "leprosy"
-#define TRIUMPH_BUY_CURSE "curse"
-
-// Storyteller category and its buys
-#define TRIUMPH_CAT_STORYTELLER "STORYTELLER"
-
-#define TRIUMPH_BUY_ASTRATA_INFLUENCE "astrata_influence"
-#define TRIUMPH_BUY_NOC_INFLUENCE "noc_influence"
-#define TRIUMPH_BUY_RAVOX_INFLUENCE "ravox_influence"
-#define TRIUMPH_BUY_ABYSSOR_INFLUENCE "abyssor_influence"
-#define TRIUMPH_BUY_XYLIX_INFLUENCE "xylix_influence"
-#define TRIUMPH_BUY_NECRA_INFLUENCE "necra_influence"
-#define TRIUMPH_BUY_PESTRA_INFLUENCE "pestra_influence"
-#define TRIUMPH_BUY_MALUM_INFLUENCE "malum_influence"
-#define TRIUMPH_BUY_EORA_INFLUENCE "eora_influence"
-#define TRIUMPH_BUY_DENDOR_INFLUENCE "dendor_influence"
-#define TRIUMPH_BUY_ZIZO_INFLUENCE "zizo_influence"
-#define TRIUMPH_BUY_BAOTHA_INFLUENCE "baotha_influence"
-#define TRIUMPH_BUY_GRAGGAR_INFLUENCE "graggar_influence"
-#define TRIUMPH_BUY_MATTHIOS_INFLUENCE "matthios_influence"
-
-// Misc category and its buys
-#define TRIUMPH_CAT_MISC "MISC"
-
-#define TRIUMPH_BUY_PSYDON_FAVOURITE "psydon_favourite"
-
-// Misc category and its buys
-#define TRIUMPH_CAT_COMMUNAL "COMMUNAL"
-
-#define TRIUMPH_BUY_PSYDON_RETIREMENT "psydon_retirement"
-#define TRIUMPH_BUY_ORPHANAGE_RENOVATION "orphanage_renovation"
-#define TRIUMPH_BUY_LONGER_WEEK "longer_week"
-
-// Bought triumph buys category
-#define TRIUMPH_CAT_ACTIVE_DATUMS "BOUGHT"
+#define CTAG_ALLCLASS "CAT_ALLCLASS" // just a define for allclass to not deal with actively typing strings
+#define CTAG_PILGRIM "CAT_PILGRIM"  // Pilgrim classes
+#define CTAG_ADVENTURER "CAT_ADVENTURER" // Adventurer classes
+#define CTAG_TOWNER "CAT_TOWNER" // Villager class - Villagers can use it
+#define CTAG_ANTAG "CAT_ANTAG" // Antag class - results in an antag
+#define CTAG_BANDIT	"CAT_BANDIT" // Bandit class - Tied to the bandit antag really	<- Disabled; bandits got stuck with class selection
+#define CTAG_CHALLENGE "CAT_CHALLENGE" // Challenge class - Meant to be free for everyone
+#define CTAG_MERCENARY "CAT_MERCENARY"
+#define CTAG_GARRISON "CAT_GARRISON"
+#define CTAG_FORGARRISON "CAT_FORGARRISON"
+#define CTAG_ADEPT "CAT_ADEPT" // Used for Adept class selection
+#define CTAG_SQUIRE "CAT_SQUIRE" // Squire Love, Classes, as above.
+#define CTAG_MAGIE "CAT_MAGIE" //for Mage Associate
+#define CTAG_HEIR "CAT_HEIR"
+#define CTAG_HAND "CAT_HAND" // Hand class - Handles Hand class selector
+#define CTAG_CONSORT "CAT_CONSORT" // Consort classes
+#define CTAG_VETERAN "CAT_VETERAN" // Veteran class - Handles Veteran class selector
+#define CTAG_TOWN_ELDER "CAT_TOWN_ELDER" // Town Elder class - Handles Town Elder class selector
+#define CTAG_ROYALKNIGHT "CAT_ROYAL_KNIGHT"
+#define CTAG_ARCHIVIST "CAT_ARCHIVIST"
+#define CTAG_MENATARMS "CAT_MENATARMS"
+#define CTAG_SERVANT "CAT_SERVANT" // Servant class - 4 type of servant to fill in someplace.
+#define CTAG_GATEMASTER "CAT_GATEMASTER"
+#define CTAG_WRETCH "CAT_WRETCH"
+#define CTAG_INQUISITION "CAT_INQUISITION" // For Orthodoxist subclasses
+#define CTAG_PURITAN "CAT_PURITAN"
+#define CTAG_ORPHAN "CAT_ORPHAN" // For Orphan subclasses
 
 // .............. SELLPRICE/VALUE DEFINES ..................... //
 // Basicallly material cost + work cost will be the value from now on. Needs work to value these things in comparison but its a simple way to get some consistency to it
@@ -350,21 +278,22 @@ Thing can move up or down an armor class by significant changes to coverage & cr
 \--------------------*/
 
 // Light AC
+#define ARMOR_NONE			list("blunt" = 0, "slash" = 0, "stab" = 0, "piercing" = 0, "fire" = 0, "acid" = 0)
 #define ARMOR_MINIMAL		list("blunt" = 5, "slash" = 5, "stab" = 5, "piercing" = 0, "fire" = 0, "acid" = 0)
 #define ARMOR_WEAK			list("blunt" = 10, "slash" = 10, "stab" = 10, "piercing" = 5, "fire" = 0, "acid" = 0)
 
 #define ARMOR_PADDED_BAD	list("blunt" = 15, "slash" = 15, "stab" = 15, "piercing" = 15, "fire" = 0, "acid" = 0)
-#define ARMOR_PADDED		list("blunt" = 25, "slash" = 25, "stab" = 25, "piercing" = 30, "fire" = 0, "acid" = 0)
-#define ARMOR_PADDED_GOOD	list("blunt" = 30, "slash" = 30, "stab" = 30, "piercing" = 35, "fire" = 0, "acid" = 0)
+#define ARMOR_PADDED		list("blunt" = 35, "slash" = 25, "stab" = 25, "piercing" = 30, "fire" = 0, "acid" = 0)
+#define ARMOR_PADDED_GOOD	list("blunt" = 45, "slash" = 30, "stab" = 30, "piercing" = 35, "fire" = 0, "acid" = 0)
 
 #define ARMOR_LEATHER_BAD	list("blunt" = 30, "slash" = 30, "stab" = 30, "piercing" = 10, "fire" = 0, "acid" = 0)
 #define ARMOR_LEATHER		list("blunt" = 35, "slash" = 35, "stab" = 35, "piercing" = 15, "fire" = 0, "acid" = 0)
 #define	ARMOR_LEATHER_GOOD	list("blunt" = 40, "slash" = 40, "stab" = 40, "piercing" = 20, "fire" = 0, "acid" = 0)
 
 // Medium AC
-#define ARMOR_MAILLE_IRON	list("blunt" = 45, "slash" = 45, "stab" = 50, "piercing" = 30, "fire" = 0, "acid" = 0)
-#define ARMOR_MAILLE		list("blunt" = 55, "slash" = 55, "stab" = 55, "piercing" = 40, "fire" = 0, "acid" = 0)
-#define ARMOR_MAILLE_GOOD	list("blunt" = 60, "slash" = 60, "stab" = 60, "piercing" = 45, "fire" = 0, "acid" = 0)
+#define ARMOR_MAILLE_IRON	list("blunt" = 30, "slash" = 45, "stab" = 50, "piercing" = 30, "fire" = 0, "acid" = 0)
+#define ARMOR_MAILLE		list("blunt" = 45, "slash" = 55, "stab" = 55, "piercing" = 40, "fire" = 0, "acid" = 0)
+#define ARMOR_MAILLE_GOOD	list("blunt" = 55, "slash" = 60, "stab" = 60, "piercing" = 45, "fire" = 0, "acid" = 0)
 #define ARMOR_SCALE			list("blunt" = 65, "slash" = 65, "stab" = 65, "piercing" = 65, "fire" = 0, "acid" = 0)
 #define ARMOR_BRIGANDINE	list("blunt" = 70, "slash" = 70, "stab" = 70, "piercing" = 50, "fire" = 0, "acid" = 0)
 
@@ -374,6 +303,72 @@ Thing can move up or down an armor class by significant changes to coverage & cr
 #define ARMOR_PLATE_SILVER	list("blunt" = 85, "slash" = 85, "stab" = 85, "piercing" = 80, "fire" = 0, "acid" = 0)
 #define ARMOR_PLATE_GOOD	list("blunt" = 90, "slash" = 90, "stab" = 90, "piercing" = 85, "fire" = 0, "acid" = 0)
 
+#define ARMOR_BLACKBAG list("blunt" = 100, "slash" = 100, "stab" = 100, "piercing" = 100, "fire" = 75, "acid" = 100)
+#define ARMOR_BROADSWORD list("blunt" = 40, "slash" = 50, "stab" = 50, "piercing" = 0)
+
+// Misc defines. These are here just in case. Inherited by their relevant subtypes.
+#define ARMOR_MACHINERY list("blunt" = 25, "slash" = 25, "stab" = 25,  "piercing" = 10, "fire" = 50, "acid" = 70)
+#define ARMOR_STRUCTURE list("blunt" = 0, "slash" = 0, "stab" = 0, "piercing" = 0, "fire" = 50, "acid" = 50)
+#define ARMOR_DISPLAYCASE list("blunt" = 30, "slash" = 30, "stab" = 30,  "piercing" = 0, "fire" = 70, "acid" = 100)
+#define ARMOR_CLOSET list("blunt" = 20, "slash" = 10, "stab" = 15, "piercing" = 10, "fire" = 70, "acid" = 60)
+
+// Light AC | Chest
+#define ARMOR_CLOTHING list("blunt" = 0, "slash" = 10, "stab" = 20, "piercing" = 0, "fire" = 0, "acid" = 0)
+
+#define ARMOR_SPELLSINGER list("blunt" = 70, "slash" = 70, "stab" = 50, "piercing" = 30, "fire" = 0, "acid" = 0)
+#define ARMOR_LEATHER_STUDDED list("blunt" = 80, "slash" = 80, "stab" = 60, "piercing" = 20, "fire" = 0, "acid" = 0)
+
+// Medium AC | Chest
+#define ARMOR_CUIRASS list("blunt" = 40, "slash" = 100, "stab" = 80, "piercing" = 40, "fire" = 0, "acid" = 0)
+#define ARMOR_PLATE_BSTEEL list("blunt" = 80, "slash" = 100, "stab" = 90, "piercing" = 80, "fire" = 0, "acid" = 0) // It's EVIL. OH GOD.
+
+// Boot Armor
+#define ARMOR_BOOTS_PLATED list("blunt" = 10, "slash" = 100, "stab" = 80, "piercing" = 50, "fire" = 0, "acid" = 0)
+#define ARMOR_BOOTS_PLATED_IRON list("blunt" = 10, "slash" = 100, "stab" = 70, "piercing" = 35, "fire" = 0, "acid" = 0)
+#define ARMOR_BOOTS_BAD list("blunt" = 30, "slash" = 10, "stab" = 20, "piercing" = 0, "fire" = 0, "acid" = 0)
+#define ARMOR_BOOTS list("blunt" = 30, "slash" = 40, "stab" = 60, "piercing" = 0, "fire" = 0, "acid" = 0)
+
+// Glove Armor
+#define ARMOR_GLOVES_LEATHER list("blunt" = 60, "slash" = 10, "stab" = 20, "piercing" = 0, "fire" = 0, "acid" = 0)
+#define ARMOR_GLOVES_LEATHER_GOOD list("blunt" = 60, "slash" = 25, "stab" = 40, "piercing" = 10, "fire" = 0, "acid" = 0)
+#define ARMOR_GLOVES_CHAIN list("blunt" = 20, "slash" = 100, "stab" = 70, "piercing" = 20, "fire" = 0, "acid" = 0)
+#define ARMOR_GLOVES_PLATE list("blunt" = 5, "slash" = 100, "stab" = 80, "piercing" = 40, "fire" = 0, "acid" = 0)
+#define ARMOR_GLOVES_PLATE_GOOD list("blunt" = 20, "slash" = 100, "stab" = 80, "piercing" = 50, "fire" = 0, "acid" = 0)
+
+//  Head Armor
+#define ARMOR_HEAD_CLOTHING list("blunt" = 0, "slash" = 20, "stab" = 20, "piercing" = 0, "fire" = 0, "acid" = 0)
+#define ARMOR_HEAD_BAD list("blunt" = 50, "slash" = 20, "stab" = 30, "piercing" = 10, "fire" = 0, "acid" = 0)
+#define ARMOR_HEAD_HELMET_BAD list("blunt" = 50, "slash" = 50, "stab" = 50, "piercing" = 20, "fire" = 0, "acid" = 0)
+#define ARMOR_HEAD_HELMET list("blunt" = 50, "slash" = 100, "stab" = 80, "piercing" = 20, "fire" = 0, "acid" = 0)
+#define ARMOR_HEAD_HELMET_VISOR list("blunt" = 40, "slash" = 100, "stab" = 80, "piercing" = 50, "fire" = 0, "acid" = 0)
+#define ARMOR_HEAD_PSYDON list("blunt" = 70, "slash" = 70, "stab" = 50, "piercing" = 30, "fire" = 0, "acid" = 0)	//Yeah they just have their own thing going on.
+#define ARMOR_HEAD_LEATHER list("blunt" = 90, "slash" = 60, "stab" = 30, "piercing" = 20, "fire" = 0, "acid" = 0)
+
+// Mask Armor
+#define ARMOR_MASK_METAL_BAD list("blunt" = 50, "slash" = 50, "stab" = 50, "piercing" = 50, "fire" = 0, "acid" = 0)
+#define ARMOR_MASK_METAL list("blunt" = 50, "slash" = 100, "stab" = 80, "piercing" = 50, "fire" = 0, "acid" = 0)
+
+// Neck Armor
+#define ARMOR_BEVOR list("blunt" = 20, "slash" = 100, "stab" = 80, "piercing" = 50, "fire" = 0, "acid" = 0)
+#define ARMOR_GORGET list("blunt" = 40, "slash" = 100, "stab" = 80, "piercing" = 50, "fire" = 0, "acid" = 0)
+#define ARMOR_NECK_BAD list("blunt" = 50, "slash" = 50, "stab" = 40, "piercing" = 20, "fire" = 0, "acid" = 0)
+
+//Pants Armor
+#define ARMOR_PANTS_LEATHER list("blunt" = 80, "slash" = 50, "stab" = 40, "piercing" = 10, "fire" = 0, "acid" = 0)
+#define ARMOR_PANTS_CHAIN list("blunt" = 40, "slash" = 100, "stab" = 80, "piercing" = 20, "fire" = 0, "acid" = 0)
+#define ARMOR_PANTS_BRIGANDINE list("blunt" = 40, "slash" = 70, "stab" = 70, "piercing" = 50, "fire" = 0, "acid" = 0)
+
+//Antag / Special / Unique armor defines
+#define ARMOR_VAMP list("blunt" = 100, "slash" = 100, "stab" = 90, "piercing" = 80, "fire" = 0, "acid" = 0)
+#define ARMOR_WWOLF list("blunt" = 100, "slash" = 90, "stab" = 80, "piercing" = 70, "fire" = 40, "acid" = 0)
+#define ARMOR_DRAGONSCALE list("blunt" = 100, "slash" = 100, "stab" = 100, "fire" = 50, "acid" = 0)
+#define ARMOR_ASCENDANT list("blunt" = 50, "slash" = 100, "stab" = 80, "piercing" = 80, "fire" = 0, "acid" = 0)
+#define ARMOR_GRUDGEBEARER list("blunt" = 40, "slash" = 200, "stab" = 200, "piercing" = 100, "fire" = 0, "acid" = 0)
+#define ARMOR_ZIZOCONCSTRUCT list("blunt" = 60, "slash" = 70, "stab" = 70, "piercing" = 60, "fire" = 40, "acid" = 10)
+#define ARMOR_DRAGONHIDE list("blunt" = 30, "slash" = 30, "stab" = 30, "piercing" = 30, "fire" = 40, "acid" = 0) // snowflake armor for dragonhide, fire resist but lower other values from the ring since more integ
+#define ARMOR_FATEWEAVER list("blunt" = 10, "slash" = 100, "stab" = 100, "piercing" = 100, "fire" = 0, "acid" = 0)
+// Blocks every hit, at least once
+#define ARMOR_GRONN_LIGHT list("blunt" = 80, "slash" = 80, "stab" = 30, "piercing" = 30, "fire" = 0, "acid" = 0)
 
 /*-----------------------\
 | COVERAGE ARMOR DEFINES |
@@ -585,10 +580,81 @@ BCLASS_TWIST)
 #define SKULLMET_ICONS list(\
 		"volf"="skullmet_volf",\
 		"bear"="skullmet_bear",\
-		"gote"="skullmet_goat")
+		"gote"="skullmet_goat",\
+		"rous"="skullmet_ruffian",\
+		"bobcat"="skullmet_bobcat")
 
 #define DENDOR_TAME_PROB_NONE 0
 #define DENDOR_TAME_PROB_LOW 25
 #define DENDOR_TAME_PROB_MEDIUM 50
 #define DENDOR_TAME_PROB_HIGH 75
 #define DENDOR_TAME_PROB_GURANTEED 100
+
+
+/*------------------------\
+| ARMOR INTEGRITY DEFINES | // Use these when possible on armor to keep value consistent.
+\------------------------*/
+// Side = Non-chest armor integrity
+// For now. Steel vs Iron will be a difference of 75% integrity without rating differences.
+// So Iron will actually be pretty decent and there shouldn't be a compulsive need to upgrade.
+
+// Helmet
+#define ARMOR_INT_HELMET_ANTAG 600
+#define ARMOR_INT_HELMET_BLACKSTEEL 500
+#define ARMOR_INT_HELMET_HEAVY_STEEL 400
+#define ARMOR_INT_HELMET_HEAVY_IRON 300
+#define ARMOR_INT_HELMET_HEAVY_DECREPIT 200
+#define ARMOR_INT_HELMET_HEAVY_ADJUSTABLE_PENALTY 50 // Integrity reduction, if a helmet is adjustable
+#define ARMOR_INT_HELMET_STEEL 300
+#define ARMOR_INT_HELMET_IRON 225
+#define ARMOR_INT_HELMET_HARDLEATHER 250
+#define ARMOR_INT_HELMET_LEATHER 200
+#define ARMOR_INT_HELMET_CLOTH 100
+
+// Chest / Armor Pieces
+
+// HEAVY
+#define ARMOR_INT_CHEST_PLATE_ANTAG 700
+#define ARMOR_INT_CHEST_PLATE_BLACKSTEEL 600
+#define ARMOR_INT_CHEST_PLATE_STEEL 500
+#define ARMOR_INT_CHEST_PLATE_BRIGANDINE 350
+#define ARMOR_INT_CHEST_PLATE_PSYDON 400 // You get free training, less int
+#define ARMOR_INT_CHEST_PLATE_IRON 375
+#define ARMOR_INT_CHEST_PLATE_DECREPIT 250
+
+// MEDIUM
+#define ARMOR_INT_CHEST_MEDIUM_STEEL 300
+#define ARMOR_INT_CHEST_MEDIUM_IRON 225
+#define ARMOR_INT_CHEST_MEDIUM_SCALE 200 // More coverage, less integrity
+#define ARMOR_INT_CHEST_MEDIUM_DECREPIT 150
+
+// LIGHT
+#define ARMOR_INT_CHEST_LIGHT_MASTER 300 // High tier cloth / leather armor
+#define ARMOR_INT_CHEST_LIGHT_MEDIUM 250 // Medium tier cloth / leather armor
+#define ARMOR_INT_CHEST_LIGHT_BASE 200
+#define ARMOR_INT_CHEST_LIGHT_STEEL 180
+#define ARMOR_INT_CHEST_CIVILIAN 100
+
+// LEG PIECES - Leg Armor
+#define ARMOR_INT_LEG_ANTAG 600
+#define ARMOR_INT_LEG_BLACKSTEEL 500
+#define ARMOR_INT_LEG_STEEL_PLATE 400
+#define ARMOR_INT_LEG_IRON_PLATE 300
+#define ARMOR_INT_LEG_DECREPIT_PLATE 200
+#define ARMOR_INT_LEG_STEEL_CHAIN 300
+#define ARMOR_INT_LEG_BRIGANDINE 250 // Iron grade but whatever.
+#define ARMOR_INT_LEG_IRON_CHAIN 225
+#define ARMOR_INT_LEG_DECREPIT_CHAIN 150
+#define ARMOR_INT_LEG_HARDLEATHER 250
+#define ARMOR_INT_LEG_LEATHER 200
+#define ARMOR_INT_LEG_CLOTH 10
+
+// SIDE PIECES - Non-Chest armor
+#define ARMOR_INT_SIDE_ANTAG 500 // Integrity for antag pieces
+#define ARMOR_INT_SIDE_BLACKSTEEL 400 // Integrity for blacksteel pieces
+#define ARMOR_INT_SIDE_STEEL 300 // Integrity for steel pieces
+#define ARMOR_INT_SIDE_IRON 225 // Integrity for iron pieces
+#define ARMOR_INT_SIDE_HARDLEATHER 250 // Integrity for hardened leather pieces
+#define ARMOR_INT_SIDE_LEATHER 200 // Integrity for leather / copper pieces
+#define ARMOR_INT_SIDE_DECREPIT 150 // Integrity for decrepit pieces
+#define ARMOR_INT_SIDE_CLOTH 100 // Integrity for cloth / aesthetic oriented pieces

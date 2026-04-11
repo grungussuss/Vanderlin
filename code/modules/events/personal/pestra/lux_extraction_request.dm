@@ -8,6 +8,7 @@
 	min_players = 30
 
 	tags = list(
+		TAG_PESTRA,
 		TAG_MEDICAL,
 	)
 
@@ -21,7 +22,7 @@
 			continue
 		if(!H.patron || !istype(H.patron, /datum/patron/divine/pestra))
 			continue
-		if(H.get_skill_level(/datum/skill/misc/medicine) < 3)
+		if(GET_MOB_SKILL_VALUE_OLD(H, /datum/attribute/skill/misc/medicine) < 3)
 			continue
 		return TRUE
 
@@ -35,7 +36,7 @@
 			continue
 		if(!human_mob.patron || !istype(human_mob.patron, /datum/patron/divine/pestra))
 			continue
-		if(human_mob.get_skill_level(/datum/skill/misc/medicine) < 3)
+		if(GET_MOB_SKILL_VALUE_OLD(human_mob, /datum/attribute/skill/misc/medicine) < 3)
 			continue
 		valid_targets += human_mob
 
@@ -47,8 +48,10 @@
 	var/datum/objective/personal/lux_extraction/new_objective = new(owner = chosen_one.mind)
 	chosen_one.mind.add_personal_objective(new_objective)
 
-	to_chat(chosen_one, span_userdanger("YOU ARE PESTRA'S CHOSEN!"))
-	to_chat(chosen_one, span_notice("Pestra is curious about the divine spark! Extract lux from a living being to earn Pestra's favor!"))
+	bordered_message(chosen_one, list(
+		span_userdanger("YOU ARE PESTRA'S CHOSEN!"),
+		span_notice("Pestra is curious about the divine spark! Extract lux from a living being to earn Pestra's favor!"),
+	))
 	chosen_one.playsound_local(chosen_one, 'sound/magic/cosmic_expansion.ogg', 100)
 
 	chosen_one.mind.announce_personal_objectives()

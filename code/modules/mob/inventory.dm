@@ -5,6 +5,8 @@
 /mob/proc/get_active_held_item()
 	return get_item_for_held_index(active_hand_index)
 
+/mob/proc/get_active_held_items()
+	return list(get_item_for_held_index(active_hand_index), get_item_for_held_index(get_inactive_hand_index()))
 
 //Finds the opposite limb for the active one (eg: upper left arm will find the item in upper right arm)
 //So we're treating each "pair" of limbs as a team, so "both" refers to them
@@ -171,8 +173,8 @@
 	I.pixel_x = I.base_pixel_x
 	I.pixel_y = I.base_pixel_y
 	if(hud_used)
-		hud_used.throw_icon?.update_appearance()
-		hud_used.give_intent?.update_appearance()
+		hud_used.throw_icon?.update_appearance(UPDATE_ICON_STATE)
+		hud_used.give_intent?.update_appearance(UPDATE_ICON_STATE)
 	if((istype(I, /obj/item/weapon) || istype(I, /obj/item/gun) || I.force >= 15) && !forced && client)
 		// is this the right hand?
 		var/right_hand = FALSE
@@ -233,7 +235,7 @@
 	I.dropped(src)
 	return FALSE
 
-/mob/proc/drop_all_held_items()
+/mob/proc/drop_all_held_items(silent=TRUE)
 	. = FALSE
 	for(var/obj/item/I in held_items)
 		. |= dropItemToGround(I)
@@ -272,6 +274,7 @@
 		I.pixel_x = I.base_pixel_x + rand(-6,6)
 		I.pixel_y = I.base_pixel_x + rand(-6,6)
 		I.afterdrop()
+		SEND_SIGNAL(I, COMSIG_ATOM_TEMPORARY_ANIMATION_START, 3)
 
 //for when the item will be immediately placed in a loc other than the ground
 /mob/proc/transferItemToLoc(obj/item/I, newloc = null, force = FALSE, silent = TRUE)
@@ -288,7 +291,7 @@
 /mob/proc/doUnEquip(obj/item/I, force, newloc, no_move, invdrop = TRUE, silent = FALSE) //Force overrides TRAIT_NODROP for things like wizarditis and admin undress.
 													//Use no_move if the item is just gonna be immediately moved afterward
 													//Invdrop is used to prevent stuff in pockets dropping. only set to false if it's going to immediately be replaced
-	if(!I) //If there's nothing to drop, the drop is automatically succesfull. If(unEquip) should generally be used to check for TRAIT_NODROP.
+	if(!I) //If there's nothing to drop, the drop is automatically successful. If(unEquip) should generally be used to check for TRAIT_NODROP.
 		update_inv_hands()
 		update_a_intents()
 		return TRUE
@@ -319,8 +322,8 @@
 				I.forceMove(newloc)
 		I.dropped(src, silent)
 	if(hud_used)
-		hud_used.throw_icon?.update_appearance()
-		hud_used.give_intent?.update_appearance()
+		hud_used.throw_icon?.update_appearance(UPDATE_ICON_STATE)
+		hud_used.give_intent?.update_appearance(UPDATE_ICON_STATE)
 	update_a_intents()
 	SEND_SIGNAL(I, COMSIG_ITEM_POST_UNEQUIP, force, newloc, no_move, invdrop, silent)
 	SEND_SIGNAL(src, COMSIG_MOB_UNEQUIPPED_ITEM, I, force, newloc, no_move, invdrop, silent)
@@ -349,6 +352,16 @@
 		items += wear_mask
 	if(wear_neck)
 		items += wear_neck
+	if(shoes)
+		items += shoes
+	if(gloves)
+		items += gloves
+	if(mouth)
+		items += mouth
+	if(handcuffed)
+		items += handcuffed
+	if(legcuffed)
+		items += legcuffed
 	return items
 
 /mob/living/carbon/human/get_equipped_items(include_pockets = FALSE)
@@ -359,14 +372,6 @@
 		items += beltr
 	if(beltl)
 		items += beltl
-	if(backr)
-		items += backr
-	if(backl)
-		items += backl
-	if(gloves)
-		items += gloves
-	if(shoes)
-		items += shoes
 	if(wear_ring)
 		items += wear_ring
 	if(wear_wrists)
@@ -377,18 +382,16 @@
 		items += wear_pants
 	if(cloak)
 		items += cloak
-	if(mouth)
-		items += mouth
 	if(wear_shirt)
 		items += wear_shirt
 	return items
 
-/mob/living/proc/unequip_everything()
+/mob/living/proc/unequip_everything(silent = TRUE)
 	var/list/items = list()
 	items |= get_equipped_items(TRUE)
 	for(var/I in items)
-		dropItemToGround(I)
-	drop_all_held_items()
+		dropItemToGround(I, TRUE, silent)
+	drop_all_held_items(silent)
 
 
 /mob/living/carbon/proc/check_obscured_slots(transparent_protection)
@@ -404,6 +407,7 @@
 		obscured |= ITEM_SLOT_NECK
 	if(hidden_slots & HIDEMASK)
 		obscured |= ITEM_SLOT_MASK
+		obscured |= ITEM_SLOT_MOUTH
 	if(hidden_slots & HIDEGLOVES)
 		obscured |= ITEM_SLOT_GLOVES
 	if(hidden_slots & HIDEJUMPSUIT)
@@ -417,9 +421,21 @@
 
 	return obscured
 
+/// Returns an associative list of items to the slot they are in.
+/mob/living/carbon/proc/get_unobscured_items(transparent_protection)
+	var/list/items = list()
+	var/obscured_slots = check_obscured_slots(transparent_protection)
+	for(var/slot in SLOT_DISPLAY_PRIORITY)
+		if(obscured_slots & slot)
+			continue
+		var/obj/item/I = get_item_by_slot(slot)
+		if(I)
+			items[I] = slot
+	return items
+
 /obj/item/proc/equip_to_best_slot(mob/M)
 	if(src != M.get_active_held_item())
-		to_chat(M, span_warning("I are not holding anything to equip!"))
+		to_chat(M, span_warning("I am not holding anything to equip!"))
 		return FALSE
 
 	if(M.equip_to_appropriate_slot(src))

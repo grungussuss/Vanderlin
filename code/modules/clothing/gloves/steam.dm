@@ -1,6 +1,6 @@
 /obj/item/clothing/gloves/plate/steam
 	name = "steamknight gloves"
-	desc = "Part of the the steamknight armor. Requires knowledge in engineering to operate."
+	desc = "Part of the steamknight armor. Requires knowledge in engineering to operate."
 
 	icon = 'icons/roguetown/clothing/steamknight.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/onmob/steamknight_onmob.dmi'
@@ -9,9 +9,9 @@
 	sleeved =  'icons/roguetown/clothing/onmob/steamknight_onmob.dmi'
 	sleevetype = "steamknight_gloves"
 
-	anvilrepair = /datum/skill/craft/engineering
+	anvilrepair = /datum/attribute/skill/craft/engineering
 	smeltresult = /obj/item/ingot/bronze
-	item_weight = 7 * BRONZE_MULTIPLIER
+	item_weight = 7 KILOGRAMS
 
 /obj/item/clothing/shoes/boots/armor/steam/dropped(mob/living/carbon/user)
 	// Locate the boiler in the back slots

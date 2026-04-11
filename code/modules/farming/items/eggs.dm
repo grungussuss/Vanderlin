@@ -7,13 +7,12 @@
 	filling_color = "#F0E68C"
 	foodtype = MEAT
 	grind_results = list()
-	rotprocess = 15 MINUTES
+	rotprocess = SHELFLIFE_DECENT
 	become_rot_type = /obj/item/reagent_containers/food/snacks/rotten/egg
 	cooktime = 20 SECONDS
-
 	var/fertile = FALSE
 
-/obj/item/reagent_containers/food/snacks/egg/New()
+/obj/item/reagent_containers/food/snacks/egg/Initialize(mapload)
 	. = ..()
 	icon_state = pick("egg","eggB")
 
@@ -21,7 +20,6 @@
 	. = ..()
 	if(.)
 		fertile = FALSE
-
 
 /obj/item/reagent_containers/food/snacks/egg/Crossed(mob/living/carbon/human/H)
 	..()
@@ -33,8 +31,10 @@
 		visible_message("<span class='warning'>[H] crushes [src] underfoot.</span>")
 		qdel(src)
 
-/obj/item/reagent_containers/food/snacks/egg/proc/hatch(mob/living/simple_animal/hostile/retaliate/chicken/parent)
+/obj/item/reagent_containers/food/snacks/egg/proc/hatch(mob/living/simple_animal/hostile/retaliate/chicken/parent, mob/living/simple_animal/hostile/retaliate/chicken/father)
 	record_round_statistic(STATS_ANIMALS_BRED)
 	var/mob/living/simple_animal/hostile/retaliate/chicken/chick/new_chick = new /mob/living/simple_animal/hostile/retaliate/chicken/chick(get_turf(parent))
 	SEND_SIGNAL(parent, COMSIG_FRIENDSHIP_PASS_FRIENDSHIP, new_chick)
 	SEND_SIGNAL(parent, COMSIG_HAPPINESS_PASS_HAPPINESS, new_chick)
+	if(parent.genetics && !ispath(parent.genetics))
+		parent.genetics.inherit_to(new_chick, father)

@@ -5,7 +5,7 @@
 
 	finishing_item = /obj/item/reagent_containers/food/snacks/piedough
 	starting_item = /obj/item/reagent_containers/food/snacks/foodbase/piebottom
-	related_skill = /datum/skill/craft/cooking
+	related_skill = /datum/attribute/skill/craft/cooking/baking
 	skill_xp_gained = 20
 	action_time = 5 SECONDS
 
@@ -56,6 +56,30 @@
 	overlay_state = "fill_pot"
 	output_item = /obj/item/reagent_containers/food/snacks/raw_pie/pot_pie
 
+/datum/orderless_slapcraft/food/pie/blackberry
+	name = "Unbaked Blackberry Pie"
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/produce/fruit/blackberry = 3
+	)
+	overlay_state = "fill_blackberry"
+	output_item = /obj/item/reagent_containers/food/snacks/raw_pie/blackberry
+
+/datum/orderless_slapcraft/food/pie/raspberry
+	name = "Unbaked Raspberry Pie"
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/produce/fruit/raspberry = 3
+	)
+	overlay_state = "fill_raspberry"
+	output_item = /obj/item/reagent_containers/food/snacks/raw_pie/raspberry
+
+/datum/orderless_slapcraft/food/pie/pompkaun
+	name = "Unbaked Pompkaun Pie"
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/fruit/pompkaun_goo = 3
+	)
+	overlay_state = "fill_pompkaun"
+	output_item = /obj/item/reagent_containers/food/snacks/raw_pie/pompkaun
+
 /datum/orderless_slapcraft/food/pie/apple
 	name = "Unbaked Apple Pie"
 	requirements = list(
@@ -82,11 +106,6 @@
 	overlay_state = "fill_berry"
 	output_item = /obj/item/reagent_containers/food/snacks/raw_pie/berry
 
-/datum/orderless_slapcraft/food/pie/berry/step_process(mob/user, obj/item/attacking_item)
-	. = ..()
-	if(istype(attacking_item, /obj/item/reagent_containers/food/snacks/produce/fruit/jacksberry/poison))
-		output_item = /obj/item/reagent_containers/food/snacks/raw_pie/berry/poison
-
 /datum/orderless_slapcraft/food/pie/meat
 	name = "Unbaked Meat Pie"
 	requirements = list(
@@ -96,3 +115,78 @@
 			/obj/item/reagent_containers/food/snacks/egg) = 1)
 	overlay_state = "fill_meat"
 	output_item = /obj/item/reagent_containers/food/snacks/raw_pie/meat
+
+/// Tarts
+/datum/orderless_slapcraft/food/tart
+	abstract_type = /datum/orderless_slapcraft/food/tart
+	category = "Tarts"
+	finishing_item = /obj/item/reagent_containers/food/snacks/sugar
+	starting_item = /obj/item/reagent_containers/food/snacks/foodbase/tartcrust
+	related_skill = /datum/attribute/skill/craft/cooking/baking
+	skill_xp_gained = 20
+	action_time = 5 SECONDS
+	var/overlay_state = ""
+	var/fill_states = 3
+
+/datum/orderless_slapcraft/food/tart/step_process(mob/user, obj/item/attacking_item)
+	. = ..()
+	hosted_source.name = "unfinished [name]"
+	var/total_number = 0
+	for(var/type in requirements)
+		total_number |= requirements[type]
+
+	hosted_source.cut_overlays()
+	var/mutable_appearance/fill_state = mutable_appearance(hosted_source.icon, "[overlay_state][max(1, fill_states - total_number)]")
+	hosted_source.add_overlay(fill_state)
+	if(istype(hosted_source, /obj/item/reagent_containers/food/snacks/raw_tart))
+		hosted_source.update_appearance(UPDATE_OVERLAYS)
+
+
+/datum/orderless_slapcraft/food/tart/avocado
+	name = "Unbaked Avocado Tart"
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/fruit/avocado_half = 3
+	)
+	output_item = /obj/item/reagent_containers/food/snacks/raw_tart/avocado
+
+/datum/orderless_slapcraft/food/tart/mango
+	name = "Unbaked Mangga Tart"
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/fruit/mango_half= 3
+	)
+	output_item = /obj/item/reagent_containers/food/snacks/raw_tart/mango
+
+/datum/orderless_slapcraft/food/tart/mangosteen
+	name = "Unbaked Mangosteen Tart"
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/fruit/mangosteen_opened = 3
+	)
+	output_item = /obj/item/reagent_containers/food/snacks/raw_tart/mangosteen
+
+/datum/orderless_slapcraft/food/tart/pineapple
+	name = "Unbaked Ananas Tart"
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/fruit/pineapple_slice = 3,
+	)
+	output_item = /obj/item/reagent_containers/food/snacks/raw_tart/pineapple
+
+/datum/orderless_slapcraft/food/tart/dragonfruit
+	name = "Unbaked Piyata Tart"
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/fruit/dragonfruit_half = 3
+	)
+	output_item = /obj/item/reagent_containers/food/snacks/raw_tart/dragonfruit
+
+/datum/orderless_slapcraft/food/tart/chocolate
+	name = "Unbaked Chocolate Tart"
+	requirements = list(
+		/obj/item/reagent_containers/food/snacks/chocolate/chunk = 3
+	)
+	output_item = /obj/item/reagent_containers/food/snacks/raw_tart/chocolate
+
+/datum/orderless_slapcraft/food/pie/borowiki
+	name = "unbaked borowiki pie"
+	requirements = list(/obj/item/reagent_containers/food/snacks/produce/mushroom/borowiki = 3
+		)
+	overlay_state = "fill_pot"
+	output_item = /obj/item/reagent_containers/food/snacks/raw_pie/borowiki

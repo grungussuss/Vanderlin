@@ -47,6 +47,8 @@
 #define DISABLE_RUNECHAT (1<<0)
 #define DISABLE_HOVER_TEXT (1<<1)
 #define DISABLE_BALLOON_ALERTS (1<<3)
+#define DISABLE_BALLOON_COMBAT (1<<4)
+#define DISABLE_BALLOON_EXP (1<<5)
 
 #define PARALLAX_INSANE -1 //for show offs
 #define PARALLAX_HIGH    0 //default.
@@ -72,14 +74,26 @@
 #define EXP_TYPE_LIVING			"Living"
 #define EXP_TYPE_GHOST			"Ghost"
 #define EXP_TYPE_ADMIN			"Admin"
-
 #define EXP_TYPE_ANTAG			"Antag"
 
-#define EXP_TYPE_TOWNER			"Towner"
-#define EXP_TYPE_NOBLE			"Noble"
-#define EXP_TYPE_ADVENTURER		"Adventurer"
-#define EXP_TYPE_CHURCH			"Church"
-#define EXP_TYPE_GUARDS			"Guards"
+#define EXP_TYPE_TOWNER			"Towner Roles"
+#define EXP_TYPE_NOBLE			"Noble Roles"
+#define EXP_TYPE_ADVENTURER		"Adventurer Roles"
+#define EXP_TYPE_CHURCH			"Church Roles"
+#define EXP_TYPE_GARRISON		"Garrison Roles"
+#define EXP_TYPE_MERCHANT_COMPANY	"Merchant Roles"
+#define EXP_TYPE_INQUISITION	"Inquisition Roles"
+#define EXP_TYPE_MEDICAL	"Medical Roles"
+#define EXP_TYPE_LEADERSHIP	"Leadership Roles"
+#define EXP_TYPE_MERCENARY	"Mercenary Roles"
+
+#define EXP_TYPE_CLERIC	"Cleric Roles"
+#define EXP_TYPE_RANGER	"Ranger Roles"
+#define EXP_TYPE_BARD	"Bard Roles"
+#define EXP_TYPE_THIEF	"Thief Roles"
+#define EXP_TYPE_MAGICK	"Magick Roles"
+#define EXP_TYPE_COMBAT	"Combat Roles"
+
 
 //Flags in the players table in the db
 #define DB_FLAG_EXEMPT 1
@@ -153,11 +167,14 @@
 
 // Voice types
 
-#define VOICE_TYPE_MASC		"Masculine"
-#define VOICE_TYPE_FEM		"Feminine"
+#define VOICE_TYPE_MASC		"Masculine (Species)"
+#define VOICE_TYPE_MASC_FOP "Masculine (Humen, Foppish)"
+#define VOICE_TYPE_FEM		"Feminine (Species)"
+#define VOICE_TYPE_FEM_DAINTY "Feminine (Humen, Dainty)"
+#define VOICE_TYPE_FEM_HAUGHTY "Feminine (Humen, Haughty)"
 #define VOICE_TYPE_ANDRO	"Androgynous"
 
-#define VOICE_TYPES_LIST list(VOICE_TYPE_MASC, VOICE_TYPE_FEM, VOICE_TYPE_ANDRO)
+#define VOICE_TYPES_LIST list(VOICE_TYPE_MASC, VOICE_TYPE_MASC_FOP, VOICE_TYPE_FEM, VOICE_TYPE_FEM_DAINTY, VOICE_TYPE_FEM_HAUGHTY, VOICE_TYPE_ANDRO)
 
 #define VOICE_TYPES_MASCANDRO list(VOICE_TYPE_MASC, VOICE_TYPE_ANDRO)
 #define VOICE_TYPES_FEMANDRO list(VOICE_TYPE_FEM, VOICE_TYPE_ANDRO)

@@ -14,7 +14,7 @@
 	target = get_turf(target)
 
 	owner.visible_message(span_notice("[owner] gestures, creating a small patch of frost around [target]."))
-	//playsound(get_turf(target), 'sound/magic/whiff.ogg', 50, TRUE)
+	//playsound(target, 'sound/magic/whiff.ogg', 50, TRUE)
 
 	var/obj/structure/ice_zone/zone = new(get_turf(target))
 	QDEL_IN(zone, 45 MINUTES)
@@ -22,9 +22,9 @@
 /obj/structure/ice_zone
 	name = "frozen zone"
 	desc = "A magic pile of ice used to chill things."
-	icon = 'icons/turf/floors.dmi'
-	icon_state = "carpet_c_primary"
-	alpha = 150
+	icon = 'icons/effects/freeze.dmi'
+	icon_state = "ice_shards"
+	alpha = 200
 	density = FALSE
 	anchored = TRUE
 	obj_flags = CAN_BE_HIT | BLOCK_Z_OUT_DOWN | BLOCK_Z_IN_UP

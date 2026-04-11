@@ -1,7 +1,21 @@
+/datum/attribute_holder/sheet/job/gallowglass
+	raw_attribute_list = list(
+		STAT_STRENGTH = 2,
+		STAT_ENDURANCE = 2,
+		STAT_CONSTITUTION = 2,
+		STAT_SPEED = -1,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/axesmaces = 20,
+		/datum/attribute/skill/combat/wrestling = 20,
+		/datum/attribute/skill/combat/unarmed = 30,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/misc/climbing = 30,
+		/datum/attribute/skill/misc/athletics = 30
+	)
 
 /datum/job/advclass/mercenary/gallowglass
 	title = "Gallowglass"
-	tutorial = "A claymore wielding mercanary hailing from the land of Kaledon, you are a fighter for coin, having fled the Grenzelhoftian occupation of your homeland. Your Kerns fight under you."
+	tutorial = "A claymore-wielding mercenary hailing from the land of Kaledon, you are a fighter for coin, having fled the Grenzelhoftian occupation of your homeland. Your Kerns fight under you."
 	allowed_races = list(\
 		SPEC_ID_HUMEN,\
 		SPEC_ID_ELF,\
@@ -10,34 +24,28 @@
 	)
 	outfit = /datum/outfit/mercenary/gallowglass
 	category_tags = list(CTAG_MERCENARY)
-	total_positions = 2
-
+	total_positions = 0 //Kaledon isn't in
 	cmode_music = 'sound/music/cmode/Combat_Dwarf.ogg'
 
-/datum/outfit/mercenary/gallowglass/pre_equip(mob/living/carbon/human/H)
-	..()
+	attribute_sheet = /datum/attribute_holder/sheet/job/gallowglass
+
+	traits = list(
+		TRAIT_HEAVYARMOR
+	)
+
+/datum/outfit/mercenary/gallowglass
+	name = "Gallowglass (Mercenary)"
 	shoes = /obj/item/clothing/shoes/boots/leather
-	head = /obj/item/clothing/head/helmet/nasal
-	gloves = /obj/item/clothing/gloves/chain/iron
+	head = /obj/item/clothing/head/helmet/gallowglass
+	gloves = /obj/item/clothing/gloves/leather
 	belt = /obj/item/storage/belt/leather/mercenary/black
-	armor = /obj/item/clothing/armor/cuirass
-	cloak = /obj/item/clothing/cloak/stabard/kaledon
-	neck = /obj/item/clothing/neck/gorget
+	armor = /obj/item/clothing/armor/chainmail/iron
+	cloak = /obj/item/clothing/shirt/undershirt/sash/colored/mageblue
+	neck = /obj/item/clothing/neck/chaincoif/iron
 	wrists = /obj/item/clothing/wrists/bracers/leather
 	beltr = /obj/item/storage/belt/pouch/coins/poor
 	beltl = /obj/item/weapon/mace/cudgel
 	shirt = /obj/item/clothing/armor/gambeson/light/striped
-	pants = /obj/item/clothing/pants/chainlegs/kilt
-	backl = /obj/item/weapon/sword/long/greatsword/steelclaymore
-	if(H.mind)
-		H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE) // main weapon skill  the gallowglass is REALLY good with their claymore however there is only one of them
-		H.adjust_skillrank(/datum/skill/combat/axesmaces, 2, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
-		H.adjust_skillrank(/datum/skill/combat/unarmed, 3, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)
-	H.change_stat(STATKEY_STR, 2)
-	H.change_stat(STATKEY_END, 1) //both Kaledon Highlanders get more endurance due to their harsh upbringing
-	H.change_stat(STATKEY_SPD, -1) //Strong not fast
-	ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
+	pants = /obj/item/clothing/pants/skirt/patkilt/colored/mageblue
+	backl = /obj/item/weapon/sword/long/greatsword/claymore
+	backr = /obj/item/storage/backpack/satchel

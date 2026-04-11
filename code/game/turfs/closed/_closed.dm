@@ -2,10 +2,10 @@
 	name = ""
 	icon_state = "black"
 	layer = CLOSED_TURF_LAYER
-	opacity = 1
+	opacity = TRUE
 	density = TRUE
 	blocks_air = TRUE
-	baseturfs = list(/turf/open/floor/naturalstone, /turf/open/transparent/openspace)
+	baseturfs = /turf/open/floor/naturalstone
 	smoothing_groups = SMOOTH_GROUP_CLOSED
 	pass_flags_self = PASSCLOSEDTURF
 
@@ -15,6 +15,9 @@
 	var/climbdiff = 0
 
 	var/obj/effect/skill_tracker/thieves_cant/thieves_marking
+
+/turf/closed/basic
+	baseturfs = /turf/closed/basic
 
 /turf/closed/basic/New()//Do not convert to Initialize
 	SHOULD_CALL_PARENT(FALSE)
@@ -103,16 +106,16 @@
 
 /mob/living/proc/update_wallpress_slowdown()
 	if(wallpressed)
-		add_movespeed_modifier("wallpress", TRUE, 100, override = TRUE, multiplicative_slowdown = 3)
+		add_movespeed_modifier(MOVESPEED_ID_WALLPRESS, TRUE, 100, override = TRUE, multiplicative_slowdown = 3)
 	else
-		remove_movespeed_modifier("wallpress")
+		remove_movespeed_modifier(MOVESPEED_ID_WALLPRESS)
 
 /turf/closed/Bumped(atom/movable/AM)
 	..()
 	if(density)
 		if(ishuman(AM))
 			var/mob/living/carbon/human/H = AM
-			if(H.dir == get_dir(H,src) && H.m_intent == MOVE_INTENT_RUN && H.body_position != LYING_DOWN)
+			if(H.dir == get_dir(H,src) && (H.m_intent == MOVE_INTENT_RUN || HAS_TRAIT(H, TRAIT_STUMBLE)) && H.body_position != LYING_DOWN)
 				H.Immobilize(10)
 				H.apply_damage(15, BRUTE, "head", H.run_armor_check("head", "blunt", damage = 15))
 				H.toggle_rogmove_intent(MOVE_INTENT_WALK, TRUE)
@@ -123,20 +126,20 @@
 /turf/closed/Initialize()
 	. = ..()
 	if(above_floor)
-		var/turf/open/transparent/openspace/target = get_step_multiz(src, UP)
+		var/turf/open/openspace/target = GET_TURF_ABOVE(src)
 		if(istype(target))
 			target.ChangeTurf(above_floor)
 
 /turf/closed/Destroy()
 	if(above_floor)
-		var/turf/above = get_step_multiz(src, UP)
+		var/turf/above = GET_TURF_ABOVE(src)
 		if(above)
 			if(istype(above, above_floor))
 				var/count
 				for(var/D in GLOB.cardinals)
 					var/turf/T = get_step(above, D)
 					if(T)
-						var/turf/closed/C = get_step_multiz(T, DOWN)
+						var/turf/closed/C = GET_TURF_BELOW(T)
 						if(istype(C))
 							count++
 					if(count >= 2)
@@ -151,21 +154,22 @@
 /turf/closed/attack_hand(mob/user)
 	if(wallclimb)
 		if(isliving(user))
+			var/turf/user_turf = get_turf(user)
 			var/mob/living/L = user
 			var/climbsound = 'sound/foley/climb.ogg'
 			if(L.stat != CONSCIOUS)
 				return
-			var/turf/target = get_step_multiz(user, UP)
-			if(!istype(target, /turf/open/transparent/openspace))
+			var/turf/target = GET_TURF_ABOVE(user_turf)
+			if(!istype(target, /turf/open/openspace))
 				to_chat(user, "<span class='warning'>I can't climb here.</span>")
 				return
 			if(!L.can_zTravel(target, UP))
 				to_chat(user, "<span class='warning'>I can't climb there.</span>")
 				return
-			target = get_step_multiz(src, UP)
-			if(!target || istype(target, /turf/closed) || istype(target, /turf/open/transparent/openspace))
-				target = get_step_multiz(user.loc, UP)
-				if(!target || !istype(target, /turf/open/transparent/openspace))
+			target = GET_TURF_ABOVE(src)
+			if(!target || istype(target, /turf/closed) || istype(target, /turf/open/openspace))
+				target = GET_TURF_ABOVE(user_turf)
+				if(!target || !istype(target, /turf/open/openspace))
 					to_chat(user, "<span class='warning'>I can't climb here.</span>")
 					return
 			for(var/obj/structure/F in target)
@@ -176,9 +180,9 @@
 			var/amt2raise = 0
 			var/boon = 0
 			if(L.mind)
-				var/myskill = L.get_skill_level(/datum/skill/misc/climbing)
-				amt2raise = floor(L.STAINT/2)
-				boon = L.get_learning_boon(/datum/skill/misc/climbing)
+				var/myskill = GET_MOB_SKILL_VALUE_OLD(L, /datum/attribute/skill/misc/climbing)
+				amt2raise = floor(GET_MOB_ATTRIBUTE_VALUE(L, STAT_INTELLIGENCE)/2)
+				boon = L.get_learning_boon(/datum/attribute/skill/misc/climbing)
 				var/obj/structure/table/TA = locate() in L.loc
 				if(TA)
 					myskill += 1
@@ -195,7 +199,7 @@
 				if(myskill < climbdiff)
 					to_chat(user, "<span class='warning'>I'm not capable of climbing this.</span>")
 					return
-				used_time = max(70 - (myskill * 10) - (L.STASPD * 3), 30)
+				used_time = max(70 - (myskill * 10) - (GET_MOB_ATTRIBUTE_VALUE(L, STAT_SPEED) * 3), 30)
 			if(user.m_intent != MOVE_INTENT_SNEAK)
 				playsound(user, climbsound, 100, TRUE)
 			user.visible_message("<span class='warning'>[user] starts to climb [src].</span>", "<span class='warning'>I start to climb [src]...</span>")
@@ -208,18 +212,25 @@
 				if(user.m_intent != MOVE_INTENT_SNEAK)
 					playsound(user, 'sound/foley/climb.ogg', 100, TRUE)
 				if(L.mind)
-					L.adjust_experience(/datum/skill/misc/climbing, floor(amt2raise * boon), FALSE)
+					L.adjust_experience(/datum/attribute/skill/misc/climbing, floor(amt2raise * boon), FALSE)
 	else
 		..()
+
+/turf/closed/attack_hand_secondary(mob/user, list/modifiers)
+	. = ..()
+	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
+		return
+	feel_turf(user)
+	return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
 /turf/closed/attack_ghost(mob/dead/observer/user)
 	if(!user.Adjacent(src))
 		return
-	var/turf/target = get_step_multiz(user, UP)
+	var/turf/target = GET_TURF_ABOVE(get_turf(user))
 	if(!target)
 		to_chat(user, "<span class='warning'>I can't go there.</span>")
 		return
-	if(!istype(target, /turf/open/transparent/openspace))
+	if(!istype(target, /turf/open/openspace))
 		to_chat(user, "<span class='warning'>I can't go there.</span>")
 		return
 	user.forceMove(target)
@@ -254,7 +265,7 @@
 /turf/closed/indestructible/roguewindow
 	name = "window"
 	desc = ""
-	opacity = 0
+	opacity = FALSE
 	icon = 'icons/roguetown/misc/structure.dmi'
 	icon_state = "window-solid"
 

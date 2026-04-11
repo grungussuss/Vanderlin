@@ -38,8 +38,7 @@ GLOBAL_LIST_INIT(available_ui_styles, sortList(list(
 	var/atom/movable/screen/quad_intents/quad_intents
 	var/atom/movable/screen/give_intent/give_intent
 	var/atom/movable/screen/def_intent/def_intent
-	var/atom/movable/screen/fov
-	var/atom/movable/screen/fov_blocker
+	var/atom/movable/screen/fov_holder/fov_holder
 	var/atom/movable/screen/clock
 	var/atom/movable/screen/stress/stressies
 	var/atom/movable/screen/cmode_button
@@ -88,6 +87,8 @@ GLOBAL_LIST_INIT(available_ui_styles, sortList(list(
 	/// Mouse hover text for this hud
 	var/atom/movable/screen/movable/mouseover/maptext/mouse_over_text
 
+	var/list/team_finder_arrows = list()
+
 /datum/hud/New(mob/owner)
 	mymob = owner
 
@@ -134,6 +135,8 @@ GLOBAL_LIST_INIT(available_ui_styles, sortList(list(
 	QDEL_NULL(module_store_icon)
 	QDEL_LIST(static_inventory)
 
+	QDEL_NULL(fov_holder)
+
 	QDEL_NULL(reads)
 	QDEL_NULL(textl)
 	QDEL_NULL(textr)
@@ -144,6 +147,7 @@ GLOBAL_LIST_INIT(available_ui_styles, sortList(list(
 	QDEL_NULL(palette_actions)
 	QDEL_NULL(listed_actions)
 	QDEL_LIST(floating_actions)
+	QDEL_LIST(team_finder_arrows)
 
 	inv_slots.Cut()
 	action_intent = null
@@ -215,6 +219,8 @@ GLOBAL_LIST_INIT(available_ui_styles, sortList(list(
 				screenmob.client.screen += hotkeybuttons
 			if(length(infodisplay))
 				screenmob.client.screen += infodisplay
+			if(length(team_finder_arrows))
+				screenmob.client.screen += team_finder_arrows
 
 			screenmob.client.screen += toggle_palette
 
@@ -272,7 +278,29 @@ GLOBAL_LIST_INIT(available_ui_styles, sortList(list(
 		viewmob.hud_used.plane_masters_update()
 		viewmob.show_other_mob_action_buttons(mymob)
 
+	if(fov_holder)
+		screenmob.client?.screen |= fov_holder
+
 	return TRUE
+
+/datum/hud/proc/update_chromatic_aberration(intensity = 0, \
+											time = 2 SECONDS, \
+											easing = LINEAR_EASING, \
+											loop = 0,
+											red_x = 0, \
+											red_y = 0, \
+											green_x = 0, \
+											green_y = 0, \
+											blue_x = 0, \
+											blue_y = 0)
+	var/atom/movable/screen/plane_master/rendering_plate/game_world_processing/game_world_processing = plane_masters["[RENDER_PLANE_GAME_PROCESSING]"]
+	if(!game_world_processing || (game_world_processing.chromatic_intensity == intensity))
+		return
+	game_world_processing.chromatic_intensity = intensity
+	game_world_processing.transition_filter("blue", time, list("x" = blue_x, "y" = blue_y), easing, loop)
+	game_world_processing.transition_filter("green", time, list("x" = green_x, "y" = green_y), easing, loop)
+	game_world_processing.transition_filter("red", time, list("x" = red_x, "y" = red_y), easing, loop)
+
 
 /datum/hud/proc/plane_masters_update()
 	// Plane masters are always shown to OUR mob, never to observers
@@ -342,7 +370,7 @@ GLOBAL_LIST_INIT(available_ui_styles, sortList(list(
 		hand_box.held_index = i
 		hand_slots["[i]"] = hand_box
 		static_inventory += hand_box
-		hand_box.update_appearance()
+		hand_box.update_appearance(UPDATE_OVERLAYS)
 
 	var/i = 1
 	for(var/atom/movable/screen/swap_hand/SH in static_inventory)

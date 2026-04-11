@@ -1,6 +1,6 @@
 /datum/spell_node/arcyne_eye
 	name = "Arcyne Eye"
-	desc = "Imbue yourself with the ability to percieve magical phenomena."
+	desc = "Imbue yourself with the ability to perceive magical phenomena."
 	node_x = 0
 	node_y = 0
 	spell_type = /datum/action/cooldown/spell/undirected/arcyne_eye
@@ -119,11 +119,11 @@
 	cost = 5
 	node_x = -50
 	node_y = 50
-	prerequisites = list(/datum/spell_node/dark_attunement, /datum/spell_node/electric_affinity)
+	prerequisites = list(/datum/spell_node/dark_affinity, /datum/spell_node/electric_affinity)
 	is_passive = TRUE
 
 /datum/spell_node/blood_pact/on_node_buy(mob/user)
-	user.mana_pool?.adjust_attunement(/datum/attunement/death, 0.12)
+	user.mana_pool?.adjust_attunement(/datum/attunement/dark, 0.12)
 	user.mana_pool?.adjust_attunement(/datum/attunement/blood, 0.12)
 	to_chat(user, span_notice("Dark power flows through your lifeblood."))
 
@@ -422,7 +422,7 @@
 
 /datum/spell_node/magic_stone
 	name = "Magicians Brick"
-	desc = "Concentrate your intelect into an arcyne brick."
+	desc = "Concentrate your intellect into an arcyne brick."
 	node_x = LEFT_X_TIER_2
 	node_y = LEFT_Y_LEFT - 50
 	prerequisites = list(/datum/spell_node/earth_affinity)
@@ -516,7 +516,7 @@
 	prerequisites = list(/datum/spell_node/frost_affinity)
 	spell_type = /datum/action/cooldown/spell/aoe/on_turf/snap_freeze
 
-/datum/spell_node/dark_attunement
+/datum/spell_node/dark_affinity
 	name = "Dark Affinity"
 	desc = "Feel the light vanish."
 	cost = 3
@@ -525,7 +525,7 @@
 	prerequisites = list(/datum/spell_node/prestidigitation)
 	is_passive = TRUE
 
-/datum/spell_node/death_affinity/on_node_buy(mob/user)
+/datum/spell_node/dark_affinity/on_node_buy(mob/user)
 	user.mana_pool?.adjust_attunement(/datum/attunement/dark, 0.15)
 	to_chat(user, span_notice("The void whispers secrets to you."))
 
@@ -534,7 +534,7 @@
 	desc = "Let forth a wave of maddening mind-energy."
 	node_x = UP_X_LEFT
 	node_y = UP_Y_TIER_2
-	prerequisites = list(/datum/spell_node/dark_attunement)
+	prerequisites = list(/datum/spell_node/dark_affinity)
 	spell_type = /datum/action/cooldown/spell/cone/staggered/eldritch_blast
 
 /datum/spell_node/encode_thoughts
@@ -542,7 +542,7 @@
 	desc = "Incept an intrusive thought into the mind of your target. They may not agree with it."
 	node_x = UP_X_LEFT - 50
 	node_y = UP_Y_TIER_2
-	prerequisites = list(/datum/spell_node/dark_attunement)
+	prerequisites = list(/datum/spell_node/dark_affinity)
 	spell_type = /datum/action/cooldown/spell/undirected/list_target/encode_thoughts
 
 /datum/spell_node/mind_sliver
@@ -578,13 +578,13 @@
 	prerequisites = list(/datum/spell_node/frost_affinity)
 	spell_type = /datum/action/cooldown/spell/chill_touch
 
-/datum/spell_node/frostbite
-	name = "Frostbite"
-	desc = "Cause numbing frost to form on a creature."
+/datum/spell_node/cone_of_frost
+	name = "Cone of Frost"
+	desc = "Let forth a wave of frost to form."
 	node_x = UP_X_RIGHT + 50
 	node_y = UP_Y_TIER_2 + 50
 	prerequisites = list(/datum/spell_node/chill_touch)
-	spell_type = /datum/action/cooldown/spell/status/frostbite
+	spell_type = /datum/action/cooldown/spell/cone/staggered/cone_of_cold
 
 /datum/spell_node/frostbolt
 	name = "Frostbolt"
@@ -596,7 +596,7 @@
 
 
 /datum/spell_node/gib
-	name = "Xylixs Cruel Prank"
+	name = "Xylix's Cruel Prank"
 	desc = "Fucked up and evil."
 	node_x = -500
 	node_y = -500
@@ -605,3 +605,14 @@
 /datum/spell_node/gib/on_node_buy(mob/user)
 	. = ..()
 	user.gib()
+	for(var/mob/target in GLOB.player_list)
+		if(isnewplayer(target))
+			continue
+		bordered_message(target, list(
+			span_extremelybig(html_tag("center", SPAN_GOD_XYLIX("An Infectious Laugh from the God of Fools!"))),
+			html_tag("center", span_extremelybig(span_info("[user.real_name] has fallen for a jest most cruel!"))),
+		))
+		target.playsound_local(target, 'sound/magic/mockery.ogg', 100, environment_override = 25)
+		if(target.add_stress(/datum/stress_event/xylix_laughed))
+			addtimer(CALLBACK(target, TYPE_PROC_REF(/mob, emote), pick("laugh", "chuckle")), rand(5, 20))
+	record_round_statistic(STATS_CRUEL_PRANKS)

@@ -52,6 +52,9 @@
 /obj/structure/chair/bench/church/smallbench
 	icon_state = "benchsmall"
 
+/obj/structure/chair/bench/church/smallbench/stone
+	icon_state = "stonebench"
+
 /obj/structure/chair/bench/coucha
 	icon_state = "redcouch"
 
@@ -76,9 +79,19 @@
 /obj/structure/chair/bench/couchablack/r
 	icon_state = "couchablackaright"
 
+/obj/structure/chair/bench/chaiselounge
+	icon_state = "chaiseloungeleft"
+
+/obj/structure/chair/bench/chaiselounge/r
+	icon_state = "chaiseloungeright"
+
 /obj/structure/chair/bench/throne
 	name = "small throne"
 	icon_state = "thronechair"
+
+/obj/structure/chair/bench/throne/stone
+	name = "stone throne"
+	icon_state = "stonethrone"
 
 // dirtier sofa
 /obj/structure/chair/bench/coucha/redleft
@@ -153,6 +166,13 @@
 	icon_state = "chair_red"
 	origin_type = /obj/structure/chair/wood/alt/chair_noble/red
 
+/obj/structure/chair/wood/alt/chair_noble/fancyplush
+	icon_state = "chair_fancyplush"
+	item_chair = /obj/item/chair/chair_nobles/fancyplush
+
+/obj/item/chair/chair_nobles/fancyplush
+	icon_state = "chair_fancyplush"
+	origin_type = /obj/structure/chair/wood/alt/chair_noble/fancyplush
 
 /obj/structure/chair/wood/alt/CanAllowThrough(atom/movable/mover, turf/target)
 	. = ..()
@@ -162,7 +182,7 @@
 			if(isturf(loc))
 				var/movefrom = get_dir(M.loc, loc)
 				if(movefrom == dir && item_chair != null)
-					playsound(loc, 'sound/foley/chairfall.ogg', 100, FALSE)
+					playsound(src, 'sound/foley/chairfall.ogg', 100, FALSE)
 					var/obj/item/I = new item_chair(loc)
 					item_chair = null
 					I.dir = dir
@@ -173,7 +193,7 @@
 	if(!user)
 		return
 	if(isturf(loc))
-		playsound(loc, 'sound/foley/chairfall.ogg', 100, FALSE)
+		playsound(src, 'sound/foley/chairfall.ogg', 100, FALSE)
 		var/obj/item/I = new item_chair(loc)
 		item_chair = null
 		I.dir = dir
@@ -188,7 +208,7 @@
 	if(M.body_position == LYING_DOWN)
 		return
 	if(get_dir(leaving.loc, new_location) == REVERSE_DIR(dir))
-		playsound(loc, 'sound/foley/chairfall.ogg', 100, FALSE)
+		playsound(src, 'sound/foley/chairfall.ogg', 100, FALSE)
 		var/obj/item/I = new item_chair(loc)
 		item_chair = null
 		I.dir = dir
@@ -197,7 +217,7 @@
 
 /obj/structure/chair/wood/alt/take_damage(damage_amount, damage_type = BRUTE, damage_flag = 0, sound_effect = 1)
 	if(damage_amount > 5 && item_chair != null)
-		playsound(loc, 'sound/foley/chairfall.ogg', 100, FALSE)
+		playsound(src, 'sound/foley/chairfall.ogg', 100, FALSE)
 		var/obj/item/I = new item_chair(loc)
 		item_chair = null
 		I.dir = dir
@@ -222,10 +242,10 @@
 	density = FALSE
 
 /obj/item/chair/stool/bar
-	name = "stool"
-	icon_state = "baritem"
+	name = "barstool"
+	icon_state = "barstoolover"
 	icon = 'icons/roguetown/misc/structure.dmi'
-	origin_type = /obj/structure/chair/stool
+	origin_type = /obj/structure/chair/stool/bar
 	blade_dulling = DULLING_BASHCHOP
 	can_parry = TRUE
 	gripped_intents = list(/datum/intent/hit)
@@ -242,6 +262,16 @@
 				return list("shrink" = 0.8,"sx" = 3,"sy" = -8,"nx" = -19,"ny" = -6,"wx" = -13,"wy" = -7,"ex" = 1,"ey" = -5,"westabove" = 1,"eastbehind" = 0,"nturn" = 30,"sturn" = -18,"wturn" = 30,"eturn" = -24,"nflip" = 8,"sflip" = 0,"wflip" = 8,"eflip" = 0)
 			if("wielded")
 				return list("shrink" = 0.8,"sx" = -20,"sy" = -6,"nx" = 0,"ny" = -7,"wx" = -18,"wy" = -5,"ex" = -4,"ey" = -8,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = -42,"sturn" = 33,"wturn" = 33,"eturn" = -21,"nflip" = 0,"sflip" = 8,"wflip" = 8,"eflip" = 0)
+
+
+/obj/item/chair/stool/bar/fancyplush
+	name = "fancy stool"
+	icon_state = "fancystoolover"
+	origin_type = /obj/structure/chair/stool/bar/fancyplush
+
+/obj/structure/chair/stool/bar/fancyplush
+	icon_state = "fancystool"
+	item_chair = /obj/item/chair/stool/bar/fancyplush
 
 // ------------ GOOD BEDS ----------------------
 /obj/structure/bed/inn
@@ -278,6 +308,7 @@
 	name = "big wool bed"
 	desc = "A large soft bed, could fit two people."
 	icon_state = "double_wool"
+	max_buckled_mobs = 2
 	debris = list(/obj/item/grown/log/tree/small = 2)
 	/// The mob who buckled to this bed second, to avoid other mobs getting pixel-shifted before they unbuckle.
 	var/mob/living/goldilocks
@@ -296,7 +327,7 @@
 // ------------ ACCEPTABLE BEDS ----------------------
 /obj/structure/bed/hay
 	name = "hay bed"
-	desc = "A bed padded with hay. At least your not sleeping on the floor."
+	desc = "A bed padded with hay. At least you're not sleeping on the floor."
 	icon_state = "haybed"
 	sleepy = 1
 	debris = list(/obj/item/grown/log/tree/small = 1)
@@ -320,6 +351,12 @@
 	icon_state = "shitbed"
 	sleepy = 0.75
 
+/obj/structure/bed/stone
+	name = "stone bed"
+	desc = "A bed made of stone.  The face of it is intricately carved, but it doesn't look very comfortable."
+	icon_state = "stonebed"
+	sleepy = 0.75
+
 /obj/structure/bed/sleepingbag
 	name = "bedroll"
 	desc = "So you can sleep on the ground in relative peace."
@@ -329,7 +366,7 @@
 	sleepy = 0.75
 	var/item_path = /obj/item/sleepingbag
 
-/obj/structure/bed/sleepingbag/MiddleClick(mob/user, params)
+/obj/structure/bed/sleepingbag/MiddleClick(mob/user, list/modifiers)
 	..()
 	user.visible_message("<span class='notice'>[user] begins rolling up \the [src].</span>")
 	if(do_after(user, 2 SECONDS, target = src))
@@ -355,7 +392,7 @@
 	grid_width = 96
 	var/bed_path = /obj/structure/bed/sleepingbag
 
-/obj/item/sleepingbag/attack_self(mob/user, params)
+/obj/item/sleepingbag/attack_self(mob/user, list/modifiers)
 	..()
 	var/turf/T = get_turf(loc)
 	if(!isfloorturf(T))
@@ -371,9 +408,9 @@
 		new_bedroll.color = color
 		qdel(src)
 
-/obj/item/sleepingbag/MiddleClick(mob/user, params)
+/obj/item/sleepingbag/MiddleClick(mob/user, list/modifiers)
 	. = ..()
-	attack_self(user, params)
+	attack_self(user, modifiers)
 
 /obj/item/sleepingbag/deluxe
 	name = "rolled-up deluxe bedroll"
@@ -407,9 +444,11 @@
 	sellprice = 12
 
 /obj/structure/chair/stool/crafted
-	item_chair = /obj/item/chair/stool/bar/crafted
+	item_chair = /obj/item/chair/stool/crafted
 	sellprice = 6
 
-/obj/item/chair/stool/bar/crafted
+/obj/item/chair/stool/crafted
 	origin_type = /obj/structure/chair/stool/crafted
 	sellprice = 6
+
+

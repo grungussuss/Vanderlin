@@ -3,16 +3,21 @@
 	track = EVENT_TRACK_INTERVENTION
 	typepath = /datum/round_event/ravox_resolve
 	weight = 8
-	earliest_start = 20 MINUTES
+	earliest_start = 15 MINUTES
 	max_occurrences = 1
 	min_players = 30
-	allowed_storytellers = list(/datum/storyteller/ravox)
+	dedicated_storytellers = list(/datum/storyteller/ravox)
+	allowed_storytellers = DIVINE_STORYTELLERS
+
+	tags = list(
+		TAG_RAVOX,
+	)
 
 /datum/round_event_control/ravox_resolve/canSpawnEvent(players_amt, gamemode, fake_check)
 	. = ..()
 	if(!.)
 		return FALSE
-	if(GLOB.patron_follower_counts["Ravox"] < 3)
+	if(GLOB.patron_follower_counts[/datum/patron/divine/ravox::name] < 3)
 		return FALSE
 
 /datum/round_event/ravox_resolve/start()
@@ -26,10 +31,10 @@
 			continue
 
 		if(!weakest)
-			weakest_stat = human_mob.get_stat_level(STATKEY_STR)
+			weakest_stat = human_mob.get_stat_level(STAT_STRENGTH)
 			weakest = human_mob
 
-		var/mob_stat_level = human_mob.get_stat_level(STATKEY_STR)
+		var/mob_stat_level = human_mob.get_stat_level(STAT_STRENGTH)
 		if(mob_stat_level < weakest_stat)
 			weakest = human_mob
 		else if(mob_stat_level == weakest_stat && prob(50))
@@ -38,13 +43,20 @@
 	if(!weakest)
 		return
 
-	weakest.set_stat_modifier("ravox_resolve", STATKEY_STR, 2)
-	weakest.set_stat_modifier("ravox_resolve", STATKEY_END, 2)
-	weakest.set_stat_modifier("ravox_resolve", STATKEY_CON, 2)
+	weakest.adjust_stat_modifier(STATMOD_RAVOX_RESOLVE, list(
+		STAT_STRENGTH = 2,
+		STAT_ENDURANCE = 2,
+		STAT_CONSTITUTION =2,
+	))
 	if(is_ascendant(RAVOX))
-		weakest.set_stat_modifier("ravox_resolve", STATKEY_PER, 2)
-		weakest.set_stat_modifier("ravox_resolve", STATKEY_INT, 2)
-		weakest.set_stat_modifier("ravox_resolve", STATKEY_SPD, 2)
-		weakest.set_stat_modifier("ravox_resolve", STATKEY_LCK, 2)
-	to_chat(weakest, span_green("You may be weak compared to your fellow warriors of justice, but still you persevere. Ravox honors those who fight even when victory seems impossible. May his gift of strength help you overcome the odds."))
+		weakest.adjust_stat_modifier(STATMOD_RAVOX_RESOLVE, list(
+			STAT_PERCEPTION = 2,
+			STAT_INTELLIGENCE = 2,
+			STAT_SPEED = 2,
+			STAT_FORTUNE = 2,
+		))
+
+	bordered_message(weakest, list(
+		span_green("You may be weak compared to your fellow warriors of justice, but still you persevere. Ravox honors those who fight even when victory seems impossible. May his gift of strength help you overcome the odds.")
+	))
 	weakest.playsound_local(weakest, 'sound/vo/male/knight/rage (6).ogg', 70)

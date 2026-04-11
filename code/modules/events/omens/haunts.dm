@@ -6,7 +6,14 @@
 	max_occurrences = 2
 	min_players = 0
 	req_omen = TRUE
-	todreq = list("night")
+	earliest_start = 25 MINUTES
+	todreq = list(NIGHT)
+
+	tags = list(
+		TAG_HAUNTED,
+		TAG_CURSE,
+		TAG_BATTLE,
+	)
 
 /datum/round_event/haunts
 	announceWhen	= 50

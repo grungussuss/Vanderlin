@@ -31,19 +31,9 @@
 	/// List of Maniac datums that have inscribed on this heart
 	var/maniacs = list()
 
-	food_type = /obj/item/reagent_containers/food/snacks/organ/heart
+	var/graggometer = 0
 
-/obj/item/organ/heart/Destroy()
-	for(var/datum/culling_duel/D in GLOB.graggar_cullings)
-		var/obj/item/organ/heart/d_challenger_heart = D.challenger_heart?.resolve()
-		var/obj/item/organ/heart/d_target_heart = D.target_heart?.resolve()
-		if(src == d_challenger_heart)
-			D.handle_heart_destroyed("challenger")
-			continue
-		else if(src == d_target_heart)
-			D.handle_heart_destroyed("target")
-			continue
-	return ..()
+	food_type = /obj/item/reagent_containers/food/snacks/meat/organ/heart
 
 /obj/item/organ/heart/examine(mob/user)
 	. = ..()
@@ -87,7 +77,7 @@
 	if(!owner)
 		Stop()
 
-/obj/item/organ/heart/attack_self(mob/user, params)
+/obj/item/organ/heart/attack_self(mob/user, list/modifiers)
 	..()
 	if(!beating)
 		user.visible_message("<span class='notice'>[user] squeezes [src] to \
@@ -106,7 +96,7 @@
 	return 1
 
 /obj/item/organ/heart/prepare_eat(mob/living/carbon/human/user)
-	var/obj/item/reagent_containers/food/snacks/organ/S = ..()
+	var/obj/item/reagent_containers/food/snacks/meat/organ/S = ..()
 	S.icon_state = "heart-off"
 	var/nothing = FALSE
 	if(!nothing)
@@ -130,7 +120,7 @@
 			H.stop_sound_channel(CHANNEL_HEARTBEAT)
 			beat = BEAT_NONE
 
-		if(H.jitteriness)
+		if(H.has_status_effect(/datum/status_effect/jitter))
 			if(H.health > HEALTH_THRESHOLD_FULLCRIT && (!beat || beat == BEAT_SLOW))
 				H.playsound_local(get_turf(H),fastbeat,40,0, channel = CHANNEL_HEARTBEAT)
 				beat = BEAT_FAST
@@ -163,7 +153,7 @@
 	var/heal_oxy = 0
 
 
-/obj/item/organ/heart/cursed/attack(mob/living/carbon/human/H, mob/living/carbon/human/user, obj/target)
+/obj/item/organ/heart/cursed/attack(mob/living/carbon/human/H, mob/living/carbon/human/user, list/modifiers)
 	if(H == user && istype(H))
 		playsound(user,'sound/blank.ogg',40,TRUE)
 		user.temporarilyRemoveItemFromInventory(src, TRUE)

@@ -1,17 +1,17 @@
 /datum/action/cooldown/spell/undirected/bloodrage
 	name = "Bloodrage"
-	desc = "Grants you unbound strength for a short while."
+	desc = "Grants you unbound strength for a short while, making you immune to all stuns. Removes all your chains that bounded you."
 	button_icon_state = "bloodrage"
 	sound = 'sound/magic/bloodrage.ogg'
 
 	has_visual_effects = FALSE
 	spell_type = SPELL_MIRACLE
 	antimagic_flags = MAGIC_RESISTANCE_HOLY
-	associated_skill = /datum/skill/magic/holy
-	invocation = "GRAGGAR!! GRAGGAR!! GRAGGAR!!"
+	associated_skill = /datum/attribute/skill/magic/holy
+	invocation = "I AM GRAGGAR'S RAGE MADE MANIFEST!!"
 	invocation_type = INVOCATION_SHOUT
 	charge_required = FALSE
-	cooldown_time = 5 MINUTES
+	cooldown_time = 2 MINUTES
 	spell_cost = 80
 	var/static/list/purged_effects = list(
 		/datum/status_effect/incapacitating/immobilized,
@@ -20,15 +20,23 @@
 		/datum/status_effect/incapacitating/knockdown,
 	)
 
+/datum/action/cooldown/spell/undirected/bloodrage/is_valid_target(atom/cast_on)
+	. = ..()
+	if(!.)
+		return
+	return isliving(cast_on)
+
 /datum/action/cooldown/spell/undirected/bloodrage/before_cast(mob/living/cast_on)
 	. = ..()
 	if(. & SPELL_CANCEL_CAST)
 		return
+	invocation = "I AM GRAGGAR'S RAGE MADE MANIFEST!!"
+	var/mob/living/carbon/human/C = cast_on
+	if(C.handcuffed || C.legcuffed)
+		invocation = "THESE CHAINS CANNOT BIND ME!"
+		C.uncuff()
+		C.visible_message(span_danger("[cast_on]'s chains fall to the ground!"))
 
-	if(cast_on.stat == DEAD)
-		to_chat(cast_on, span_warning("I am dead."))
-		reset_spell_cooldown()
-		return . | SPELL_CANCEL_CAST
 	if(cast_on.buckled)
 		cast_on.buckled.unbuckle_mob(cast_on)
 
@@ -40,5 +48,6 @@
 	for(var/effect in purged_effects)
 		cast_on.remove_status_effect(effect)
 	cast_on.apply_status_effect(/datum/status_effect/buff/bloodrage)
+
 	cast_on.visible_message(span_danger("[cast_on] rises upward, boiling with immense rage!"))
 

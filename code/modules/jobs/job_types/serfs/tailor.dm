@@ -1,5 +1,28 @@
+/datum/attribute_holder/sheet/job/tailor
+	attribute_variance = list(
+		/datum/attribute/skill/misc/sewing = list(10, 20),
+		/datum/attribute/skill/craft/tanning = list(10, 20),
+	)
+	raw_attribute_list = list(
+		STAT_INTELLIGENCE = 2,
+		STAT_SPEED = 1,
+		STAT_PERCEPTION = 1,
+		STAT_STRENGTH = -1,
+		/datum/attribute/skill/misc/sewing = 30,
+		/datum/attribute/skill/craft/tanning = 20,
+		/datum/attribute/skill/craft/crafting = 30,
+		/datum/attribute/skill/combat/knives = 20,
+		/datum/attribute/skill/misc/sneaking = 20,
+		/datum/attribute/skill/labor/taming = 30,
+		/datum/attribute/skill/misc/medicine = 20,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/craft/carpentry = 10,
+		/datum/attribute/skill/misc/stealing = 10,
+		/datum/attribute/skill/labor/mathematics = 20
+	)
+
 /datum/job/tailor
-	title = "Tailor"
+	title = JOB_TAILOR
 	f_title = "Seamstress"
 	tutorial = "Cloth, linen, silk and leather. \
 	You've tirelessly studied and poured your life into \
@@ -15,13 +38,23 @@
 	allowed_races = RACES_PLAYER_ALL
 
 	outfit = /datum/outfit/tailor
+	give_bank_account = 25
 	cmode_music = 'sound/music/cmode/towner/CombatTowner2.ogg'
 
 	job_bitflag = BITFLAG_CONSTRUCTOR
 
-/datum/outfit/tailor/pre_equip(mob/living/carbon/human/H)
-	..()
+	attribute_sheet = /datum/attribute_holder/sheet/job/tailor
 
+	traits = list(
+		TRAIT_SEEPRICES
+	)
+
+/datum/outfit/tailor
+	name = JOB_TAILOR
+	pants = /obj/item/clothing/pants/tights/colored/red
+	shirt = /obj/item/clothing/shirt/undershirt/colored/red
+	armor = /obj/item/clothing/shirt/tunic/colored/red
+	cloak = /obj/item/clothing/cloak/raincloak/furcloak
 	shoes = /obj/item/clothing/shoes/nobleboot
 	head = /obj/item/clothing/head/courtierhat
 	belt = /obj/item/storage/belt/leather
@@ -29,30 +62,20 @@
 	beltl = /obj/item/key/tailor
 	backr = /obj/item/storage/backpack/satchel
 	neck = /obj/item/storage/belt/pouch/coins/mid
-	backpack_contents = list(/obj/item/needle = 1, /obj/item/natural/bundle/cloth/full = 1, /obj/item/natural/bundle/fibers/full = 1, /obj/item/dye_pack/luxury = 1, /obj/item/recipe_book/sewing_leather = 1, /obj/item/weapon/knife/villager = 1)
 
-	H.adjust_skillrank(/datum/skill/misc/sewing, pick(4,5), TRUE)
-	H.adjust_skillrank(/datum/skill/craft/tanning, pick(3,4), TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/knives, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/sneaking, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/medicine, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/carpentry, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/stealing, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/mathematics, 2, TRUE)
-	ADD_TRAIT(H, TRAIT_SEEPRICES, TRAIT_GENERIC)
-	if(H.gender == MALE)
-		pants = /obj/item/clothing/pants/tights/colored/red
-		shirt = /obj/item/clothing/shirt/undershirt/colored/red
-		armor = /obj/item/clothing/shirt/tunic/colored/red
-		cloak = /obj/item/clothing/cloak/raincloak/furcloak
-	else
+	backpack_contents = list(
+		/obj/item/needle = 1,
+		/obj/item/natural/bundle/cloth/full = 1,
+		/obj/item/natural/bundle/fibers/full = 1,
+		/obj/item/dye_pack/luxury = 1,
+		/obj/item/recipe_book/sewing_leather = 1,
+		/obj/item/weapon/knife/villager = 1
+	)
+
+/datum/outfit/tailor/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
+	. = ..()
+	if(equipped_human.gender == FEMALE)
 		cloak = /obj/item/clothing/cloak/raincloak/furcloak
 		shirt = /obj/item/clothing/shirt/dress/gen/colored/purple
 		armor = /obj/item/clothing/shirt/tunic/colored/purple
 		pants = /obj/item/clothing/pants/tights/colored/purple
-	H.change_stat(STATKEY_INT, 2)
-	H.change_stat(STATKEY_SPD, 2)
-	H.change_stat(STATKEY_PER, 1)
-	H.change_stat(STATKEY_STR, -1)

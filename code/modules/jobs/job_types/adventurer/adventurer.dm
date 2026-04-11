@@ -2,7 +2,7 @@ GLOBAL_VAR_INIT(adventurer_hugbox_duration, 30 SECONDS)
 GLOBAL_VAR_INIT(adventurer_hugbox_duration_still, 3 MINUTES)
 
 /datum/job/adventurer
-	title = "Adventurer"
+	title = JOB_ADVENTURER
 	tutorial = "Hero of nothing, adventurer by trade. \
 	Whatever led you to this fate is up to the wind to decide, \
 	and you've never fancied yourself for much other than the thrill. \
@@ -14,10 +14,10 @@ GLOBAL_VAR_INIT(adventurer_hugbox_duration_still, 3 MINUTES)
 	faction = FACTION_FOREIGNERS
 	total_positions = 14
 	spawn_positions = 14
-	min_pq = 2
 	bypass_lastclass = TRUE
 
 	allowed_races = RACES_PLAYER_ALL
+	blacklisted_species = list(SPEC_ID_HALFLING)
 
 	outfit = null
 	outfit_female = null
@@ -27,13 +27,18 @@ GLOBAL_VAR_INIT(adventurer_hugbox_duration_still, 3 MINUTES)
 	is_foreigner = TRUE
 	can_have_apprentices = FALSE
 	scales = TRUE
+	can_be_apprentice = TRUE
 
-/datum/outfit/adventurer // Reminder message
-	var/merc_ad = "<br><font color='#855b14'><span class='bold'>If I wanted to make mammons by selling my services, or completing quests, the Mercenary guild would be a good place to start.</span></font><br>"
+	exp_types_granted = list(EXP_TYPE_ADVENTURER, EXP_TYPE_COMBAT)
 
-/datum/outfit/adventurer/post_equip(mob/living/carbon/human/H)
-	..()
-	to_chat(H, merc_ad)
+/datum/job/advclass/combat
+	exp_types_granted = list(EXP_TYPE_ADVENTURER, EXP_TYPE_COMBAT)
+	spawn_with_torch = TRUE
+	department_flag = OUTSIDERS
+
+/datum/job/adventurer/after_spawn(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+	to_chat(spawned, "<br><font color='#855b14'><span class='bold'>If I wanted to make mammons by selling my services, or completing quests, the Mercenary guild would be a good place to start.</span></font><br>")
 
 /datum/job/adventurer/set_spawn_and_total_positions(count)
 	// Calculate the new spawn positions

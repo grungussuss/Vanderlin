@@ -57,7 +57,7 @@ SUBSYSTEM_DEF(ambience)
 	if(override_sound)
 		new_sound = override_sound
 	else if(spooky_sounds)
-		if(ambientnight && GLOB.tod == "night")
+		if(ambientnight && GLOB.tod == NIGHT)
 			spooky_sounds = ambientnight
 		new_sound = pick(spooky_sounds)
 
@@ -95,13 +95,13 @@ SUBSYSTEM_DEF(ambience)
 	var/time = GLOB.tod
 	var/used = background_track
 	if(is_lit)
-		if(time == "night" && background_track_night)
+		if(time == NIGHT && background_track_night)
 			used = background_track_night
-		else if (time == "dusk" && background_track_dusk)
+		else if (time == DUSK && background_track_dusk)
 			used = background_track_dusk
 	else if(uses_alt_droning)
 		used = safepick(alternative_droning)
-		if(time == "night" && length(alternative_droning_night))
+		if(time == NIGHT && length(alternative_droning_night))
 			used = pick(alternative_droning_night)
 
 	return used
@@ -111,9 +111,9 @@ SUBSYSTEM_DEF(ambience)
 	if(!client || isobserver(client.mob))
 		return
 
-	var/datum/antagonist/maniac/maniac = mind?.has_antag_datum(/datum/antagonist/maniac)
+	var/datum/component/theme_music/theme_music = src.GetComponent(/datum/component/theme_music)
 
-	if(!can_hear() || maniac?.music_enabled)
+	if(!can_hear() || theme_music?.music_enabled)
 		cancel_looping_ambience()
 		return
 
@@ -124,11 +124,15 @@ SUBSYSTEM_DEF(ambience)
 
 	if(!used && music_enabled)
 		used = my_area?.get_current_buzz(has_light_nearby())
+		if(!used || islist(used))
+			return
 	if(cmode && cmode_music)
 		used = cmode_music
 		vol *= 1.2
 	else if(music_enabled && HAS_TRAIT(src, TRAIT_SCHIZO_AMBIENCE))
 		used = 'sound/music/dreamer_is_still_asleep.ogg'
+	else if(music_enabled && has_stress_type(/datum/stress_event/black_briar2))
+		used = 'sound/music/briar.ogg'
 	else if(music_enabled && HAS_TRAIT(src, TRAIT_DRUQK))
 		used = 'sound/music/spice.ogg'
 
@@ -147,3 +151,31 @@ SUBSYSTEM_DEF(ambience)
 		return
 	SEND_SOUND(src, sound(null, repeat = 0, wait = 0, channel = CHANNEL_BUZZ))
 	client.current_ambient_sound = null
+
+/mob/proc/test_area_sounds()
+	for(var/area/area as anything in subtypesof(/area))
+		if(!initial(area.background_track))
+			continue
+		to_chat(src, initial(area.name))
+		refresh_looping_ambience(initial(area.background_track))
+		sleep(0.2 SECONDS)
+		if(!client)
+			world << "Crashed at [initial(area.name)]"
+
+	for(var/area/area as anything in subtypesof(/area))
+		if(!initial(area.background_track_dusk))
+			continue
+		to_chat(src, initial(area.name))
+		refresh_looping_ambience(initial(area.background_track_dusk))
+		sleep(0.2 SECONDS)
+		if(!client)
+			world << "Crashed at [initial(area.name)] dusk"
+
+	for(var/area/area as anything in subtypesof(/area))
+		if(!initial(area.background_track_night))
+			continue
+		to_chat(src, initial(area.name))
+		refresh_looping_ambience(initial(area.background_track_night))
+		sleep(0.2 SECONDS)
+		if(!client)
+			world << "Crashed at [initial(area.name)] night"

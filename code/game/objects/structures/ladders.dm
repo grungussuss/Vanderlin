@@ -15,11 +15,11 @@
 	if (up)
 		src.up = up
 		up.down = src
-		up.update_appearance()
+		up.update_appearance(UPDATE_ICON_STATE)
 	if (down)
 		src.down = down
 		down.up = src
-		down.update_appearance()
+		down.update_appearance(UPDATE_ICON_STATE)
 	return INITIALIZE_HINT_LATELOAD
 
 /obj/structure/ladder/Destroy(force)
@@ -38,23 +38,23 @@
 		if (L)
 			down = L
 			L.up = src  // Don't waste effort looping the other way
-			L.update_appearance()
+			L.update_appearance(UPDATE_ICON_STATE)
 	if (!up)
 		L = locate() in GET_TURF_ABOVE(T)
 		if (L)
 			up = L
 			L.down = src  // Don't waste effort looping the other way
-			L.update_appearance()
+			L.update_appearance(UPDATE_ICON_STATE)
 
 	update_appearance(UPDATE_ICON_STATE)
 
 /obj/structure/ladder/proc/disconnect()
 	if(up && up.down == src)
 		up.down = null
-		up.update_appearance()
+		up.update_appearance(UPDATE_ICON_STATE)
 	if(down && down.up == src)
 		down.up = null
-		down.update_appearance()
+		down.update_appearance(UPDATE_ICON_STATE)
 	up = down = null
 
 /obj/structure/ladder/update_icon_state()
@@ -72,14 +72,15 @@
 	if(is_ghost)
 		return
 
-	if(!is_ghost)
-		playsound(src, 'sound/foley/ladder.ogg', 100, FALSE)
-		if(!do_after(user, 3 SECONDS, src))
-			return
+	if(isliving(user))
+		var/mob/living/L = user
+		if(L.m_intent != MOVE_INTENT_SNEAK)
+			playsound(src, 'sound/foley/ladder.ogg', 100, FALSE)
+	if(!do_after(user, 3 SECONDS, src))
+		return
 
-	if(!is_ghost)
-		show_fluff_message(going_up, user)
-		ladder.add_fingerprint(user)
+	show_fluff_message(going_up, user)
+	ladder.add_fingerprint(user)
 	var/turf/T = get_turf(ladder)
 	if(isliving(user))
 		movable_travel_z_level(user, T)
@@ -94,7 +95,7 @@
 		return
 
 	if (up && down)
-		var/result = alert("Go up or down [src]?", "Ladder", "Up", "Down", "Cancel")
+		var/result = tgui_alert(user, "Go up or down [src]?", "Ladder", list("Up", "Down", "Cancel"))
 		if (!in_range(src, user))
 			return  // nice try
 		switch(result)
@@ -123,7 +124,7 @@
 /obj/structure/ladder/attack_paw(mob/user)
 	return use(user)
 
-/obj/structure/ladder/attackby(obj/item/W, mob/user, params)
+/obj/structure/ladder/attackby(obj/item/W, mob/user, list/modifiers)
 	return use(user)
 
 //ATTACK GHOST IGNORING PARENT RETURN VALUE

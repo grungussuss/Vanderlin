@@ -1,3 +1,44 @@
+/datum/attribute_holder/sheet/job/lieutenant
+	raw_attribute_list = list(
+		STAT_STRENGTH = 2,
+		STAT_ENDURANCE = 2,
+		STAT_CONSTITUTION = 1,
+		STAT_SPEED = 1,
+		/datum/attribute/skill/combat/axesmaces = 30,
+		/datum/attribute/skill/combat/swords = 10,
+		/datum/attribute/skill/combat/polearms = 10,
+		/datum/attribute/skill/combat/whipsflails = 10,
+		/datum/attribute/skill/combat/shields = 30,
+		/datum/attribute/skill/combat/bows = 20,
+		/datum/attribute/skill/combat/knives = 20,
+		/datum/attribute/skill/combat/wrestling = 30,
+		/datum/attribute/skill/combat/unarmed = 30,
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/climbing = 30,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/sneaking = 20,
+		/datum/attribute/skill/craft/crafting = 10,
+		/datum/attribute/skill/misc/reading = 10
+	)
+
+/datum/attribute_holder/sheet/job/lieutenant/flail
+	raw_attribute_list = list()
+	clamped_adjustment = list(
+		/datum/attribute/skill/combat/whipsflails = list(20, 30)
+	)
+
+/datum/attribute_holder/sheet/job/lieutenant/polearm
+	raw_attribute_list = list()
+	clamped_adjustment = list(
+		/datum/attribute/skill/combat/polearms = list(20, 30)
+	)
+
+/datum/attribute_holder/sheet/job/lieutenant/sword
+	raw_attribute_list = list()
+	clamped_adjustment = list(
+		/datum/attribute/skill/combat/swords = list(20, 30)
+	)
+
 /datum/job/lieutenant
 	/*
 	From wikipedia:
@@ -5,7 +46,7 @@
 	and tenant meaning "holding" as in "holding a position";
 	thus a "lieutenant" is a placeholder for a superior, during their absence.
 	*/
-	title = "City Watch Lieutenant"
+	title = JOB_CITY_WATCH_LIEUTENANT
 	tutorial = "You are a lieutenant of the City Watch. \
 	You have been chosen by the Captain to lead the Watch in his absence; \
 	Failure is not an option."
@@ -15,21 +56,55 @@
 	faction = FACTION_TOWN
 	total_positions = 1
 	spawn_positions = 1
-	min_pq = 10
 	bypass_lastclass = TRUE
-
 	allowed_ages = list(AGE_ADULT, AGE_MIDDLEAGED, AGE_IMMORTAL)
-	allowed_races = RACES_PLAYER_GUARD
-
-	outfit = /datum/outfit/lieutenant	//Default outfit.
+	allowed_races = RACES_PLAYER_NO_KOBOLD
+	blacklisted_species = list(SPEC_ID_HALFLING)
+	outfit = /datum/outfit/lieutenant
 	give_bank_account = 50
 	cmode_music = 'sound/music/cmode/garrison/CombatGarrison.ogg'
+	exp_type = list(EXP_TYPE_GARRISON)
+	exp_types_granted  = list(EXP_TYPE_COMBAT, EXP_TYPE_GARRISON, EXP_TYPE_LEADERSHIP)
+	exp_requirements = list(EXP_TYPE_GARRISON = 900)
+	honorary = "Lieutenant"
+	job_bitflag = BITFLAG_GARRISON
 
-//................. Base Gear .............. //
-/datum/outfit/lieutenant/pre_equip(mob/living/carbon/human/H)
+	attribute_sheet = /datum/attribute_holder/sheet/job/lieutenant
+
+	traits = list(
+		TRAIT_MEDIUMARMOR,
+	)
+	mind_traits = list(TRAIT_KNOWBANDITS)
+	verbs = list(
+		/mob/living/carbon/human/proc/torture_victim
+	)
+
+/datum/job/lieutenant/on_roundstart(mob/living/carbon/human/spawned, client/player_client)
 	. = ..()
+
+	var/static/list/selectable = list( \
+		"Flail" = /obj/item/weapon/flail, \
+		"Spear" = /obj/item/weapon/polearm/spear, \
+		"Sword" = /obj/item/weapon/sword/iron, \
+	)
+	var/choice = spawned.select_equippable(player_client, selectable, message = "CHOOSE YOUR SECONDARY WEAPON", title = "LIEUTENANT")
+	if(!choice)
+		return
+	switch(choice)
+		if("Flail")
+			spawned.equip_to_slot_or_del(new /obj/item/weapon/shield/wood(), ITEM_SLOT_BACK_R, TRUE)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/lieutenant/flail)
+		if("Spear")
+			spawned.equip_to_slot_or_del(new /obj/item/weapon/shield/tower/buckleriron(), ITEM_SLOT_BACK_R, TRUE)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/lieutenant/polearm)
+		if("Sword")
+			spawned.equip_to_slot_or_del(new /obj/item/weapon/shield/heater(), ITEM_SLOT_BACK_R, TRUE)
+			spawned.equip_to_slot_or_del(new /obj/item/weapon/scabbard/sword(), ITEM_SLOT_BACK_L, TRUE)
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/lieutenant/sword)
+
+/datum/outfit/lieutenant
+	name = JOB_CITY_WATCH_LIEUTENANT
 	head = /obj/item/clothing/head/helmet/sargebarbute //veteran who won a nice helmet
-	cloak = pick(/obj/item/clothing/cloak/half/guard, /obj/item/clothing/cloak/half/guardsecond)
 	wrists = /obj/item/clothing/wrists/bracers/jackchain
 	shoes = /obj/item/clothing/shoes/boots/leather
 	belt = /obj/item/storage/belt/leather
@@ -40,70 +115,22 @@
 	neck = /obj/item/clothing/neck/chaincoif/iron
 	beltl = /obj/item/weapon/mace/bludgeon
 	backl = /obj/item/storage/backpack/satchel
-	backpack_contents = list(/obj/item/storage/keyring/lieutenant, /obj/item/weapon/knife/dagger/steel, /obj/item/rope/chain)
-	if(H.dna && !(H.dna.species.id in RACES_PLAYER_NONDISCRIMINATED)) // to prevent examine stress
-		mask = /obj/item/clothing/face/shepherd/clothmask
+	backpack_contents = list(
+		/obj/item/storage/keyring/lieutenant = 1,
+		/obj/item/weapon/knife/dagger/steel = 1,
+		/obj/item/rope/chain = 1
+	)
 
-	//combat
-	H.adjust_skillrank(/datum/skill/combat/axesmaces, 3, TRUE) // Cudgel
-	H.adjust_skillrank(/datum/skill/combat/swords, 1, TRUE) //weak in swords, polearms, bows and whipsandflails
-	H.adjust_skillrank(/datum/skill/combat/polearms, 1, TRUE) //basically the gear the watchmen can use
-	H.adjust_skillrank(/datum/skill/combat/whipsflails, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/bows, 2, TRUE) //no bow specialization tho, so they get average instead
-	H.adjust_skillrank(/datum/skill/combat/knives, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 4, TRUE)
-
-	//movement and stamina
-	H.adjust_skillrank(/datum/skill/misc/swimming, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 4, TRUE)
-
-	//misc skills
-	H.adjust_skillrank(/datum/skill/misc/sneaking, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
-
-	//stats
-	H.change_stat(STATKEY_STR, 2)
-	H.change_stat(STATKEY_END, 2)
-	H.change_stat(STATKEY_CON, 1)
-	H.change_stat(STATKEY_SPD, 1)
-
-	//traits
-	ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_KNOWBANDITS, TRAIT_GENERIC)
-
-/datum/outfit/lieutenant/post_equip(mob/living/carbon/human/H)
+/datum/outfit/lieutenant/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
 	. = ..()
-	if(H.cloak)
-		if(!findtext(H.cloak.name,"([H.real_name])"))
-			H.cloak.name = "[H.cloak.name]"+" "+"([H.real_name])"
+	cloak = pick(/obj/item/clothing/cloak/half/guard, /obj/item/clothing/cloak/half/guardsecond)
 
-	var/static/list/selectable = list( \
-		"Flail" = /obj/item/weapon/flail, \
-		"Spear" = /obj/item/weapon/polearm/spear, \
-		"Sword" = /obj/item/weapon/sword/iron, \
-		)
-	var/choice = H.select_equippable(H, selectable, time_limit = 1 MINUTES, message = "Choose your secondary weapon", title = "LIEUTENANT")
-	if(!choice)
-		return
-	//yeah this is copied from how royal knights do it
-	var/shield_type = null
-	switch(choice)
-		if("Flail")
-			H.clamped_adjust_skillrank(/datum/skill/combat/whipsflails, 2, 3, TRUE)
-			shield_type = new /obj/item/weapon/shield/wood()
-		if("Spear")
-			H.clamped_adjust_skillrank(/datum/skill/combat/polearms, 2, 3, TRUE)
-			shield_type = new /obj/item/weapon/shield/tower/buckleriron()
-		if("Sword")
-			H.clamped_adjust_skillrank(/datum/skill/combat/swords, 2, 3, TRUE)
-			shield_type = new /obj/item/weapon/shield/heater()
-			var/scabbard = new /obj/item/weapon/scabbard/sword()
-			if(!H.equip_to_appropriate_slot(scabbard))
-				qdel(scabbard)
-	if(shield_type)//just incase
-		H.clamped_adjust_skillrank(/datum/skill/combat/shields, 3, 3, TRUE)
-		if(!H.equip_to_appropriate_slot(shield_type))
-			qdel(shield_type)
+	if(equipped_human.dna && !(equipped_human.dna.species.id in RACES_PLAYER_NONDISCRIMINATED))
+		var/obj/item/clothing/mask = new /obj/item/clothing/face/shepherd/clothmask()
+		if(!equipped_human.equip_to_slot_if_possible(mask, ITEM_SLOT_MASK))
+			qdel(mask)
+
+/datum/outfit/lieutenant/post_equip(mob/living/carbon/human/equipped_human, visuals_only)
+	. = ..()
+	if(equipped_human.cloak && !findtext(equipped_human.cloak.name,"([equipped_human.real_name])"))
+		equipped_human.cloak.name = "[equipped_human.cloak.name]"+" "+"([equipped_human.real_name])"

@@ -5,6 +5,7 @@
 	button_icon_state = "wind_step"
 	cast_range = 0
 	point_cost = 6
+	has_visual_effects = FALSE
 	attunements = list(/datum/attunement/aeromancy, /datum/attunement/aeromancy)
 
 /datum/action/cooldown/spell/essence/wind_step/cast(atom/cast_on)
@@ -12,6 +13,7 @@
 	owner.visible_message(span_notice("[owner] steps upon the wind itself."))
 	var/mob/living/L = owner
 	L.apply_status_effect(/datum/status_effect/buff/wind_walking, 30 SECONDS)
+	new /obj/effect/temp_visual/snake/swarm(null, L)
 
 /datum/action/cooldown/spell/essence/aerial_dash
 	name = "Aerial Dash"
@@ -19,6 +21,7 @@
 	button_icon_state = "aerial_dash"
 	cast_range = 0
 	point_cost = 5
+	has_visual_effects = FALSE
 	attunements = list(/datum/attunement/aeromancy, /datum/attunement/aeromancy)
 
 /datum/action/cooldown/spell/essence/aerial_dash/cast(atom/cast_on)
@@ -26,6 +29,7 @@
 	owner.visible_message(span_notice("[owner] is propelled by rushing air currents."))
 	var/mob/living/L = owner
 	L.apply_status_effect(/datum/status_effect/buff/aerial_speed, 15 SECONDS)
+	new /obj/effect/temp_visual/snake/swarm(null, L)
 
 // Chaos + Void Combo Spells
 /datum/action/cooldown/spell/essence/reality_shift
@@ -140,6 +144,7 @@
 	button_icon_state = "momentum_transfer"
 	cast_range = 2
 	point_cost = 6
+	has_visual_effects = FALSE
 	attunements = list(/datum/attunement/light, /datum/attunement/aeromancy)
 
 /datum/action/cooldown/spell/essence/momentum_transfer/cast(atom/cast_on)
@@ -152,6 +157,7 @@
 	if(ismob(target))
 		var/mob/living/M = target
 		M.apply_status_effect(/datum/status_effect/buff/momentum_boost, 30 SECONDS)
+		new /obj/effect/temp_visual/snake/swarm(null, M)
 
 // Cycle + Life Combo Spells
 /datum/action/cooldown/spell/essence/regeneration_cycle
@@ -169,6 +175,7 @@
 		target = owner
 	owner.visible_message(span_notice("[target] begins a cycle of natural regeneration."))
 	target.apply_status_effect(/datum/status_effect/buff/regeneration_cycle, 300 SECONDS)
+	new /obj/effect/temp_visual/snake/twin_up(null, target)
 
 /datum/action/cooldown/spell/essence/growth_acceleration
 	name = "Growth Acceleration"
@@ -187,6 +194,7 @@
 
 	for(var/obj/structure/soil/plant in range(1, target_turf))
 		plant.accellerated_growth = world.time + 600 SECONDS
+		new /obj/effect/temp_visual/bless_swirl(get_turf(plant))
 
 // RACIAL COMBO SPELLS
 
@@ -345,12 +353,12 @@
 
 /datum/status_effect/buff/wind_walking/on_apply()
 	. = ..()
-	owner.add_movespeed_modifier("wind_walking", multiplicative_slowdown = -0.3)
+	owner.add_movespeed_modifier(MOVESPEED_ID_STATUS_EFFECT(id), multiplicative_slowdown = -0.3)
 	to_chat(owner, span_notice("You step upon the wind itself!"))
 
 /datum/status_effect/buff/wind_walking/on_remove()
 	. = ..()
-	owner.remove_movespeed_modifier("wind_walking")
+	owner.remove_movespeed_modifier(MOVESPEED_ID_STATUS_EFFECT(id))
 
 /datum/status_effect/buff/aerial_speed
 	id = "aerial_speed"
@@ -359,18 +367,18 @@
 
 /datum/status_effect/buff/aerial_speed/on_apply()
 	. = ..()
-	owner.add_movespeed_modifier("aerial_speed", multiplicative_slowdown = -0.5)
+	owner.add_movespeed_modifier(MOVESPEED_ID_STATUS_EFFECT(id), multiplicative_slowdown = -0.5)
 	to_chat(owner, span_notice("Air currents propel you forward!"))
 
 /datum/status_effect/buff/aerial_speed/on_remove()
 	. = ..()
-	owner.remove_movespeed_modifier("aerial_speed")
+	owner.remove_movespeed_modifier(MOVESPEED_ID_STATUS_EFFECT(id))
 
 /datum/status_effect/buff/probability_flux
 	id = "probability_flux"
 	alert_type = /atom/movable/screen/alert/status_effect/probability_flux
 	duration = 60 SECONDS
-	effectedstats = list(STATKEY_LCK = 2)
+	effectedstats = list(STAT_FORTUNE = 2)
 
 /datum/status_effect/buff/arcane_focus
 	id = "arcane_focus"
@@ -400,14 +408,14 @@
 
 /datum/status_effect/buff/momentum_boost/on_apply()
 	. = ..()
-	owner.add_movespeed_modifier("momentum", multiplicative_slowdown = -0.4)
-	ADD_TRAIT(owner, TRAIT_PUSHIMMUNE, MAGIC_TRAIT)
+	owner.add_movespeed_modifier(MOVESPEED_ID_STATUS_EFFECT(id), multiplicative_slowdown = -0.4)
+	ADD_TRAIT(owner, TRAIT_PUSHIMMUNE, TRAIT_STATUS_EFFECT(id))
 	to_chat(owner, span_notice("Kinetic energy surges through you!"))
 
 /datum/status_effect/buff/momentum_boost/on_remove()
 	. = ..()
-	owner.remove_movespeed_modifier("momentum")
-	REMOVE_TRAIT(owner, TRAIT_PUSHIMMUNE, MAGIC_TRAIT)
+	owner.remove_movespeed_modifier(MOVESPEED_ID_STATUS_EFFECT(id))
+	REMOVE_TRAIT(owner, TRAIT_PUSHIMMUNE, TRAIT_STATUS_EFFECT(id))
 
 /datum/status_effect/buff/regeneration_cycle
 	id = "regeneration_cycle"
@@ -432,11 +440,11 @@
 
 /datum/status_effect/buff/elven_grace/on_apply()
 	. = ..()
-	owner.add_movespeed_modifier("elven_grace", multiplicative_slowdown = -0.2)
+	owner.add_movespeed_modifier(MOVESPEED_ID_STATUS_EFFECT(id), multiplicative_slowdown = -0.2)
 
 /datum/status_effect/buff/elven_grace/on_remove()
 	. = ..()
-	owner.remove_movespeed_modifier("elven_grace")
+	owner.remove_movespeed_modifier(MOVESPEED_ID_STATUS_EFFECT(id))
 
 /datum/status_effect/buff/balanced_mind
 	id = "balanced_mind"
@@ -450,25 +458,25 @@
 	if(!owner)
 		return
 	source_key = "balanced_mind_[ref(src)]"
-	owner.set_stat_modifier(source_key, STATKEY_STR, balance_value - owner.STASTR)
-	owner.set_stat_modifier(source_key, STATKEY_PER, balance_value - owner.STAPER)
-	owner.set_stat_modifier(source_key, STATKEY_END, balance_value - owner.STAEND)
-	owner.set_stat_modifier(source_key, STATKEY_CON, balance_value - owner.STACON)
-	owner.set_stat_modifier(source_key, STATKEY_INT, balance_value - owner.STAINT)
-	owner.set_stat_modifier(source_key, STATKEY_SPD, balance_value - owner.STASPD)
-	owner.set_stat_modifier(source_key, STATKEY_LCK, balance_value - owner.STALUC)
+	owner.set_stat_modifier(source_key, STAT_STRENGTH, balance_value - GET_MOB_ATTRIBUTE_VALUE(owner, STAT_STRENGTH))
+	owner.set_stat_modifier(source_key, STAT_PERCEPTION, balance_value - GET_MOB_ATTRIBUTE_VALUE(owner, STAT_PERCEPTION))
+	owner.set_stat_modifier(source_key, STAT_ENDURANCE, balance_value - GET_MOB_ATTRIBUTE_VALUE(owner, STAT_ENDURANCE))
+	owner.set_stat_modifier(source_key, STAT_CONSTITUTION, balance_value - GET_MOB_ATTRIBUTE_VALUE(owner, STAT_CONSTITUTION))
+	owner.set_stat_modifier(source_key, STAT_INTELLIGENCE, balance_value - GET_MOB_ATTRIBUTE_VALUE(owner, STAT_INTELLIGENCE))
+	owner.set_stat_modifier(source_key, STAT_SPEED, balance_value - GET_MOB_ATTRIBUTE_VALUE(owner, STAT_SPEED))
+	owner.set_stat_modifier(source_key, STAT_FORTUNE, balance_value - GET_MOB_ATTRIBUTE_VALUE(owner, STAT_FORTUNE))
 
 /datum/status_effect/buff/balanced_mind/on_remove()
 	. = ..()
 	if(!owner || !source_key)
 		return
-	owner.set_stat_modifier(source_key, STATKEY_STR, 0)
-	owner.set_stat_modifier(source_key, STATKEY_PER, 0)
-	owner.set_stat_modifier(source_key, STATKEY_END, 0)
-	owner.set_stat_modifier(source_key, STATKEY_CON, 0)
-	owner.set_stat_modifier(source_key, STATKEY_INT, 0)
-	owner.set_stat_modifier(source_key, STATKEY_SPD, 0)
-	owner.set_stat_modifier(source_key, STATKEY_LCK, 0)
+	owner.set_stat_modifier(source_key, STAT_STRENGTH, 0)
+	owner.set_stat_modifier(source_key, STAT_PERCEPTION, 0)
+	owner.set_stat_modifier(source_key, STAT_ENDURANCE, 0)
+	owner.set_stat_modifier(source_key, STAT_CONSTITUTION, 0)
+	owner.set_stat_modifier(source_key, STAT_INTELLIGENCE, 0)
+	owner.set_stat_modifier(source_key, STAT_SPEED, 0)
+	owner.set_stat_modifier(source_key, STAT_FORTUNE, 0)
 
 /atom/movable/screen/alert/status_effect/wind_walking
 	name = "Wind Walking"

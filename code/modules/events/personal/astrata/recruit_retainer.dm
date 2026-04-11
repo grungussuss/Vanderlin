@@ -7,6 +7,10 @@
 	max_occurrences = 1
 	min_players = 35
 
+	tags = list(
+		TAG_ASTRATA,
+	)
+
 /datum/round_event_control/retainer_recruitment/canSpawnEvent(players_amt, gamemode, fake_check)
 	. = ..()
 	if(!.)
@@ -39,7 +43,7 @@
 		if(human_mob.get_spell(/datum/action/cooldown/spell/undirected/list_target/convert_role))
 			continue
 
-		if(istype(human_mob.mind?.assigned_role, /datum/job/minor_noble) || human_mob.job == "Noble")
+		if(istype(human_mob.mind?.assigned_role, /datum/job/minor_noble) || human_mob.job == JOB_MINOR_NOBLE)
 			minor_nobles += human_mob
 		else
 			valid_targets += human_mob
@@ -51,7 +55,6 @@
 		return
 
 	var/mob/living/carbon/human/noble = pick(valid_targets)
-	noble.add_spell(/datum/action/cooldown/spell/undirected/list_target/convert_role/retainer, source = src)
 
 	var/datum/objective/personal/retainer/new_objective = new(owner = noble.mind)
 	noble.mind.add_personal_objective(new_objective)

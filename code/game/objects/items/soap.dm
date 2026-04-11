@@ -13,6 +13,7 @@
 	var/clean_effectiveness = 50
 	var/clean_strength = CLEAN_SCRUB
 	force_string = "robust... against filth"
+	item_weight = 140 GRAMS
 	var/uses = 100
 	var/slip_chance = 15
 
@@ -81,7 +82,7 @@
 	qdel(src)
 
 
-/obj/item/soap/attack(mob/living/carbon/human/target, mob/living/carbon/user)
+/obj/item/soap/attack(mob/living/carbon/human/target, mob/living/carbon/user, list/modifiers)
 	user.changeNext_move(CLICK_CD_MELEE)
 
 	if(ishuman(target) && user.zone_selected == BODY_ZONE_PRECISE_MOUTH)
@@ -96,7 +97,7 @@
 				return FALSE
 		user.visible_message(span_warning("<[user] starts to wash \the [target]'s mouth out with [src]..."), span_notice("I start to wash \the [target]'s mouth out with [src]...")) //washes mouth out with soap sounds better than 'the soap' here
 		// how this looks vvv https://www.desmos.com/calculator/55fpadxol5
-		if(do_after(user, (20 / user.STASPD + 2) SECONDS, target))
+		if(do_after(user, (20 / GET_MOB_ATTRIBUTE_VALUE(user, STAT_SPEED) + 2) SECONDS, target))
 			user.visible_message(span_warning("[user] washes \the [target]'s mouth out with [src]!"), span_notice("I wash \the [target]'s mouth out with [src]!")) //washes mouth out with soap sounds better than 'the soap' here
 			target.emote("drown")
 			target.adjustOxyLoss(20)
@@ -178,6 +179,8 @@
 	decreaseUses(5)
 	target.add_stress(/datum/stress_event/clean)
 	target.adjust_hygiene(50)
+	target.ExtinguishMob()
+	target.adjust_fire_stacks(-20)
 
 /obj/item/soap/bath
 	name = "herbal soap"
@@ -190,9 +193,5 @@
 	. = ..()
 	if(target.hygiene == HYGIENE_LEVEL_CLEAN)
 		to_chat(target, span_green("I feel so relaxed and clean!"))
-		if(user != target)
-			//Someone else washing you applies the buff, otherwise just the stress event
-			//btw, the buff applies the clean_plus stress_event, keep that in mind
-			target.apply_status_effect(/datum/status_effect/buff/clean_plus)
-		else
-			user.add_stress(/datum/stress_event/clean_plus)
+		target.apply_status_effect(/datum/status_effect/buff/clean_plus)
+		user.add_stress(/datum/stress_event/clean_plus)

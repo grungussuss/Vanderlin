@@ -10,6 +10,10 @@
 		/datum/attunement/dark = 0.6,
 	)
 
+	//https://www.youtube.com/watch?v=MfK3Ygb7Jzk
+	invocation = "Fall."
+	invocation_type = INVOCATION_SHOUT
+
 	charge_time = 2 SECONDS
 	cooldown_time = 25 SECONDS
 	spell_cost = 35
@@ -23,7 +27,7 @@
 /datum/action/cooldown/spell/gravity/cast(mob/living/cast_on)
 	. = ..()
 	new /obj/effect/temp_visual/gravity(get_turf(cast_on))
-	if(cast_on.STASTR >= 13)
+	if(GET_MOB_ATTRIBUTE_VALUE(cast_on, STAT_STRENGTH) >= 13)
 		cast_on.OffBalance(3 SECONDS)
 		cast_on.adjustBruteLoss(15)
 		to_chat(cast_on, span_userdanger("You're magically weighed down, but your strength resists!"))

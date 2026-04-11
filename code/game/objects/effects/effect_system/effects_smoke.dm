@@ -7,7 +7,7 @@
 	icon = 'icons/effects/96x96.dmi'
 	icon_state = "smoke"
 	SET_BASE_PIXEL(-32, -32)
-	opacity = 1
+	opacity = TRUE
 	layer = FLY_LAYER
 	plane = GAME_PLANE_UPPER
 	anchored = TRUE
@@ -61,6 +61,8 @@
 	if(lifetime<1)
 		return 0
 	if(C.smoke_delay)
+		return 0
+	if(istype(C.wear_mask, /obj/item/clothing/face/facemask/steel/confessor))
 		return 0
 	C.smoke_delay++
 	addtimer(CALLBACK(src, PROC_REF(remove_smoke_delay), C), 10)

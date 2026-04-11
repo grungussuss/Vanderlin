@@ -30,14 +30,15 @@
 * in which the steward sails.
 */
 SUBSYSTEM_DEF(treasury)
-	name = "treasury"
+	name = "Treasury"
 	wait = 1
 	init_order = INIT_ORDER_TREASURY
 	priority = FIRE_PRIORITY_WATER_LEVEL
-	var/tax_value = 0.11
+	var/tax_value = 0.1
 	var/queens_tax = 0.15
 	var/treasury_value = 0
 	var/list/bank_accounts = list()
+	var/list/untaxed_deposits = list()
 	var/list/noble_incomes = list()
 	var/list/stockpile_datums = list()
 	var/multiple_item_penalty = 0.7
@@ -93,14 +94,14 @@ SUBSYSTEM_DEF(treasury)
 		*/
 		amt_to_generate = amt_to_generate - (amt_to_generate * queens_tax)
 		amt_to_generate = round(amt_to_generate)
-		give_money_treasury(amt_to_generate, "Wealth Horde")
+		give_money_treasury(amt_to_generate, "Wealth Hoard")
 		force_set_round_statistic(STATS_REGULAR_VAULT_INCOME, amt_to_generate)
 		record_round_statistic(STATS_VAULT_TOTAL_REVENUE, amt_to_generate)
 		for(var/mob/living/carbon/human/X in GLOB.human_list)
 			if(!X.mind)
 				continue
 			if(is_lord_job(X.mind.assigned_role) || is_consort_job(X.mind.assigned_role) || is_steward_job(X.mind.assigned_role))
-				send_ooc_note("Income from wealth horde: +[amt_to_generate]", name = X.real_name)
+				send_ooc_note("Income from wealth hoard: +[amt_to_generate]", name = X.real_name)
 				return
 
 /*
@@ -110,7 +111,7 @@ SUBSYSTEM_DEF(treasury)
 */
 /datum/controller/subsystem/treasury/proc/CalcVaultIncome()
 	vault_accounting = list()
-	var/area/A = GLOB.areas_by_type[/area/rogue/indoors/town/vault]
+	var/area/A = GLOB.areas_by_type[/area/indoors/town/vault]
 	var/passive_income = 0
 	for(var/obj/I in A)
 		if(!isturf(I.loc))
@@ -156,6 +157,14 @@ SUBSYSTEM_DEF(treasury)
 		bank_accounts[name] = initial_deposit
 	else
 		bank_accounts[name] = 0
+	return TRUE
+
+/datum/controller/subsystem/treasury/proc/remove_bank_account(name)
+	if(!name)
+		return
+	if(!(name in bank_accounts))
+		return
+	bank_accounts -= name
 	return TRUE
 
 //increments the treasury directly (tax collection)
@@ -223,23 +232,38 @@ SUBSYSTEM_DEF(treasury)
 		return FALSE
 	if(!character)
 		return FALSE
+
 	var/taxed_amount = 0
 	var/original_amt = amt
 	treasury_value += amt
+
 	if(character in bank_accounts)
-		if(HAS_TRAIT(character, TRAIT_NOBLE))
+		if(HAS_TRAIT(character, TRAIT_NOBLE_BLOOD))
 			bank_accounts[character] += amt
 		else
-			taxed_amount = round(amt * tax_value)
-			amt -= taxed_amount
-			bank_accounts[character] += amt
+			if(!untaxed_deposits[character])
+				untaxed_deposits[character] = 0
+
+			var/previous_untaxed = untaxed_deposits[character]
+			untaxed_deposits[character] += amt
+
+			var/taxable_amount = untaxed_deposits[character]
+			var/potential_tax = round(taxable_amount * tax_value)
+
+			if(potential_tax >= 1)
+				taxed_amount = potential_tax
+				var/taxed_portion = round(taxed_amount / tax_value)
+				var/net_from_this_deposit = (taxable_amount - taxed_amount) - previous_untaxed
+				bank_accounts[character] += net_from_this_deposit
+				untaxed_deposits[character] = taxable_amount - taxed_portion
+			else
+				bank_accounts[character] += amt
 	else
 		return FALSE
 
 	log_to_steward("+[original_amt] deposited by [character.real_name] of which taxed [taxed_amount]")
 
 	return list(original_amt, taxed_amount)
-
 
 /datum/controller/subsystem/treasury/proc/withdraw_money_account(amt, target)
 	if(!amt)
@@ -265,7 +289,6 @@ SUBSYSTEM_DEF(treasury)
 		return
 	log_to_steward("-[amt] withdrawn by [target_name]")
 	return TRUE
-
 
 /datum/controller/subsystem/treasury/proc/log_to_steward(log)
 	log_entries += log

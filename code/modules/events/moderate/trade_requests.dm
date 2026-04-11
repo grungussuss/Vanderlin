@@ -49,14 +49,12 @@
 /obj/item/paper/scroll/trade_requests
 	name = "trade requests"
 	icon_state = "contractsigned"
-	old_render = FALSE
-
 	var/list/requests
 	var/writers_name
 
 /obj/item/paper/scroll/trade_requests/Initialize()
 	. = ..()
-	writers_name = pick(world.file2list("strings/rt/names/human/humnorm.txt"))
+	writers_name = pick(file2list("strings/rt/names/human/humnorm.txt"))
 	rebuild_info()
 
 /obj/item/paper/scroll/trade_requests/update_icon_state()
@@ -81,7 +79,7 @@
 
 	if(!requests)
 		return
-	if(requests.len)
+	if(length(requests))
 		info += "<ul>"
 		for(var/datum/trade_request/request in requests)
 			info += "<li style='color:#06080F;font-size:11px;font-family:\"Segoe Script\"'>[request.input_name]x[request.input_amount] for [request.output_name]x[request.output_amount]</li><br/>"

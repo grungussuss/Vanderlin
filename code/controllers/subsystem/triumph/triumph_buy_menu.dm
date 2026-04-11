@@ -11,7 +11,7 @@
 /datum/triumph_buy_menu/New()
 	..()
 
-/datum/triumph_buy_menu/Destroy(force, ...)
+/datum/triumph_buy_menu/Destroy(force)
 	linked_client = null
 	. = ..()
 
@@ -196,7 +196,10 @@
 				for(var/datum/triumph_buy/conflict_check in SStriumphs.active_triumph_buy_queue)
 					if(current_check.type in conflict_check.conflicts_with)
 						string = "<td class='triumph_filler_cells'><a class='triumph_text_buy' href='byond://?src=\ref[src];handle_buy_button=\ref[current_check];'><span class='strikethru_back'>CONFLICT</span></a></td>"
-
+			if(!current_check.allow_multiple_buys && linked_client?.has_triumph_buy(current_check.triumph_buy_id))
+				string = "<td class='triumph_buy_wrapper'><a class='triumph_text_buy' href='byond://?src=\ref[src];handle_buy_button=\ref[current_check];'>PURCHASED</a></td>"
+			if(current_check.disabled)
+				string = "<td class='triumph_buy_wrapper'><a class='triumph_text_buy' href='byond://?src=\ref[src];handle_buy_button=\ref[current_check];'><span class='strikethru_back'>DISABLED</span></a></td>"
 			data += string
 			data += "</tr>"
 
@@ -218,8 +221,7 @@
 		</body>
 	</html>
 	"}
-	linked_client << browse(data, "window=triumph_buy_window;size=674x715;can_close=1;can_minimize=0;can_maximize=0;can_resize=0;titlebar=1")
-
+	linked_client << browse(data, "window=triumph_buy_window;size=675x855;can_close=1;can_minimize=0;can_maximize=0;can_resize=1;titlebar=1")
 	for(var/i in 1 to 10)
 		if(!linked_client)
 			break
@@ -254,6 +256,9 @@
 
 		var/datum/triumph_buy/communal/communal_buy = locate(href_list["contribute"])
 		if(communal_buy && istype(communal_buy))
+			if(communal_buy.disabled)
+				to_chat(linked_client, span_warning("This Triumph Buy has been disabled by administrators!"))
+				return
 			if(communal_buy.activated)
 				to_chat(linked_client, span_warning("The item is already active!"))
 				return
@@ -269,6 +274,7 @@
 				return
 			if(!amount || amount <= 0)
 				return
+
 			if(SSticker.current_state == GAME_STATE_FINISHED)
 				to_chat(linked_client, span_warning("You cannot contribute after the round has ended!"))
 				return
@@ -279,6 +285,14 @@
 				to_chat(linked_client, span_warning("This can only be contributed to before the round starts!"))
 				return
 
+			amount = round(amount)
+			if(amount <= 0)
+				to_chat(linked_client, span_warning("You must contribute at least one whole triumph!"))
+				return
+			if(amount > available)
+				to_chat(linked_client, span_warning("You don't have [amount] triumph\s! You only have [available] triumph\s."))
+				return
+
 			amount = min(amount, available, max_possible)
 			if(amount > 0)
 				linked_client.adjust_triumphs(-amount, counted = FALSE, silent = TRUE)
@@ -286,10 +300,15 @@
 				LAZYADD(SStriumphs.communal_contributions[communal_buy.type][linked_client.ckey], amount)
 				to_chat(linked_client, span_notice("You have contributed [amount] triumph\s to the [communal_buy.name]."))
 
+				if(amount >= 5 && SSticker.current_state < GAME_STATE_SETTING_UP)
+					to_chat(world, span_notice("[amount] triumph\s were contributed to the [communal_buy.name] communal buy!"))
+
 				if(communal_buy.maximum_pool && SStriumphs.communal_pools[communal_buy.type] >= communal_buy.maximum_pool)
 					communal_buy.on_activate()
 
-			show_menu()
+				SStriumphs.refresh_communal_menus()
+			else
+				show_menu()
 
 	if(href_list["handle_buy_button"])
 		if(!linked_client?.ckey)

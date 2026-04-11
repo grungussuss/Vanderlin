@@ -1,62 +1,79 @@
 /datum/migrant_role/sergeant_at_arms
 	name = "Serjeant-at-Arms"
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, you and those under your command have returned upon fullfiling your task."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, you and those under your command have returned upon fulfilling your task."
 	migrant_job = /datum/job/migrant/serjeant_at_arms
+
+/datum/attribute_holder/sheet/job/migrant/serjeant_at_arms
+	raw_attribute_list = list(
+		STAT_STRENGTH = 2,
+		STAT_INTELLIGENCE = 2,
+		STAT_ENDURANCE = 2,
+		/datum/attribute/skill/combat/axesmaces = 30,
+		/datum/attribute/skill/combat/bows = 30,
+		/datum/attribute/skill/combat/crossbows = 30,
+		/datum/attribute/skill/combat/wrestling = 30,
+		/datum/attribute/skill/combat/unarmed = 30,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/polearms = 30,
+		/datum/attribute/skill/combat/whipsflails = 30,
+		/datum/attribute/skill/combat/knives = 30,
+		/datum/attribute/skill/combat/shields = 30,
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/misc/riding = 30,
+	)
+
+/datum/attribute_holder/sheet/job/migrant/serjeant_at_arms/old
+	raw_attribute_list = list(
+		STAT_STRENGTH = 5,
+		STAT_INTELLIGENCE = 4,
+		STAT_ENDURANCE = 4,
+		STAT_SPEED = 1,
+		STAT_PERCEPTION = 1,
+		/datum/attribute/skill/combat/axesmaces = 30,
+		/datum/attribute/skill/combat/bows = 30,
+		/datum/attribute/skill/combat/crossbows = 30,
+		/datum/attribute/skill/combat/wrestling = 30,
+		/datum/attribute/skill/combat/unarmed = 30,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/polearms = 30,
+		/datum/attribute/skill/combat/whipsflails = 30,
+		/datum/attribute/skill/combat/knives = 30,
+		/datum/attribute/skill/combat/shields = 30,
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/misc/riding = 30,
+	)
 
 /datum/job/migrant/serjeant_at_arms
 	title = "Serjeant-at-Arms"
-	tutorial = "You were apart of an expedition sent by the Monarch to Kingsfield, you and those under your command have returned upon fullfiling your task."
+	tutorial = "You were a part of an expedition sent by the Monarch to Kingsfield, you and those under your command have returned upon fulfilling your task."
 	outfit = /datum/outfit/serjeant_at_arms
 	allowed_races = RACES_PLAYER_NONDISCRIMINATED
+	blacklisted_species = list(SPEC_ID_HALFLING)
 	is_foreigner = FALSE
-
-	jobstats = list(
-		STATKEY_STR = 2,
-		STATKEY_INT = 2,
-		STATKEY_END = 2,
-	)
-
-	skills = list(
-		/datum/skill/combat/axesmaces = 4,
-		/datum/skill/combat/bows = 3,
-		/datum/skill/combat/crossbows = 3,
-		/datum/skill/combat/wrestling = 3,
-		/datum/skill/combat/unarmed = 3,
-		/datum/skill/combat/swords = 4,
-		/datum/skill/combat/polearms = 3,
-		/datum/skill/combat/whipsflails = 3,
-		/datum/skill/combat/knives = 3,
-		/datum/skill/combat/shields = 4,
-		/datum/skill/misc/swimming = 2,
-		/datum/skill/misc/climbing = 2,
-		/datum/skill/misc/athletics = 3,
-		/datum/skill/misc/reading = 1,
-		/datum/skill/misc/riding = 3,
-	)
+	exp_types_granted  = list(EXP_TYPE_COMBAT)
+	attribute_sheet = /datum/attribute_holder/sheet/job/migrant/serjeant_at_arms
+	attribute_sheet_old = /datum/attribute_holder/sheet/job/migrant/serjeant_at_arms/old
 
 	traits = list(
 		TRAIT_HEAVYARMOR,
 		TRAIT_STEELHEARTED,
-		TRAIT_KNOWBANDITS,
 	)
+	mind_traits = list(TRAIT_KNOWBANDITS)
 
 	cmode_music = 'sound/music/cmode/garrison/CombatGarrison.ogg'
 
 /datum/job/migrant/serjeant_at_arms/after_spawn(mob/living/carbon/human/spawned, client/player_client)
 	. = ..()
-	if(spawned.age == AGE_OLD)
-		var/list/old_stats = list(
-			STATKEY_STR = 3,
-			STATKEY_INT = 2,
-			STATKEY_END = 2,
-			STATKEY_PER = 1,
-			STATKEY_SPD = 1,
-		)
-		spawned.adjust_stat_modifier_list("job_stats", old_stats)
-	spawned.verbs |= /mob/proc/haltyell
+	add_verb(spawned, /mob/proc/haltyell)
 
 /datum/outfit/serjeant_at_arms
-	name = "Serjeant-at-Arms"
+	name = "Serjeant-at-Arms (Migrant Wave)"
 	head = /obj/item/clothing/head/helmet/sargebarbute
 	pants = /obj/item/clothing/pants/trou/leather
 	cloak = /obj/item/clothing/cloak/half/vet
@@ -75,51 +92,53 @@
 
 /datum/migrant_role/archer_bannerman
 	name = "Bannermen Archer"
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fullfiling your task."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fulfilling your task."
 	migrant_job = /datum/job/migrant/archer_bannerman
+
+/datum/attribute_holder/sheet/job/migrant/archer_bannerman
+	raw_attribute_list = list(
+		STAT_INTELLIGENCE = 1,
+		STAT_PERCEPTION = 2,
+		STAT_ENDURANCE = 1,
+		STAT_SPEED = 2,
+		/datum/attribute/skill/combat/knives = 30,
+		/datum/attribute/skill/combat/bows = 30,
+		/datum/attribute/skill/combat/crossbows = 30,
+		/datum/attribute/skill/combat/wrestling = 20,
+		/datum/attribute/skill/combat/unarmed = 20,
+		/datum/attribute/skill/misc/swimming = 30,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/misc/climbing = 30,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/lockpicking = 20,
+		/datum/attribute/skill/combat/swords = 20,
+		/datum/attribute/skill/craft/crafting = 10,
+		/datum/attribute/skill/craft/tanning = 10,
+	)
 
 /datum/job/migrant/archer_bannerman
 	title = "Bannermen Archer"
-	tutorial = "You were apart of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fullfiling your task."
+	tutorial = "You were a part of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fulfilling your task."
 	outfit = /datum/outfit/archer_bannerman
 	allowed_races = RACES_PLAYER_NONDISCRIMINATED
+	blacklisted_species = list(SPEC_ID_HALFLING)
 	is_foreigner = FALSE
+	exp_types_granted  = list(EXP_TYPE_COMBAT)
 
-	jobstats = list(
-		STATKEY_INT = 1,
-		STATKEY_PER = 2,
-		STATKEY_END = 1,
-		STATKEY_SPD = 2,
-	)
-
-	skills = list(
-		/datum/skill/combat/knives = 3,
-		/datum/skill/combat/bows = 4,
-		/datum/skill/combat/crossbows = 3,
-		/datum/skill/combat/wrestling = 2,
-		/datum/skill/combat/unarmed = 2,
-		/datum/skill/misc/swimming = 3,
-		/datum/skill/misc/reading = 1,
-		/datum/skill/misc/climbing = 3,
-		/datum/skill/misc/athletics = 3,
-		/datum/skill/misc/lockpicking = 2,
-		/datum/skill/combat/swords = 2,
-		/datum/skill/craft/crafting = 1,
-		/datum/skill/craft/tanning = 1,
-	)
+	attribute_sheet = /datum/attribute_holder/sheet/job/migrant/archer_bannerman
 
 	traits = list(
 		TRAIT_DODGEEXPERT,
-		TRAIT_KNOWBANDITS,
 	)
+	mind_traits = list(TRAIT_KNOWBANDITS)
 
 	cmode_music = 'sound/music/cmode/garrison/CombatGarrison.ogg'
 
 /datum/outfit/archer_bannerman
-	name = "Bannermen Archer"
+	name = "Bannermen Archer (Migrant Wave)"
 	pants = /obj/item/clothing/pants/trou/leather
 	armor = /obj/item/clothing/armor/leather/hide
-	backr = /obj/item/gun/ballistic/revolver/grenadelauncher/bow
+	backr = /obj/item/gun/ballistic/bow
 	shirt = /obj/item/clothing/shirt/shortshirt/colored/merc
 	cloak = /obj/item/clothing/cloak/stabard/guard
 	shoes = /obj/item/clothing/shoes/boots
@@ -139,51 +158,53 @@
 
 /datum/migrant_role/crossbow_bannerman
 	name = "Bannermen Crossbowman"
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fullfiling your task."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fulfilling your task."
 	migrant_job = /datum/job/migrant/crossbow_bannerman
+
+/datum/attribute_holder/sheet/job/migrant/crossbow_bannerman
+	raw_attribute_list = list(
+		STAT_INTELLIGENCE = 1,
+		STAT_PERCEPTION = 2,
+		STAT_ENDURANCE = 1,
+		STAT_SPEED = 2,
+		/datum/attribute/skill/combat/knives = 30,
+		/datum/attribute/skill/combat/bows = 30,
+		/datum/attribute/skill/combat/crossbows = 30,
+		/datum/attribute/skill/combat/wrestling = 20,
+		/datum/attribute/skill/combat/unarmed = 20,
+		/datum/attribute/skill/misc/swimming = 30,
+		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/misc/climbing = 30,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/lockpicking = 20,
+		/datum/attribute/skill/combat/swords = 20,
+		/datum/attribute/skill/craft/crafting = 10,
+		/datum/attribute/skill/craft/tanning = 10,
+	)
 
 /datum/job/migrant/crossbow_bannerman
 	title = "Bannermen Crossbowman"
-	tutorial = "You were apart of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fullfiling your task."
+	tutorial = "You were a part of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fulfilling your task."
 	outfit = /datum/outfit/crossbow_bannerman
 	allowed_races = RACES_PLAYER_NONDISCRIMINATED
+	blacklisted_species = list(SPEC_ID_HALFLING)
 	is_foreigner = FALSE
+	exp_types_granted  = list(EXP_TYPE_COMBAT)
 
-	jobstats = list(
-		STATKEY_INT = 1,
-		STATKEY_PER = 2,
-		STATKEY_END = 1,
-		STATKEY_SPD = 2,
-	)
-
-	skills = list(
-		/datum/skill/combat/knives = 3,
-		/datum/skill/combat/bows = 3,
-		/datum/skill/combat/crossbows = 4,
-		/datum/skill/combat/wrestling = 2,
-		/datum/skill/combat/unarmed = 2,
-		/datum/skill/misc/swimming = 3,
-		/datum/skill/misc/reading = 1,
-		/datum/skill/misc/climbing = 3,
-		/datum/skill/misc/athletics = 3,
-		/datum/skill/misc/lockpicking = 2,
-		/datum/skill/combat/swords = 2,
-		/datum/skill/craft/crafting = 1,
-		/datum/skill/craft/tanning = 1,
-	)
+	attribute_sheet = /datum/attribute_holder/sheet/job/migrant/crossbow_bannerman
 
 	traits = list(
 		TRAIT_DODGEEXPERT,
-		TRAIT_KNOWBANDITS,
 	)
+	mind_traits = list(TRAIT_KNOWBANDITS)
 
 	cmode_music = 'sound/music/cmode/garrison/CombatGarrison.ogg'
 
 /datum/outfit/crossbow_bannerman
-	name = "Bannermen Crossbowman"
+	name = "Bannermen Crossbowman (Migrant Wave)"
 	pants = /obj/item/clothing/pants/trou/leather
 	armor = /obj/item/clothing/armor/leather/hide
-	backr = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
+	backr = /obj/item/gun/ballistic/bow/cross
 	shirt = /obj/item/clothing/shirt/shortshirt/colored/merc
 	cloak = /obj/item/clothing/cloak/stabard/guard
 	shoes = /obj/item/clothing/shoes/boots
@@ -203,47 +224,50 @@
 
 /datum/migrant_role/footman_bannerman
 	name = "Bannermen Footman"
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fullfiling your task."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fulfilling your task."
 	migrant_job = /datum/job/migrant/footman_bannerman
+
+/datum/attribute_holder/sheet/job/migrant/footman_bannerman
+	raw_attribute_list = list(
+		STAT_STRENGTH = 1,
+		STAT_ENDURANCE = 2,
+		STAT_CONSTITUTION = 1,
+		/datum/attribute/skill/combat/shields = 30,
+		/datum/attribute/skill/combat/axesmaces = 30,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/knives = 20,
+		/datum/attribute/skill/combat/wrestling = 20,
+		/datum/attribute/skill/combat/unarmed = 30,
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/reading = 10,
+	)
+
 
 /datum/job/migrant/footman_bannerman
 	title = "Bannermen Footman"
-	tutorial = "You were apart of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fullfiling your task."
+	tutorial = "You were a part of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fulfilling your task."
 	outfit = /datum/outfit/footman_bannerman
 	allowed_races = RACES_PLAYER_NONDISCRIMINATED
+	blacklisted_species = list(SPEC_ID_HALFLING)
 	is_foreigner = FALSE
+	exp_types_granted  = list(EXP_TYPE_COMBAT)
 
-	jobstats = list(
-		STATKEY_STR = 1,
-		STATKEY_END = 2,
-		STATKEY_CON = 1,
-	)
-
-	skills = list(
-		/datum/skill/combat/shields = 3,
-		/datum/skill/combat/axesmaces = 3,
-		/datum/skill/combat/swords = 3,
-		/datum/skill/combat/knives = 2,
-		/datum/skill/combat/wrestling = 3,
-		/datum/skill/combat/unarmed = 3,
-		/datum/skill/misc/swimming = 2,
-		/datum/skill/misc/climbing = 2,
-		/datum/skill/misc/athletics = 3,
-		/datum/skill/misc/reading = 1,
-	)
+	attribute_sheet = /datum/attribute_holder/sheet/job/migrant/footman_bannerman
 
 	traits = list(
 		TRAIT_MEDIUMARMOR,
-		TRAIT_KNOWBANDITS,
 	)
+	mind_traits = list(TRAIT_KNOWBANDITS)
 	cmode_music = 'sound/music/cmode/garrison/CombatGarrison.ogg'
 
 /datum/job/migrant/footman_bannerman/after_spawn(mob/living/carbon/human/spawned, client/player_client)
 	. = ..()
-	spawned.verbs |= /mob/proc/haltyell
+	add_verb(spawned, /mob/proc/haltyell)
 
 /datum/outfit/footman_bannerman
-	name = "Bannermen Footman"
+	name = "Bannermen Footman (Migrant Wave)"
 	armor = /obj/item/clothing/armor/cuirass/iron
 	shirt = /obj/item/clothing/armor/chainmail/iron
 	neck = /obj/item/clothing/neck/gorget
@@ -258,46 +282,48 @@
 
 /datum/migrant_role/pikeman_bannerman
 	name = "Bannermen Pikeman"
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fullfiling your task."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fulfilling your task."
 	migrant_job = /datum/job/migrant/pikeman_bannerman
+
+/datum/attribute_holder/sheet/job/migrant/pikeman_bannerman
+	raw_attribute_list = list(
+		STAT_STRENGTH = 2,
+		STAT_ENDURANCE = 1,
+		STAT_CONSTITUTION = 1,
+		STAT_SPEED = -1,
+		/datum/attribute/skill/combat/polearms = 30,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/knives = 20,
+		/datum/attribute/skill/combat/wrestling = 20,
+		/datum/attribute/skill/combat/unarmed = 30,
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/athletics = 30,
+		/datum/attribute/skill/misc/reading = 10,
+	)
 
 /datum/job/migrant/pikeman_bannerman
 	title = "Bannermen Pikeman"
-	tutorial = "You were apart of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fullfiling your task."
+	tutorial = "You were a part of an expedition sent by the Monarch to Kingsfield, you and your serjeant-at-arms have returned upon fulfilling your task."
 	outfit = /datum/outfit/pikeman_bannerman
 	allowed_races = RACES_PLAYER_NONDISCRIMINATED
+	blacklisted_species = list(SPEC_ID_HALFLING)
 	is_foreigner = FALSE
+	exp_types_granted  = list(EXP_TYPE_COMBAT)
 
-	jobstats = list(
-		STATKEY_STR = 2,
-		STATKEY_END = 1,
-		STATKEY_CON = 1,
-		STATKEY_SPD = -1,
-	)
-
-	skills = list(
-		/datum/skill/combat/polearms = 3,
-		/datum/skill/combat/swords = 3,
-		/datum/skill/combat/knives = 2,
-		/datum/skill/combat/wrestling = 3,
-		/datum/skill/combat/unarmed = 3,
-		/datum/skill/misc/swimming = 2,
-		/datum/skill/misc/climbing = 2,
-		/datum/skill/misc/athletics = 3,
-		/datum/skill/misc/reading = 1,
-	)
+	attribute_sheet = /datum/attribute_holder/sheet/job/migrant/pikeman_bannerman
 
 	traits = list(
 		TRAIT_MEDIUMARMOR,
-		TRAIT_KNOWBANDITS,
 	)
+	mind_traits = list(TRAIT_KNOWBANDITS)
 
 /datum/job/migrant/pikeman_bannerman/after_spawn(mob/living/carbon/human/spawned, client/player_client)
 	. = ..()
-	spawned.verbs |= /mob/proc/haltyell
+	add_verb(spawned, /mob/proc/haltyell)
 
 /datum/outfit/pikeman_bannerman
-	name = "Bannermen Pikeman"
+	name = "Bannermen Pikeman (Migrant Wave)"
 	armor = /obj/item/clothing/armor/chainmail/hauberk/iron
 	shirt = /obj/item/clothing/armor/gambeson
 	neck = /obj/item/clothing/neck/gorget
@@ -330,7 +356,7 @@
 		/datum/migrant_role/archer_bannerman = 1,
 		/datum/migrant_role/crossbow_bannerman = 1
 	)
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
 
 /datum/migrant_wave/returning_bannermen_down
 	name = "The Bannermen's Return"
@@ -344,7 +370,7 @@
 		/datum/migrant_role/archer_bannerman = 1,
 		/datum/migrant_role/crossbow_bannerman = 1
 	)
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
 
 /datum/migrant_wave/returning_bannermen_down_one
 	name = "The Bannermen's Return"
@@ -357,7 +383,7 @@
 		/datum/migrant_role/pikeman_bannerman = 1,
 		/datum/migrant_role/archer_bannerman = 1,
 	)
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
 
 /datum/migrant_wave/returning_bannermen_down_two
 	name = "The Bannermen's Return"
@@ -369,7 +395,7 @@
 		/datum/migrant_role/footman_bannerman = 1,
 		/datum/migrant_role/pikeman_bannerman = 1,
 	)
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
 
 /datum/migrant_wave/returning_bannermen_down_three
 	name = "The Bannermen's Return"
@@ -380,7 +406,7 @@
 		/datum/migrant_role/sergeant_at_arms = 1,
 		/datum/migrant_role/footman_bannerman = 1,
 	)
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
 
 /datum/migrant_wave/returning_bannermen_down_four
 	name = "The Bannermen's Return"
@@ -389,5 +415,5 @@
 	roles = list(
 		/datum/migrant_role/sergeant_at_arms = 1,
 	)
-	greet_text = "You were apart of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
+	greet_text = "You were a part of an expedition sent by the Monarch to Kingsfield, as it is done, you now return."
 

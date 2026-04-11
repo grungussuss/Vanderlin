@@ -55,7 +55,7 @@
 	src.drain_antimagic = drain_antimagic
 	src.expiration = expiration
 
-/datum/component/anti_magic/Destroy(force, silent)
+/datum/component/anti_magic/Destroy(force)
 	QDEL_NULL(drain_antimagic)
 	QDEL_NULL(expiration)
 	return ..()
@@ -119,8 +119,8 @@
 
 		else if(casted_magic_flags & antimagic_flags & MAGIC_RESISTANCE_MIND)
 			user.visible_message(
-				span_warning("[user] forehead shines as [visible_subject] repulses magic from their mind!"),
-				span_userdanger("A feeling of cold splashes on [self_subject] as your forehead reflects magic usering your mind!"),
+				span_warning("[user]'s forehead shines as [visible_subject] repulses magic from their mind!"),
+				span_userdanger("A feeling of cold splashes on [self_subject] as your forehead reflects magic from your mind!"),
 			)
 
 		//user.mob_light(_range = 2, _color = antimagic_color, _duration = 5 SECONDS)

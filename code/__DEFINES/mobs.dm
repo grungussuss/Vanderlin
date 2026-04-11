@@ -1,16 +1,4 @@
 /*ALL MOB-RELATED DEFINES THAT DON'T BELONG IN ANOTHER FILE GO HERE*/
-
-//This was previously in vampirelord.dm and mob/living/stats.dm, the person defined it twice because vampirelord came in below that stats file, so now both of them can get it here.
-#define STATKEY_STR "strength"
-#define STATKEY_PER "perception"
-#define STATKEY_INT "intelligence"
-#define STATKEY_CON "constitution"
-#define STATKEY_END "endurance"
-#define STATKEY_SPD "speed"
-#define STATKEY_LCK "fortune"
-
-#define MOBSTATS list(STATKEY_STR, STATKEY_PER, STATKEY_INT, STATKEY_CON, STATKEY_END, STATKEY_SPD, STATKEY_LCK)
-
 //Misc mob defines
 
 //for vision cone
@@ -33,13 +21,12 @@
 #define SUBMIT_INTENT 1
 
 //Blood levels
-#define BLOOD_VOLUME_MAXIMUM 2240
-#define BLOOD_VOLUME_SLIME_SPLIT 1120
-#define BLOOD_VOLUME_NORMAL 1120
-#define BLOOD_VOLUME_SAFE 950
-#define BLOOD_VOLUME_OKAY 672
-#define BLOOD_VOLUME_BAD 448
-#define BLOOD_VOLUME_SURVIVE 244
+#define BLOOD_VOLUME_MAXIMUM	BLOOD_VOLUME_NORMAL * 2
+#define BLOOD_VOLUME_NORMAL		1200
+#define BLOOD_VOLUME_SAFE		BLOOD_VOLUME_NORMAL * 0.8
+#define BLOOD_VOLUME_OKAY		BLOOD_VOLUME_NORMAL * 0.6
+#define BLOOD_VOLUME_BAD 		BLOOD_VOLUME_NORMAL * 0.4
+#define BLOOD_VOLUME_SURVIVE	BLOOD_VOLUME_NORMAL * 0.2
 
 //Sizes of mobs, used by mob/living/var/mob_size
 #define MOB_SIZE_TINY 0
@@ -188,6 +175,8 @@
 #define NUTRITION_LEVEL_STARVING 100
 
 #define HYDRATION_LEVEL_FULL 1000
+#define HYDRATION_LEVEL_WATER_LOGGED 850
+#define HYDRATION_LEVEL_HYDRATED 700
 #define HYDRATION_LEVEL_SMALLTHIRST 600
 #define HYDRATION_LEVEL_THIRSTY 350
 #define HYDRATION_LEVEL_DEHYDRATED 100
@@ -317,7 +306,7 @@
 #define OFFSET_ARMOR "wear_armor"
 #define OFFSET_UNDIES "underwear"
 
-#define HUNGER_FACTOR		0.15	//factor at which mob nutrition decreases
+#define HUNGER_FACTOR		0.2	//factor at which mob nutrition decreases
 #define	HYGIENE_FACTOR  	0.05  //factor at which hygiene decreases
 #define ETHEREAL_CHARGE_FACTOR	0.12 //factor at which ethereal's charge decreases
 #define REAGENTS_METABOLISM 1	//How many units of reagent are consumed per tick, by default.
@@ -332,6 +321,9 @@
 #define FLASH_PROTECTION_WELDER 2
 
 #define HUMAN_FIRE_STACK_ICON_NUM	5
+
+#define GRAB_PIXEL_SHIFT_PASSIVE 5
+#define GRAB_PIXEL_SHIFT_AGGRESSIVE 10
 
 #define PULL_PRONE_SLOWDOWN 2
 #define HUMAN_CARRY_SLOWDOWN 0
@@ -375,15 +367,13 @@
 ///How much a mob's sprite should be moved when they're lying down
 #define PIXEL_Y_OFFSET_LYING -6
 
-/// If gravity must be present to perform action (can't use pens without gravity)
-#define NEED_GRAVITY (1<<0)
 /// If reading is required to perform action (can't read a book if you are illiterate)
-#define NEED_LITERACY (1<<1)
+#define NEED_LITERACY (1<<0)
 /// If lighting must be present to perform action (can't heal someone in the dark)
-#define NEED_LIGHT (1<<2)
+#define NEED_LIGHT (1<<1)
 /// If other mobs (monkeys, aliens, etc) can perform action (can't use computers if you are a monkey)
-#define NEED_DEXTERITY (1<<3)
+#define NEED_DEXTERITY (1<<2)
 /// If telekinesis is forbidden to perform action from a distance (ex. canisters are blacklisted from telekinesis manipulation)
-#define FORBID_TELEKINESIS_REACH (1<<5)
+#define FORBID_TELEKINESIS_REACH (1<<3)
 /// If resting on the floor is allowed to perform action
-#define ALLOW_RESTING (1<<7)
+#define ALLOW_RESTING (1<<4)

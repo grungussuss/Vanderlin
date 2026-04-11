@@ -8,7 +8,7 @@
 #define JOB_UNAVAILABLE_SEX 7
 #define JOB_UNAVAILABLE_DEITY 8
 #define JOB_UNAVAILABLE_QUALITY 9
-#define JOB_UNAVAILABLE_PATREON 10
+#define JOB_UNAVAILABLE_DONATOR 10
 #define JOB_UNAVAILABLE_LASTCLASS 11
 #define JOB_UNAVAILABLE_ACCOUNTAGE 12
 #define JOB_UNAVAILABLE_JOB_COOLDOWN 13
@@ -26,8 +26,27 @@
 /// Whether the job can be displayed on the actors list
 #define JOB_SHOW_IN_ACTOR_LIST (1<<4)
 
+#define ALL_FACTIONS list( \
+	FACTION_NONE, \
+	FACTION_NEUTRAL, \
+	FACTION_HOSTILE, \
+	FACTION_TOWN, \
+	FACTION_FOREIGNERS, \
+	FACTION_MIGRANTS, \
+	FACTION_UNDEAD, \
+	FACTION_PLANTS, \
+	FACTION_VINES, \
+	FACTION_CABAL, \
+	FACTION_RATS, \
+	FACTION_ORCS, \
+	FACTION_BUMS, \
+	FACTION_VIKINGS, \
+	FACTION_MATTHIOS \
+)
+
 #define FACTION_NONE		"None"
 #define FACTION_NEUTRAL		"Neutral"
+#define FACTION_HOSTILE		"Hostile"
 #define FACTION_TOWN		"Town"
 #define FACTION_FOREIGNERS  "Foreigners"
 #define FACTION_MIGRANTS  	"Migrants"
@@ -39,6 +58,7 @@
 #define FACTION_ORCS		"Orcs"
 #define FACTION_BUMS		"Bums"
 #define FACTION_MATTHIOS	"Matthios"
+#define FACTION_VIKINGS     "Vikings"
 
 #define NOBLEMEN		(1<<0)
 #define GARRISON		(1<<1)
@@ -49,6 +69,7 @@
 #define YOUNGFOLK		(1<<6)
 #define OUTSIDERS		(1<<7)
 #define COMPANY			(1<<8)
+#define INQUISITION 	(1<<9)
 
 #define UNDEAD			(1<<10)
 
@@ -58,7 +79,7 @@
 #define JCOLOR_SOLDIER "#b64949"
 #define JCOLOR_SERF "#669968"
 #define JCOLOR_PEASANT "#936d6c"
-
+#define JCOLOR_INQUISITION "#FF0000"
 
 // job display orders //
 
@@ -79,7 +100,6 @@
 #define JDO_CLINICAPPRENTICE 6.2
 
 #define JDO_CAPTAIN 7
-#define JDO_VET 7.1
 #define JDO_ROYALKNIGHT 7.2
 #define JDO_MENATARMS 8
 #define JDO_CITYWATCHMEN 8.1
@@ -91,12 +111,12 @@
 #define JDO_FORGUARD 11.1
 
 #define JDO_PRIEST 12
+#define JDO_GMTEMPLAR 12.1
 #define JDO_CLERIC 13
 #define JDO_MONK 14
 #define JDO_GRAVETENDER 15
 #define JDO_CHURCHLING 15.1
 
-#define JDO_PURITAN 16
 #define JDO_SHEPHERD 17
 #define JDO_TEMPLAR 17.1
 
@@ -106,12 +126,11 @@
 
 #define JDO_TAILOR 19
 
-#define JDO_ARMORER 20
-#define JDO_WSMITH 21
+#define JDO_BLACKSMITH 21
 #define JDO_BAPP 22
 #define JDO_ARTIFICER 23
 
-#define JDO_MASON 24
+
 
 #define JDO_BUTLER 25
 #define JDO_SERVANT 26
@@ -125,32 +144,140 @@
 #define JDO_FISHER 28.3
 #define JDO_HUNTER 28.4
 #define JDO_CARPENTER 28.6
+#define JDO_MASON 28.61
 #define JDO_CHEESEMAKER 28.7
 #define JDO_MINER 28.8
 #define JDO_MATRON 28.9
 #define JDO_GRAVEMAN 29
+
 
 #define JDO_JESTER 30
 #define JDO_BARD 30.1
 #define JDO_PRISONER 31
 
 #define JDO_CHIEF 32
+#define JDO_TOMBWARDEN 32.1
 
 #define JDO_ADVENTURER 33
-#define JDO_GAFFER 33.1
 #define JDO_PILGRIM 34.2
 #define JDO_MIGRANT  34.3
 #define JDO_BANDIT 34.3
 #define JDO_WRETCH 34.4
 
 #define JDO_MERCENARY 35
+#define JDO_BOGWITCH 35.1
+#define JDO_BOGWITCH_APP 35.2
 
 #define JDO_VAGRANT 36
 #define JDO_ORPHAN 37
 #define JDO_SOILCHILD 38
+#define JDO_SUNLORD 0.1
+#define JDO_SUNDWELLER 40
 
+
+#define JDO_PURITAN 40
+#define JDO_ORTHODOXIST	40.1
+#define JDO_ABSOLVER 40.2
 
 #define BITFLAG_CHURCH (1<<0)
 #define BITFLAG_ROYALTY (1<<1)
 #define BITFLAG_CONSTRUCTOR (1<<2)
 #define BITFLAG_GARRISON (1<<3)
+
+
+#define JOB_MONARCH "Monarch"
+#define JOB_CONSORT "Consort"
+#define JOB_HAND "Hand"
+#define JOB_PRINCE "Prince"
+#define JOB_PRINCE_FEM "Princess"
+#define JOB_GUARD_CAPTAIN "Captain"
+#define JOB_STEWARD "Steward"
+#define JOB_COURT_MAGE "Court Magician"
+#define JOB_ARCHIVIST "Archivist"
+#define JOB_COURT_PHYSICIAN "Court Physician"
+#define JOB_MINOR_NOBLE "Noble"
+#define JOB_COURT_AGENT "Court Agent"
+
+
+#define JOB_ROYAL_KNIGHT "Royal Knight"
+#define JOB_CITY_WATCH "City Watchmen"
+#define JOB_CITY_WATCH_LIEUTENANT "City Watch Lieutenant"
+#define JOB_MAN_AT_ARMS "Man-at-arms"
+#define JOB_GATEMASTER "Gatemaster"
+#define JOB_DUNGEONEER "Dungeoneer"
+#define JOB_TOWN_ELDER "Town Elder"
+
+
+#define JOB_PRIEST "Priest"
+#define JOB_PRIEST_FEM "Priestess"
+#define JOB_GRANDMASTER_TEMPLAR "Grandmaster Templar"
+#define JOB_ACOLYTE "Acolyte"
+#define JOB_GRAVETENDER "Gravetender"
+#define JOB_TEMPLAR "Templar"
+
+
+#define JOB_TOWNER "Towner"
+#define JOB_SOILSON "Soilson"
+#define JOB_MINER "Miner"
+#define JOB_COOK "Cook"
+#define JOB_CARPENTER "Carpenter"
+#define JOB_MASON "Mason"
+#define JOB_JESTER "Jester"
+#define JOB_HUNTER "Hunter"
+#define JOB_FISHER "Fisher"
+#define JOB_BARD "Bard"
+#define JOB_PRISONER "Prisoner"
+#define JOB_BEGGAR "Beggar"
+
+
+#define JOB_SQUIRE "Squire"
+#define JOB_SMITHY_APP "Smithy Apprentice"
+#define JOB_MAGIC_APP "Magician Apprentice"
+#define JOB_SERVANT "Servant"
+#define JOB_TAPSTER "Tapster"
+#define JOB_CLINIC_APP "Clinic Apprentice"
+
+
+#define JOB_INNKEEP "Innkeep"
+#define JOB_BLACKSMITH "Blacksmith"
+#define JOB_TAILOR "Tailor"
+#define JOB_ARTIFICER "Artificer"
+#define JOB_MATRON "Matron"
+#define JOB_FELDSHER "Feldsher"
+#define JOB_APOTHECARY "Apothecary"
+#define JOB_TOMB_WARDEN "Tomb Warden"
+#define JOB_BUTLER "Butler"
+
+
+#define JOB_MERCHANT "Merchant"
+#define JOB_SHOPHAND "Shophand"
+#define JOB_STEVEDORE "Stevedore"
+
+
+#define JOB_PILGRIM "Pilgrim"
+#define JOB_ADVENTURER "Adventurer"
+#define JOB_MERCENARY "Mercenary"
+
+
+#define JOB_INNKEEP_SON "Innkeepers Son"
+#define JOB_ORPHAN "Orphan"
+#define JOB_CHURCHLING "Churchling"
+#define JOB_SOILCHILD "Soilchild"
+
+
+#define JOB_BOGWITCH "Bog Witch"
+#define JOB_BOGWITCH_APP "Bog Witch Apprentice"
+#define JOB_FOREST_WARDEN "Forest Warden"
+#define JOB_FOREST_GUARD "Forest Guard"
+
+
+#define JOB_PRAFEKT "Herr Prafekt"
+#define JOB_SACRESTANTS "Sacrestants"
+#define JOB_ABSOLVER "Absolver"
+#define JOB_ADEPT "Adept"
+
+
+#define JOB_ALCHEMIST "Alchemist"
+#define JOB_LUMBERJACK "Lumberjack"
+#define JOB_CHEESEMAKER "Cheesemaker"
+#define JOB_BUTCHER "Butcher"

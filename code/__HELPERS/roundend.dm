@@ -29,12 +29,6 @@
 			else
 				category = "others"
 				mob_data += list("typepath" = m.type)
-		if(!escaped)
-			if((m.onCentCom()))
-				escaped = "escapees"
-				num_escapees++
-			else
-				escaped = "abandoned"
 		if(!m.mind && (!ishuman(m)))
 			var/list/npc_nest = file_data["[escaped]"]["npcs"]
 			if(npc_nest.Find(initial(m.name)))
@@ -93,10 +87,11 @@
 	if(SSticker.current_state != GAME_STATE_FINISHED)
 		return
 	status_flags |= GODMODE
+	ADD_TRAIT(src, TRAIT_NO_TRANSFORM, ROUNDSTART_TRAIT)
 	ai_controller?.set_ai_status(AI_STATUS_OFF)
 	if(client)
-		client.verbs |= /client/proc/lobbyooc
-		client.verbs |= /client/proc/view_stats
+		add_verb(client, /client/proc/lobbyooc)
+		add_verb(client, /client/proc/view_stats)
 		client.show_game_over()
 
 /mob/living/do_game_over()
@@ -106,7 +101,7 @@
 	ADD_TRAIT(src, TRAIT_MUTE, TRAIT_GENERIC)
 	walk(src, 0) //stops them mid pathing even if they're stunimmune
 	if(client)
-		client.verbs |= /client/proc/commendsomeone
+		add_verb(client, /client/proc/commendsomeone)
 
 /client/proc/show_game_over()
 	var/atom/movable/screen/splash/credits/S = new(null, null, src, FALSE, FALSE)
@@ -140,9 +135,10 @@
 
 	update_god_rankings()
 
+	var/outro_song = pick('sound/music/credits.ogg', /*'sound/music/credits2.ogg'*/)
 	for(var/mob/M in GLOB.mob_list)
 		M.do_game_over()
-		M.playsound_local(M, 'sound/music/credits.ogg', 100, FALSE)
+		M.playsound_local(M, outro_song, 100, FALSE)
 
 	for(var/datum/callback/cb as anything in round_end_events)
 		cb.InvokeAsync()
@@ -311,13 +307,12 @@
 	//Medals
 	parts += medal_report()
 
-	listclearnulls(parts)
+	list_clear_nulls(parts)
 
 	return parts.Join()
 
 /datum/controller/subsystem/ticker/proc/survivor_report(popcount)
 	var/list/parts = list()
-	var/station_evacuated = round_end
 
 	if(GLOB.round_id)
 		var/statspage = CONFIG_GET(string/roundstatsurl)
@@ -327,8 +322,6 @@
 	var/total_players = GLOB.joined_player_list.len
 	if(total_players)
 		parts+= "[FOURSPACES]Total Population: <B>[total_players]</B>"
-		if(station_evacuated)
-			parts += "<BR>[FOURSPACES]Evacuation Rate: <B>[popcount[POPCOUNT_ESCAPEES]] ([PERCENT(popcount[POPCOUNT_ESCAPEES]/total_players)]%)</B>"
 		parts += "[FOURSPACES]Survival Rate: <B>[popcount[POPCOUNT_SURVIVORS]] ([PERCENT(popcount[POPCOUNT_SURVIVORS]/total_players)]%)</B>"
 		if(SSblackbox.first_death)
 			var/list/ded = SSblackbox.first_death
@@ -351,7 +344,7 @@
 	if(!previous)
 		var/list/report_parts = list(personal_report(C), GLOB.common_report)
 		content = report_parts.Join()
-		C.verbs -= /client/proc/show_previous_roundend_report
+		remove_verb(C, /client/proc/show_previous_roundend_report)
 		fdel(filename)
 		text2file(content, filename)
 	else
@@ -366,12 +359,8 @@
 	var/mob/M = C.mob
 	if(M.mind && !isnewplayer(M))
 		if(M.stat != DEAD && !isbrain(M))
-			if(round_end)
-				parts += "<div class='panel greenborder'>"
-				parts += "<span class='greentext'>I managed to survive the events on [station_name()] as [M.real_name].</span>"
-			else
-				parts += "<div class='panel greenborder'>"
-				parts += "<span class='greentext'>I managed to survive the events on [station_name()] as [M.real_name].</span>"
+			parts += "<div class='panel greenborder'>"
+			parts += "<span class='greentext'>I managed to survive the events on [station_name()] as [M.real_name].</span>"
 
 		else
 			parts += "<div class='panel redborder'>"
@@ -385,8 +374,41 @@
 	return parts.Join()
 
 /datum/controller/subsystem/ticker/proc/players_report()
+	reward_notables()
 	for(var/client/C in GLOB.clients)
 		give_show_playerlist_button(C)
+
+/datum/controller/subsystem/ticker/proc/reward_notables()
+	var/list/notable_minds = list()
+
+	for(var/stat_type in SSgamemode.chosen_chronicle_stats)
+		var/list/stat_data = GLOB.chronicle_stats[stat_type]
+		if(!stat_data)
+			continue
+
+		var/datum/weakref/holder_ref = stat_data["holder"]
+		var/mob/living/carbon/human/notable = holder_ref?.resolve()
+		if(!notable.client || !notable.mind || notable.stat == DEAD)
+			continue
+
+		if(!notable_minds[notable.mind])
+			notable_minds[notable.mind] = list()
+
+		notable_minds[notable.mind] += stat_data["title"]
+
+	if(length(notable_minds) > 0)
+		var/list/shuffled_minds = shuffle(notable_minds)
+		var/recipients_given = 0
+
+		for(var/datum/mind/selected_mind as anything in shuffled_minds)
+			if(recipients_given >= MAX_CHRONICLE_STATS)
+				break
+
+			var/list/titles = notable_minds[selected_mind]
+			var/reason = "Being a notable person ([english_list(titles)])"
+			selected_mind.adjust_triumphs(1, TRUE, reason)
+			to_chat(selected_mind, "<br>")
+			recipients_given++
 
 /datum/controller/subsystem/ticker/proc/display_report(popcount)
 	GLOB.common_report = build_roundend_report()
@@ -414,7 +436,7 @@
 	// Header
 	parts += "<div class='panel stationborder'>"
 	if(GLOB.personal_objective_minds.len)
-		parts += "<div style='text-align: center; font-size: 1.2em;'>GODS' CHAMPIONS:</div>"
+		parts += "<div style='text-align: center; font-size: 1.2em;'>HEROES:</div>"
 		parts += "<hr class='paneldivider'>"
 
 	var/list/successful_champions = list()
@@ -439,7 +461,7 @@
 	for(var/datum/mind/mind as anything in successful_champions)
 		current_index++
 		showed_any_champions = TRUE
-		var/name_with_title = mind.current ? printplayer(mind) : "<b>Unknown Champion</b>"
+		var/name_with_title = mind.current ? printplayer(mind) : "<b>Unknown Hero</b>"
 		parts += name_with_title
 
 		var/obj_count = 1
@@ -453,11 +475,11 @@
 		CHECK_TICK
 
 	if(!has_any_objectives)
-		parts += "<div style='text-align: center;'>No personal objectives were assigned this round.</div>"
+		parts += "<div style='text-align: center;'>No heroes were chosen this round</div>"
 	else if(failed_chosen > 0)
 		if(showed_any_champions)
 			parts += "<br>"
-		parts += "<div style='text-align: center;'>[failed_chosen] of gods' chosen [failed_chosen == 1 ? "has" : "have"] failed to become [failed_chosen == 1 ? "a champion" : "champions"].</div>"
+		parts += "<div style='text-align: center;'>[failed_chosen] [failed_chosen == 1 ? "hero" : "heroes"] [failed_chosen == 1 ? "has" : "have"] failed to complete their calling.</div>"
 
 	parts += "</div>"
 	return parts.Join("<br>")

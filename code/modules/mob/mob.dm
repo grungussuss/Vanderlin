@@ -74,6 +74,7 @@ GLOBAL_VAR_INIT(mobids, 1)
  * * Intialize the movespeed of the mob
  */
 /mob/Initialize()
+	SHOULD_CALL_PARENT(TRUE)
 	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_MOB_CREATED, src)
 	GLOB.mob_list += src
 	GLOB.mob_directory[tag] = src
@@ -92,10 +93,31 @@ GLOBAL_VAR_INIT(mobids, 1)
 		AA.onNewMob(src)
 	set_nutrition(rand(NUTRITION_LEVEL_START_MIN, NUTRITION_LEVEL_START_MAX))
 	set_hydration(rand(HYDRATION_LEVEL_START_MIN, HYDRATION_LEVEL_START_MAX))
+	attribute_initialize()
 	. = ..()
 	update_config_movespeed()
 	update_movespeed(TRUE)
 	become_hearing_sensitive()
+
+/// Attributes
+/mob/proc/attribute_initialize()
+	// If we have an attribute holder, lets get that W
+	if(!ispath(attributes))
+		return
+	attributes = new attributes(src)
+
+	// Seed raw stat values from the subtype's base_* vars.
+	// These are var/final so we read via initial() to get the
+	// compile-time value for this specific subtype.
+	attributes.raw_attribute_list[STAT_STRENGTH]     = initial(base_strength)
+	attributes.raw_attribute_list[STAT_PERCEPTION]   = initial(base_perception)
+	attributes.raw_attribute_list[STAT_ENDURANCE]    = initial(base_endurance)
+	attributes.raw_attribute_list[STAT_CONSTITUTION] = initial(base_constitution)
+	attributes.raw_attribute_list[STAT_INTELLIGENCE] = initial(base_intelligence)
+	attributes.raw_attribute_list[STAT_SPEED]        = initial(base_speed)
+	attributes.raw_attribute_list[STAT_FORTUNE]      = initial(base_fortune)
+	attributes.update_attributes()
+
 
 /**
  * Generate the tag for this mob
@@ -133,7 +155,7 @@ GLOBAL_VAR_INIT(mobids, 1)
 	msg = copytext(msg, 1, MAX_MESSAGE_LEN)
 
 	if(type)
-		if(type & MSG_VISUAL && eye_blind )//Vision related
+		if(type & MSG_VISUAL && is_blind() )//Vision related
 			if(!alt_msg)
 				return
 			else
@@ -146,7 +168,7 @@ GLOBAL_VAR_INIT(mobids, 1)
 			else
 				msg = alt_msg
 				type = alt_type
-				if(type & MSG_VISUAL && eye_blind)
+				if(type & MSG_VISUAL && is_blind())
 					return
 	to_chat(src, msg)
 
@@ -182,11 +204,19 @@ GLOBAL_VAR_INIT(mobids, 1)
 			continue
 		//This entire if/else chain could be in two lines but isn't for readibilties sake.
 		var/msg = message
+		var/signal = SEND_SIGNAL(M, COMSIG_MOB_VISIBLE_MESSAGE, src, message, vision_distance, ignored_mobs)
+		if(signal & COMPONENT_NO_VISIBLE_MESSAGE)
+			msg = null
+		else if(signal & COMPONENT_VISIBLE_MESSAGE_BLIND)
+			msg = blind_message
+		if(!msg)
+			continue
+
 		if(M.see_invisible < invisibility)//if src is invisible to M
 			msg = blind_message
 		if(!msg)
 			continue
-		if(M != src && !M.eye_blind)
+		if(M != src && !M.is_blind())
 			M.log_message("saw [key_name(src)] emote: [message]", LOG_EMOTE, log_globally = FALSE)
 		M.show_message(msg, MSG_VISUAL, blind_message, MSG_AUDIBLE)
 		if(runechat_message && M.can_hear())
@@ -295,15 +325,11 @@ GLOBAL_VAR_INIT(mobids, 1)
 	if(!W.mob_can_equip(src, null, slot, disable_warning, bypass_equip_delay_self))
 		if(qdel_on_fail)
 			qdel(W)
-		else
-			if(!disable_warning)
-				to_chat(src, "<span class='warning'>I couldn't equip that.</span>")
+		else if(!disable_warning)
+			to_chat(src, span_warning("I can't equip that!"))
 		return FALSE
-	equip_to_slot(W, slot, redraw_mob, initial) //This proc should not ever fail.
+	equip_to_slot(W, slot, initial, redraw_mob) //This proc should not ever fail.
 	update_a_intents()
-	if(isliving(src))
-		var/mob/living/L = src
-		L.update_reflection()
 	return TRUE
 
 /**
@@ -314,7 +340,7 @@ GLOBAL_VAR_INIT(mobids, 1)
  *
  *In most cases you will want to use equip_to_slot_if_possible()
  */
-/mob/proc/equip_to_slot(obj/item/W, slot, initial)
+/mob/proc/equip_to_slot(obj/item/equipping, slot, initial = FALSE, redraw_mob = FALSE)
 	return
 
 /**
@@ -336,18 +362,21 @@ GLOBAL_VAR_INIT(mobids, 1)
  *
  * returns 0 if it cannot, 1 if successful
  */
-/mob/proc/equip_to_appropriate_slot(obj/item/W)
-	if(!istype(W))
+/mob/proc/equip_to_appropriate_slot(obj/item/equipping, delete_on_fail = FALSE, initial = FALSE)
+	if(!istype(equipping))
 		return FALSE
-	var/slot_priority = W.slot_equipment_priority
+
+	var/slot_priority = equipping.slot_equipment_priority
 
 	if(!slot_priority)
 		slot_priority = DEFAULT_SLOT_PRIORITY
 
 	for(var/slot as anything in slot_priority)
-		if(equip_to_slot_if_possible(W, slot, FALSE, TRUE, TRUE)) //qdel_on_fail = 0; disable_warning = 1; redraw_mob = 1
+		if(equip_to_slot_if_possible(equipping, slot, FALSE, TRUE, TRUE, initial = initial)) //qdel_on_fail = 0; disable_warning = 1; redraw_mob = 1
 			return TRUE
 
+	if(delete_on_fail)
+		qdel(equipping)
 	return FALSE
 /**
  * Reset the attached clients perspective (viewpoint)
@@ -355,36 +384,39 @@ GLOBAL_VAR_INIT(mobids, 1)
  * reset_perspective() set eye to common default : mob on turf, loc otherwise
  * reset_perspective(thing) set the eye to the thing (if it's equal to current default reset to mob perspective)
  */
-/mob/proc/reset_perspective(atom/A,atom/B)
-	if(client)
-		if(A)
-			if(ismovableatom(A))
-				//Set the the thing unless it's us
-				if(A != src)
-					client.perspective = EYE_PERSPECTIVE
-					client.eye = A
-				else
-					client.eye = client.mob
-					client.perspective = MOB_PERSPECTIVE
-			else if(isturf(A))
-				//Set to the turf unless it's our current turf
-				if(A != loc)
-					client.perspective = EYE_PERSPECTIVE
-					client.eye = A
-				else
-					client.eye = client.mob
-					client.perspective = MOB_PERSPECTIVE
-			else
-				//Do nothing
+/mob/proc/reset_perspective(atom/new_perspective)
+	if(!client)
+		return
+
+	if(!new_perspective)
+		if(isturf(loc))
+			client.eye = client.mob
+			client.perspective = MOB_PERSPECTIVE
 		else
-			//Reset to common defaults: mob if on turf, otherwise current loc
-			if(isturf(loc))
-				client.eye = client.mob
-				client.perspective = MOB_PERSPECTIVE
-			else
-				client.perspective = EYE_PERSPECTIVE
-				client.eye = loc
-		return 1
+			client.perspective = EYE_PERSPECTIVE
+			client.eye = loc
+		return
+
+	if(ismovableatom(new_perspective))
+		//Set the thing unless it's us
+		if(new_perspective != src)
+			client.perspective = EYE_PERSPECTIVE
+			client.eye = new_perspective
+		else
+			client.eye = client.mob
+			client.perspective = MOB_PERSPECTIVE
+		return
+
+	if(isturf(new_perspective))
+		//Set to the turf unless it's our current turf
+		if(new_perspective != loc)
+			client.perspective = EYE_PERSPECTIVE
+			client.eye = new_perspective
+		else
+			client.eye = client.mob
+			client.perspective = MOB_PERSPECTIVE
+
+	SEND_SIGNAL(src, COMSIG_MOB_RESET_PERSPECTIVE, new_perspective)
 
 /// Show the mob's inventory to another mob
 /mob/proc/show_inv(mob/user)
@@ -397,69 +429,75 @@ GLOBAL_VAR_INIT(mobids, 1)
  * [this byond forum post](https://secure.byond.com/forum/?post=1326139&page=2#comment8198716)
  * for why this isn't atom/verb/examine()
  */
-/mob/verb/examinate(atom/A as mob|obj|turf in view()) //It used to be oview(12), but I can't really say why
+/mob/verb/examinate(atom/examinify as mob|obj|turf in view()) //It used to be oview(12), but I can't really say why
 	set name = "Examine"
 	set category = "IC"
-	set hidden = 1
-	DEFAULT_QUEUE_OR_CALL_VERB(VERB_CALLBACK(src, PROC_REF(run_examinate), A))
 
-/mob/proc/run_examinate(atom/A)
-	if(isturf(A) && !(sight & SEE_TURFS) && !(A in view(client ? client.view : world.view, src)))
+	DEFAULT_QUEUE_OR_CALL_VERB(VERB_CALLBACK(src, PROC_REF(run_examinate), examinify))
+
+/mob/proc/run_examinate(atom/examinify)
+	if(QDELETED(examinify)) // since this can run async we might have had the atom get qdeleted already
+		return
+
+	if(isturf(examinify) && !(sight & SEE_TURFS) && !(examinify in view(client ? client.view : world.view, src)))
 		// shift-click catcher may issue examinate() calls for out-of-sight turfs
 		return
 
 	if(is_blind())
-		to_chat(src, "<span class='warning'>Something is there but I can't see it!</span>")
+		to_chat(src, span_warning("Something is there but I can't see it!"))
 		return
 
-	if(isturf(A.loc) && isliving(src))
-		face_atom(A)
-		if(src.m_intent != MOVE_INTENT_SNEAK)
-			visible_message("<span class='emote'>[src] looks at [A].</span>")
-		else
-			if(isliving(A))
-				var/mob/living/observer = src
-				var/mob/living/target = A
-				var/observer_skill = observer.get_skill_level(/datum/skill/misc/sneaking)
-				if(observer_skill <= 0)
-					observer_skill = 1
-				if(observer.rogue_sneaking)
-					observer_skill += 1
-				
-				// determine PER multiplier based on the target PER
-				var/multiplier = 5
-				if(target.STAPER < 5)
-					multiplier = 4
-				else if(target.STAPER >= 5 && target.STAPER < 10)
-					multiplier = 5
-				else if(target.STAPER >= 10 && target.STAPER < 15)
-					multiplier = 6
-				else if(target.STAPER >= 15 && target.STAPER <= 20)
-					multiplier = 7
-			
-				// calculate probability to fail
-				var/probby = (target.STAPER * multiplier) - (observer_skill * 10)
-			
-				// clamp probability
-				probby = max(probby, 5)
-				probby = min(probby, 95)
-				
-				if(prob(probby))
-					to_chat(src, span_warning("[A] noticed me peeking!"))
-					to_chat(A, span_warning("[src] peeks at you!"))
-					if(target.client) // only if they have a client to see it
-						found_ping(get_turf(observer), target.client, "hidden")
-				else
-					if(observer.client?.prefs.showrolls)
-						to_chat(src, span_info("[probby]%... my peeking went unnoticed.."))
-					else
-						to_chat(src, span_info("My peeking went unnoticed.."))
-	var/list/result = A.examine(src)
+	if(isturf(examinify.loc) && isliving(src) && stat == CONSCIOUS)
+		face_atom(examinify)
+		if(m_intent != MOVE_INTENT_SNEAK)
+			visible_message(span_emote("[src] looks at [examinify]."), span_emote("I look at [examinify]"))
+		else if(isliving(examinify))
+			var/mob/living/examaniee = examinify
+			if(examaniee.peek_examine_check(src))
+				to_chat(src, span_info("My peeking went unnoticed.."))
+			else
+				to_chat(src, span_warning("[examaniee] noticed me peeking!"))
+
+				if(examaniee.client) // only if they have a client to see it
+					to_chat(examaniee, span_warning("[src] peeks at you!"))
+					found_ping(get_turf(src), examaniee.client, "hidden")
+
+	var/list/result = examinify.examine(src)
 	if(LAZYLEN(result))
 		for(var/i in 1 to (length(result) - 1))
 			result[i] += "\n"
 		to_chat(src, examine_block("<span class='infoplain'>[result.Join()]</span>"))
-	SEND_SIGNAL(src, COMSIG_MOB_EXAMINATE, A)
+
+// Check if we notice an observer
+/mob/living/proc/peek_examine_check(mob/living/observer)
+	if(!istype(observer))
+		return FALSE
+
+	if(is_blind() || stat < CONSCIOUS)
+		return FALSE
+
+	var/observer_skill = GET_MOB_SKILL_VALUE_OLD(observer, /datum/attribute/skill/misc/sneaking)
+	if(observer_skill <= 0)
+		observer_skill = 1
+	if(observer.rogue_sneaking)
+		observer_skill += 1
+
+	var/multiplier = 5
+
+	var/our_per = GET_MOB_ATTRIBUTE_VALUE(src, STAT_PERCEPTION)
+	if(our_per < 5)
+		multiplier = 4
+	else if(our_per >= 5 && our_per < 10)
+		multiplier = 5
+	else if(our_per >= 10 && our_per < 15)
+		multiplier = 6
+	else if(our_per >= 15 && our_per <= 20)
+		multiplier = 7
+
+	// calculate probability to fail
+	var/probby = (our_per * multiplier) - (observer_skill * 10)
+
+	return prob(clamp(probby, 5, 95))
 
 ///Can this mob resist (default FALSE)
 /mob/proc/can_resist()
@@ -552,11 +590,14 @@ GLOBAL_VAR_INIT(mobids, 1)
  *
  * Only works if flag/norespawn is allowed in config
  */
+
+// Removed for the moment
+/*
 /mob/verb/abandon_mob()
 	set name = "{RETURN TO LOBBY}"
-	set category = "Options"
+	set category = "Preferences.Admin"
 	set hidden = 1
-	if(!check_rights(0))
+	if(!check_rights(R_ADMIN))
 		return
 	if (CONFIG_GET(flag/norespawn))
 		return
@@ -586,6 +627,7 @@ GLOBAL_VAR_INIT(mobids, 1)
 	M.key = key
 //	M.Login()	//wat
 	return
+*/
 
 
 /**
@@ -676,7 +718,7 @@ GLOBAL_VAR_INIT(mobids, 1)
  */
 /mob/MouseDrop_T(atom/dropping, atom/user)
 	. = ..()
-	if(ismob(dropping) && dropping != user)
+	if(ismob(dropping) && dropping != user && src == user)
 		var/mob/M = dropping
 		M.show_inv(user)
 		return TRUE
@@ -684,89 +726,6 @@ GLOBAL_VAR_INIT(mobids, 1)
 ///Is the mob muzzled (default false)
 /mob/proc/is_muzzled()
 	return 0
-
-/**
- * Output an update to the stat panel for the client
- *
- * calculates client ping, round id, server time, time dilation and other data about the round
- * and puts it in the mob status panel on a regular loop
- */
-/mob/Stat()
-	..()
-	// && check_rights(R_ADMIN,0)
-	var/ticker_time = world.time - SSticker.round_start_time
-	var/time_left = SSgamemode.round_ends_at - ticker_time
-	if(client)
-		if(statpanel("RoundInfo"))
-			stat("Round ID: [GLOB.rogue_round_id]")
-			stat("Round Time: [gameTimestamp("hh:mm:ss", world.time - SSticker.round_start_time)] [world.time - SSticker.round_start_time]")
-			if(client?.holder)
-				stat("Round TrueTime: [worldtime2text()] [world.time]")
-			if(SSgamemode.roundvoteend)
-				stat("Round End: [DisplayTimeText(time_left)]")
-			stat("Map: [SSmapping.config?.map_name || "Loading..."]")
-			var/datum/map_config/cached = SSmapping.next_map_config
-			if(cached)
-				stat("Next Map: [cached.map_name]")
-			stat("Time of Day: [GLOB.tod]")
-			if(client?.holder)
-				stat("Real Time: [station_time_timestamp()] [station_time()]")
-			stat("Ping: [round(client?.lastping, 1)]ms (Average: [round(client?.avgping, 1)]ms)")
-			stat("Time Dilation: [round(SStime_track.time_dilation_current,1)]% AVG: ([round(SStime_track.time_dilation_avg_fast,1)]%, [round(SStime_track.time_dilation_avg,1)]%, [round(SStime_track.time_dilation_avg_slow,1)]%)")
-
-	if(client && client.holder && check_rights(R_ADMIN,0))
-		if(statpanel("MC"))
-			var/turf/T = get_turf(client.eye)
-			stat("Location:", COORD(T))
-			stat("CPU:", "[world.cpu]")
-			stat("Instances:", "[num2text(world.contents.len, 10)]")
-			stat("World Time:", "[world.time]")
-			GLOB.stat_entry()
-			config.stat_entry()
-			stat(null)
-			if(Master)
-				Master.stat_entry()
-			else
-				stat("Master Controller:", "ERROR")
-			if(Failsafe)
-				Failsafe.stat_entry()
-			else
-				stat("Failsafe Controller:", "ERROR")
-			if(Master)
-				stat(null)
-				for(var/datum/controller/subsystem/SS in Master.subsystems)
-					SS.stat_entry()
-		if(statpanel("Tickets"))
-			GLOB.ahelp_tickets.stat_entry()
-		if(length(GLOB.sdql2_queries))
-			if(statpanel("SDQL2"))
-				stat("Access Global SDQL2 List", GLOB.sdql2_vv_statobj)
-				for(var/i in GLOB.sdql2_queries)
-					var/datum/SDQL2_query/Q = i
-					Q.generate_stat()
-
-	if(listed_turf && client)
-		if(!TurfAdjacent(listed_turf))
-			listed_turf = null
-		else
-			var/obj/structure/door/secret/secret_door =  locate(/obj/structure/door/secret) in listed_turf
-			if(!secret_door)
-				statpanel(listed_turf.name, null, listed_turf)
-			var/list/overrides = list()
-			for(var/image/I in client.images)
-				if(I.loc && I.loc.loc == listed_turf && I.override)
-					overrides += I.loc
-
-			for(var/atom/A in listed_turf)
-				if(!A.mouse_opacity)
-					continue
-				if(A.invisibility > see_invisible)
-					continue
-				if(overrides.len && (A in overrides))
-					continue
-				if(A.IsObscured())
-					continue
-				statpanel(listed_turf.name, null, A)
 
 
 #define MOB_FACE_DIRECTION_DELAY 1
@@ -895,7 +854,12 @@ GLOBAL_VAR_INIT(mobids, 1)
 		return mind.get_ghost(even_if_they_cant_reenter, ghosts_with_clients)
 
 ///Force get the ghost from the mind
-/mob/proc/grab_ghost(force)
+/mob/proc/grab_ghost(force, grab_spirit)
+	if(grab_spirit)
+		var/mob/living/carbon/spirit/underworld_spirit = get_spirit()
+		if(underworld_spirit)
+			underworld_spirit.mind?.transfer_to(src, TRUE)
+			qdel(underworld_spirit)
 	if(mind)
 		return mind.grab_ghost(force = force)
 
@@ -1148,7 +1112,7 @@ GLOBAL_VAR_INIT(mobids, 1)
  * Args:
  *  light_amount (optional) - A decimal amount between 1.0 through 0.0 (default is 0.2)
 **/
-/mob/proc/has_light_nearby(light_amount = LIGHTING_TILE_IS_DARK)
+/atom/proc/has_light_nearby(light_amount = LIGHTING_TILE_IS_DARK)
 	var/turf/mob_location = get_turf(src)
 	var/area/mob_area = get_area(src)
 
@@ -1163,7 +1127,7 @@ GLOBAL_VAR_INIT(mobids, 1)
 /mob/proc/can_read(obj/O, silent = FALSE)
 	if(isobserver(src))
 		return TRUE
-	if(is_blind() || eye_blurry)
+	if(is_blind() || has_status_effect(/datum/status_effect/eye_blur))
 		if(!silent)
 			to_chat(src, span_warning("I'm too blind to read."))
 		return
@@ -1303,6 +1267,10 @@ GLOBAL_VAR_INIT(mobids, 1)
 	else
 		add_movespeed_modifier(MOVESPEED_ID_MOB_EQUIPMENT, update=TRUE, priority=100, override=TRUE, multiplicative_slowdown=speedies, blacklisted_movetypes=FLOATING)
 
+/mob/living/carbon/update_equipment_speed_mods()
+	. = ..()
+	update_carry_weight()
+
 /// Gets the combined speed modification of all worn items
 /// Except base mob type doesnt really wear items
 /mob/proc/equipped_speed_mods()
@@ -1335,17 +1303,59 @@ GLOBAL_VAR_INIT(mobids, 1)
 	return TRUE
 
 /// Send a menu that allows for the selection of an item. Randomly selects one after time_limit. selection_list should be an associative list of string and typepath
-/mob/proc/select_equippable(user_client, list/selection_list, time_limit = 20 SECONDS, message = "", title = "")
-	if(QDELETED(src) || !mind)
-		return
+/mob/living/proc/select_equippable(user_client, list/selection_list, time_limit = 20 SECONDS, message = "", title = "")
 	if(!LAZYLEN(selection_list))
 		return
+
 	var/to_send = user_client ? user_client : src
+
 	var/choice = browser_input_list(to_send, message, title, selection_list, timeout = time_limit)
+	if(QDELETED(src))
+		return
+
 	if(!choice)
 		choice = pick(selection_list)
-	var/spawn_item = LAZYACCESS(selection_list, choice)
-	if(!spawn_item)
+
+	var/spawn_items = LAZYACCESS(selection_list, choice)
+	if(isnull(spawn_items))
+		return
+
+	if(!islist(spawn_items))
+		spawn_items = list(spawn_items)
+	if(!length(spawn_items))
 		return choice
-	equip_to_appropriate_slot(new spawn_item(get_turf(src)))
+
+	for(var/obj/item/spawn_item as anything in spawn_items)
+		equip_to_appropriate_slot(new spawn_item(), TRUE)
+
 	return choice
+
+/mob/proc/nobles_seen_servant_work()
+	if(ishuman(src))
+		var/mob/living/carbon/human/H = src
+		if(!is_servant_job(H.mind.assigned_role))
+			return
+	else
+		return
+
+	var/list/nobles = list()
+	for(var/mob/living/carbon/human/target as anything in viewers(6, src))
+		if(!target.mind || target.stat != CONSCIOUS)
+			continue
+		if(!HAS_TRAIT(target, TRAIT_NOBLE_BLOOD) && !HAS_TRAIT(target, TRAIT_NOBLE_POWER))
+			continue
+		nobles += target
+	if(length(nobles))
+		for(var/mob/living/carbon/human/target as anything in nobles)
+			if(!target.has_stress_type(/datum/stress_event/noble_seen_servant_work))
+				target.add_stress(/datum/stress_event/noble_seen_servant_work)
+
+/// Adds this list to the output to the stat browser
+/mob/proc/get_status_tab_items()
+	. = list("") //we want to offset unique stuff from standard stuff
+	SEND_SIGNAL(src, COMSIG_MOB_GET_STATUS_TAB_ITEMS, .)
+	return .
+
+/mob/get_examine_name(mob/user, use_article=FALSE)
+	return use_article && article ? "[article] <EM>[real_name]</EM>" : "\a <EM>[real_name]</EM>"
+

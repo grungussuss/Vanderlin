@@ -9,8 +9,54 @@
 
 
 	body_parts_covered = COVERAGE_NASAL
-	max_integrity = INTEGRITY_STANDARD
-	item_weight = 5.5 * STEEL_MULTIPLIER
+	max_integrity = INTEGRITY_STRONGEST
+	item_weight = 2.3 KILOGRAMS
+
+
+//................ Gallowglass ............... //
+
+/obj/item/clothing/head/helmet/gallowglass
+	name = "gallowglass helmet"
+	desc = "Worn by proud fighters of remote clans."
+	icon_state = "gallowglass"
+	sellprice = VALUE_STEEL_SMALL_ITEM
+	smeltresult = /obj/item/fertilizer/ash
+	melting_material = /datum/material/steel
+	melt_amount = 75
+
+
+	max_integrity = INTEGRITY_STRONGEST
+	item_weight = 2.5 KILOGRAMS
+
+//................ Coppergate ............... //
+/obj/item/clothing/head/helmet/coppergate
+	name = "coppergate helmet"
+	desc = "A typical style of helmet worn by Sea Elf pirates, this helmet comes with metal flaps that protects the cheeks."
+	icon_state = "coppergate"
+	sellprice = VALUE_STEEL_SMALL_ITEM
+	smeltresult = /obj/item/fertilizer/ash
+	melting_material = /datum/material/steel
+	melt_amount = 75
+
+
+	body_parts_covered = COVERAGE_NASAL
+	max_integrity = INTEGRITY_STRONGEST
+	item_weight = 3.12 KILOGRAMS
+
+//................ Decorative Coppergate ............... //
+/obj/item/clothing/head/helmet/decorativecoppergate
+	name = "decorative coppergate helmet"
+	desc = "Worn by proud Sea Elf clan leaders this decorative helmet design signifies wealth and authority."
+	icon_state = "decorative_coppergate"
+	sellprice = VALUE_STEEL_SMALL_ITEM+BONUS_VALUE_MODEST
+	smeltresult = /obj/item/fertilizer/ash
+	melting_material = /datum/material/steel
+	melt_amount = 75
+
+
+	body_parts_covered = COVERAGE_NASAL
+	max_integrity = INTEGRITY_STRONGEST
+	item_weight = 3.12 KILOGRAMS
 
 //................ Skull Cap ............... //
 /obj/item/clothing/head/helmet/skullcap
@@ -22,8 +68,8 @@
 	melting_material = /datum/material/iron
 	melt_amount = 75
 
-	max_integrity = INTEGRITY_POOR
-	item_weight = 5.5 * IRON_MULTIPLIER
+	max_integrity = INTEGRITY_STRONG
+	item_weight = 2.5 KILOGRAMS
 
 //............... Grenzelhoft Plume Hat ............... // - worn over a skullcap
 /obj/item/clothing/head/helmet/skullcap/grenzelhoft
@@ -64,7 +110,7 @@
 	desc = "A crude horned cap usually worn by brute barbarians to invoke fear unto their enemies."
 	icon_state = "hornedcap"
 	sellprice = VALUE_CHEAP_IRON_HELMET
-	item_weight = 5.5 * IRON_MULTIPLIER
+	item_weight = 2.5 KILOGRAMS
 
 //................ Winged Cap ............... //
 /obj/item/clothing/head/helmet/winged
@@ -75,7 +121,7 @@
 	worn_y_dimension = 64
 	bloody_icon = 'icons/effects/blood64x64.dmi'
 	bloody_icon_state = "helmetblood_big"
-	item_weight = 5.5 * IRON_MULTIPLIER
+	item_weight = 2.5 KILOGRAMS
 
 //................ Kettle Helmet ............... //
 /obj/item/clothing/head/helmet/kettle
@@ -89,13 +135,13 @@
 	worn_y_dimension = 64
 	flags_inv = HIDEEARS
 	sellprice = VALUE_CHEAP_STEEL_HELMET
-	max_integrity = INTEGRITY_STANDARD
+	max_integrity = INTEGRITY_STRONGEST
 	smeltresult = /obj/item/fertilizer/ash
 	melting_material = /datum/material/steel
 	melt_amount = 75
 
 	body_parts_covered = COVERAGE_HEAD
-	item_weight = 5.5 * STEEL_MULTIPLIER
+	item_weight = 2.2 KILOGRAMS
 
 /obj/item/clothing/head/helmet/kettle/iron
 	name = "iron kettle helmet"
@@ -104,8 +150,8 @@
 	item_state = "ikettle"
 	sellprice = VALUE_CHEAP_IRON_HELMET
 	armor = ARMOR_SCALE
-	max_integrity = INTEGRITY_POOR
-	item_weight = 5.5 * IRON_MULTIPLIER
+	max_integrity = INTEGRITY_STRONG
+	item_weight = 2.2 KILOGRAMS
 	melting_material = /datum/material/iron
 	melt_amount = 75
 
@@ -124,8 +170,8 @@
 	item_state = "islitkettle"
 	sellprice = VALUE_CHEAP_IRON_HELMET
 	armor = ARMOR_SCALE
-	max_integrity = INTEGRITY_POOR
-	item_weight = 5.5 * IRON_MULTIPLIER
+	max_integrity = INTEGRITY_STRONG
+	item_weight = 2.2 KILOGRAMS
 
 //................ Iron Pot Helmet ............... //
 /obj/item/clothing/head/helmet/ironpot
@@ -136,20 +182,20 @@
 	sellprice = VALUE_IRON_HELMET
 
 	body_parts_covered = COVERAGE_HEAD_NOSE
-	item_weight = 5.5 * IRON_MULTIPLIER
+	item_weight = 2.85 KILOGRAMS
 
 /obj/item/clothing/head/helmet/ironpot/lakkariancap
-	name = "lakkarian crowned cap"
-	desc = "a crimson red iron cap decorated with gold trims and embellishments. The design of this Lakkarian helmet hasn't changed in centuries."
+	name = "embellished crowned cap"
+	desc = "A crimson red iron cap decorated with gold trims and embellishments."
 	icon_state = "lakkaricap"
 	item_state = "lakkaricap"
 	sellprice = 50
 	flags_inv = null
 	armor = ARMOR_SCALE
-	anvilrepair = /datum/skill/craft/armorsmithing
+	anvilrepair = /datum/attribute/skill/craft/armor_repair
 	body_parts_covered = COVERAGE_HEAD
-	max_integrity = INTEGRITY_STANDARD
-	item_weight = 5.5 * IRON_MULTIPLIER
+	max_integrity = INTEGRITY_STRONG
+	item_weight = 1.4 KILOGRAMS
 
 //................ Copper Lamellar Cap ............... //
 /obj/item/clothing/head/helmet/coppercap
@@ -164,7 +210,7 @@
 	body_parts_covered = COVERAGE_HEAD
 	prevent_crits = ONLY_VITAL_ORGANS
 	max_integrity = INTEGRITY_POOR
-	item_weight = 5.5 * COPPER_MULTIPLIER
+	item_weight = 3.25 KILOGRAMS
 
 //............... Battle Nun ........................... (unique kit for the role, iron coif mechanically.)
 /obj/item/clothing/head/helmet/battlenun
@@ -182,7 +228,7 @@
 	armor = ARMOR_MAILLE_IRON
 	body_parts_covered = NECK|HAIR|EARS|HEAD
 	prevent_crits = ALL_EXCEPT_BLUNT
-	item_weight = 9 * IRON_MULTIPLIER
+	item_weight = 1.56 KILOGRAMS
 
 /obj/item/clothing/head/helmet/battlenun/steel
 	name = "veil over coif"
@@ -199,7 +245,7 @@
 	armor = ARMOR_MAILLE
 	body_parts_covered = NECK|HAIR|EARS|HEAD
 	prevent_crits = ALL_EXCEPT_BLUNT
-	item_weight = 9 * STEEL_MULTIPLIER
+	item_weight = 1.56 KILOGRAMS
 
 
 //................ Sallet ............... //
@@ -208,13 +254,14 @@
 	icon_state = "sallet"
 	desc = "A simple steel helmet with no attachments. Helps protect the ears."
 	flags_inv = HIDEEARS
-	smeltresult = /obj/item/ingot/steel
+	melt_amount = 75
+	melting_material = /datum/material/steel
 	sellprice = VALUE_STEEL_HELMET
 
 	armor =  ARMOR_PLATE
 	body_parts_covered = COVERAGE_HEAD
 	max_integrity = INTEGRITY_STRONG
-	item_weight = 9 * STEEL_MULTIPLIER
+	item_weight = 3.1 KILOGRAMS
 
 /obj/item/clothing/head/helmet/sallet/iron
 	name = "iron sallet"
@@ -225,8 +272,8 @@
 	sellprice = VALUE_IRON_HELMET
 
 	armor =  ARMOR_PLATE_BAD
-	max_integrity = INTEGRITY_STANDARD
-	item_weight = 9 * IRON_MULTIPLIER
+	max_integrity = INTEGRITY_STRONG
+	item_weight = 3.1 KILOGRAMS
 
 //................ Elf Sallet ............... //
 /obj/item/clothing/head/helmet/sallet/elven	// blackoak merc helmet
@@ -255,15 +302,20 @@
 	icon_state = "bascinet_novisor"
 	desc = "A simple steel bascinet without a visor. Makes up for what it lacks in protection in visibility."
 	flags_inv = HIDEEARS
-	smeltresult = /obj/item/ingot/steel
+	melt_amount = 75
+	melting_material = /datum/material/steel
 	sellprice = VALUE_STEEL_HELMET
 
 	body_parts_covered = COVERAGE_HEAD
 	max_integrity = INTEGRITY_STRONG
-	item_weight = 6 * STEEL_MULTIPLIER
+	item_weight = 3.25 KILOGRAMS
 
-
-
+/obj/item/clothing/head/helmet/bascinet/steppe
+	name = "steppe bascinet"
+	icon_state = "shishak"
+	desc = "A flat decorated steel bascinet with a spike at the top end."
+	flags_inv = HIDEEARS|HIDEHAIR
+	body_parts_covered = HEAD_NECK // built in coif
 
 //......................................................................................................
 /*----------------\
@@ -280,7 +332,8 @@
 	block2add = FOV_BEHIND
 	equip_delay_self = 3 SECONDS
 	unequip_delay_self = 3 SECONDS
-	smeltresult = /obj/item/ingot/steel // Most visored helmets are made of steel
+	melt_amount = 75
+	melting_material = /datum/material/steel // Most visored helmets are made of steel
 	sellprice = VALUE_STEEL_HELMET+BONUS_VALUE_TINY
 
 	armor = ARMOR_PLATE
@@ -314,23 +367,40 @@
 		to_chat(user, "<span class='warning'>Wear the helmet on your head to open and close the visor.</span>")
 		return
 
+/obj/item/clothing/head/helmet/visored/examine(mob/user)
+	. = ..()
+	. += span_notice("This helmet has a visor that can be raised and lowered. Interact with it while wearing it to adjust the visor, offering better protection at the cost of visibility.")
+
+//............... Black Knight Helmet ............... //
+
+/obj/item/clothing/head/helmet/visored/blkknight
+	name = "blacksteel helmet"
+	desc = "A helmet black as nite. Instills fear upon those that gaze upon it."
+	icon_state = "bkhelm_visor"
+	icon = 'icons/roguetown/clothing/special/blkknight.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
+	armor_class = AC_MEDIUM
+	armor = ARMOR_PLATE_GOOD
+	item_weight = 6.4 KILOGRAMS
+	sellprice = VALUE_SILVER_ITEM * 2
+
 //............... Visored Sallet ............... //
 /obj/item/clothing/head/helmet/visored/sallet
 	name = "visored sallet"
 	desc = "A steel helmet offering good overall protection. Its visor can be flipped over for higher visibility at the cost of eye protection."
 	icon_state = "sallet_visor"
-	item_weight = 6 * STEEL_MULTIPLIER
+	item_weight = 3.25 KILOGRAMS
 
 /obj/item/clothing/head/helmet/visored/sallet/iron
 	name = "visored iron sallet"
 	desc = "An iron helmet offering good overall protection. Its visor can be flipped over for higher visibility at the cost of eye protection."
 	icon_state = "isallet_visor"
 	item_state = "isallet_visor"
-	item_weight = 6 * IRON_MULTIPLIER
+	item_weight = 3.25 KILOGRAMS
 	smeltresult = /obj/item/ingot/iron
 	sellprice = VALUE_IRON_HELMET+BONUS_VALUE_TINY
 	armor = ARMOR_PLATE_BAD
-	max_integrity = INTEGRITY_STANDARD
+	max_integrity = INTEGRITY_STRONG
 
 //............... Hounskull ............... //
 /obj/item/clothing/head/helmet/visored/hounskull
@@ -342,7 +412,7 @@
 	emote_environment = 3
 
 	armor = ARMOR_PLATE_GOOD
-	item_weight = 7 * STEEL_MULTIPLIER
+	item_weight = 4.45 KILOGRAMS
 
 //............... Knights Helmet ............... //
 /obj/item/clothing/head/helmet/visored/knight
@@ -356,7 +426,7 @@
 	worn_y_dimension = 64
 
 	emote_environment = 3
-	item_weight = 5.6 * STEEL_MULTIPLIER
+	item_weight = 4.45 KILOGRAMS
 
 /obj/item/clothing/head/helmet/visored/knight/blk
 	color = CLOTHING_SOOT_BLACK
@@ -366,12 +436,12 @@
 	desc = "A lightweight iron armet that protects dreams of chivalrous friendship, fair maidens to rescue, and glorious deeds of combat. Its visor can be flipped over for higher visibility at the cost of eye protection."
 	icon_state = "iknight"
 
-	item_weight = 5.6 * IRON_MULTIPLIER
+	item_weight = 4.45 KILOGRAMS
 	smeltresult = /obj/item/ingot/iron
 	sellprice = VALUE_IRON_HELMET+BONUS_VALUE_TINY
 
 	armor = ARMOR_PLATE_BAD
-	max_integrity = INTEGRITY_STANDARD
+	max_integrity = INTEGRITY_STRONG
 
 //................. Royal Knight's helmet .............. //
 /obj/item/clothing/head/helmet/visored/royalknight
@@ -379,7 +449,7 @@
 	desc = "A knightly armet that protects dreams of chivalry, fair maidens to rescue, and glorious feats of melee. Purpose made for the protector of the royal lineage. Its visor can be flipped over for higher visibility at the cost of eye protection."
 	icon_state = "knightarmet"
 	emote_environment = 3
-	item_weight = 5.6 * STEEL_MULTIPLIER
+	item_weight = 4.45 KILOGRAMS
 
 //................. Captain's Helmet .............. //
 /obj/item/clothing/head/helmet/visored/captain
@@ -388,7 +458,7 @@
 	icon = 'icons/roguetown/clothing/special/captain.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/captain.dmi'
 	icon_state = "capbarbute"
-	item_weight = 13 * STEEL_MULTIPLIER
+	item_weight = 4.45 KILOGRAMS
 
 //................. Town Watch Helmet .............. //
 /obj/item/clothing/head/helmet/townwatch
@@ -399,11 +469,11 @@
 	body_parts_covered = COVERAGE_HEAD_NOSE
 	flags_inv = HIDEEARS|HIDEHAIR
 	block2add = FOV_BEHIND
-	max_integrity = INTEGRITY_STANDARD
+	max_integrity = INTEGRITY_STRONG
 	slot_flags = ITEM_SLOT_HEAD | ITEM_SLOT_HIP
 	smeltresult = /obj/item/ingot/iron
 	sellprice = VALUE_IRON_ARMOR_UNUSUAL
-	item_weight = 6 * STEEL_MULTIPLIER
+	item_weight = 3.2 KILOGRAMS
 
 /obj/item/clothing/head/helmet/townwatch/alt
 	icon_state = "gatehelm"
@@ -424,11 +494,11 @@
 	body_parts_covered = COVERAGE_HEAD_NOSE
 	flags_inv = HIDEEARS|HIDEHAIR
 	block2add = FOV_BEHIND
-	max_integrity = INTEGRITY_STANDARD
+	max_integrity = INTEGRITY_STRONG
 	slot_flags = ITEM_SLOT_HEAD | ITEM_SLOT_HIP
 	smeltresult = /obj/item/ingot/iron
 	sellprice = VALUE_IRON_ARMOR_UNUSUAL
-	item_weight = 6 * IRON_MULTIPLIER
+	item_weight = 3.7 KILOGRAMS
 	detail_tag = "_detail"
 	detail_color = CLOTHING_PLUM_PURPLE
 	uses_lord_coloring = LORD_PRIMARY
@@ -446,7 +516,7 @@
 	slot_flags = ITEM_SLOT_HEAD | ITEM_SLOT_HIP
 	smeltresult = /obj/item/ingot/iron
 	sellprice = VALUE_IRON_ARMOR_UNUSUAL
-	item_weight = 6 * STEEL_MULTIPLIER
+	item_weight = 3.7 KILOGRAMS
 	detail_tag = "_detail"
 	detail_color = CLOTHING_PLUM_PURPLE
 	uses_lord_coloring = LORD_PRIMARY
@@ -477,7 +547,7 @@
 	icon = 'icons/roguetown/clothing/special/evilarmor.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
 	sellprice = 0 // Incredibly evil Zizoid armor, this should be burnt, nobody wants this
-	item_weight = 5 * STEEL_MULTIPLIER
+	item_weight = 3.7 KILOGRAMS
 
 //................. Silver Bascinet .............. //
 
@@ -490,7 +560,7 @@
 	allowed_ages = ALL_AGES_LIST //placeholder until younglings have onmob sprites for this item
 	armor = ARMOR_PLATE_SILVER
 	sellprice = VALUE_SILVER_ARMOR
-	item_weight = 6 * SILVER_MULTIPLIER
+	item_weight = 6 KILOGRAMS
 	worn_x_dimension = 64
 	worn_y_dimension = 64
 
@@ -498,10 +568,19 @@
 	. = ..()
 	enchant(/datum/enchantment/silver)
 
+/obj/item/clothing/head/helmet/visored/silver/armet
+	name = "silver armet"
+	desc = "A finely forged silver armet, with adjustable visor to protect the face."
+	icon_state = "silverarmet"
+
+/obj/item/clothing/head/helmet/visored/silver/armet/Initialize(mapload)
+	. = ..()
+	enchant(/datum/enchantment/silver)
+
 //............... Feldshers Cage ............... //
 /obj/item/clothing/head/helmet/feld
 	name = "feldsher's cage"
-	desc = "To protect me from the maggets and creachers I treat."
+	desc = "To protect me from the maggots and creachers I treat."
 	mob_overlay_icon = 'icons/roguetown/clothing/onmob/64x64/head.dmi'
 	icon_state = "headcage"
 	worn_x_dimension = 64
@@ -511,7 +590,7 @@
 
 	body_parts_covered = FULL_HEAD
 	prevent_crits = BLUNT_AND_MINOR_CRITS
-	item_weight = 5.5 * STEEL_MULTIPLIER
+	item_weight = 1.3 KILOGRAMS
 
 /obj/item/clothing/head/helmet/blacksteel
 	abstract_type = /obj/item/clothing/head/helmet/blacksteel
@@ -522,14 +601,45 @@
 	body_parts_covered = FULL_HEAD
 	icon = 'icons/roguetown/clothing/special/blkknight.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
-	icon_state = "bkhelm"
-	item_state = "bkhelm"
+	icon_state = "bkhelm_visor"
+	item_state = "bkhelm_visor"
 	flags_inv = HIDEEARS|HIDEFACE
 	flags_cover = HEADCOVERSEYES | HEADCOVERSMOUTH
 	armor = list("blunt" = 90, "slash" = 100, "stab" = 80,  "piercing" = 100, "fire" = 0, "acid" = 0)
 	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_SMASH, BCLASS_TWIST, BCLASS_PICK)
 	block2add = FOV_RIGHT|FOV_LEFT
 	max_integrity = 425
-	anvilrepair = /datum/skill/craft/blacksmithing
+	anvilrepair = /datum/attribute/skill/craft/blacksmithing
 	smeltresult = /obj/item/ingot/blacksteel
-	item_weight = 6 * BLACKSTEEL_MULTIPLIER
+	item_weight = 4.5 KILOGRAMS
+
+/obj/item/clothing/head/helmet/blacksteel/psythorns
+	name = "crown of psydonian thorns"
+	desc = "Thorns fashioned from pliable yet durable blacksteel - woven and interlinked, fashioned to be worn upon the head."
+	body_parts_covered = HAIR | HEAD
+	icon_state = "psybarbs"
+	item_state = "psybarbs"
+	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_SMASH, BCLASS_TWIST, BCLASS_PICK)
+	blocksound = PLATEHIT
+	resistance_flags = FIRE_PROOF
+	anvilrepair = /datum/attribute/skill/craft/armor_repair
+	sewrepair = null
+	icon = 'icons/roguetown/clothing/wrists.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/head.dmi'
+	alternate_worn_layer  = 8.9 //On top of helmet
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK
+	item_weight = 2.4 KILOGRAMS
+
+/obj/item/clothing/head/helmet/blacksteel/psythorns/attack_self(mob/living/user)
+	. = ..()
+	user.visible_message(span_warning("[user] starts to reshape the [src]."))
+	if(do_after(user, 4 SECONDS))
+		var/obj/item/clothing/wrists/bracers/psythorns/P = new /obj/item/clothing/wrists/bracers/psythorns(get_turf(src.loc))
+		if(user.is_holding(src))
+			user.dropItemToGround(src)
+			user.put_in_hands(P)
+		user.adjustBruteLoss(25)
+		qdel(src)
+	else
+		user.visible_message(span_warning("[user] stops reshaping [src]."))
+		return

@@ -8,59 +8,73 @@
 /obj/item/alch/viscera
 	name = "viscera"
 	icon_state = "viscera"
+	item_weight = 16 GRAMS
 
 /obj/item/alch/waterdust
 	name = "water essentia"
 	icon_state = "water_runedust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/seeddust
 	name = "seed dust"
 	icon_state = "seeddust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/runedust
 	name = "raw essentia"
 	icon_state = "runedust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/coaldust
 	name = "coal dust"
 	icon_state = "coaldust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/silverdust
 	name = "silver dust"
 	icon_state = "silverdust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/magicdust
 	name = "pure essentia"
 	icon_state = "magic_runedust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/firedust
 	name = "fire essentia"
 	icon_state = "fire_runedust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/sinew
 	name = "sinew"
 	icon_state = "sinew"
 	dropshrink = 0.9
+	item_weight = 18 GRAMS
 
 /obj/item/alch/irondust
 	name = "iron dust"
 	icon_state = "irondust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/airdust
 	name = "air essentia"
 	icon_state = "air_runedust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/swampdust
 	name = "swampweed dust"
 	icon_state = "swampdust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/tobaccodust
 	name = "westleach dust"
 	icon_state = "tobaccodust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/earthdust
 	name = "earth essentia"
 	icon_state = "earth_runedust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/bone
 	name = "tail bone"
@@ -72,6 +86,7 @@
 
 	grid_height = 32
 	grid_width = 32
+	item_weight = 24 GRAMS
 
 	attunement_values = list(
 		/datum/attunement/death = 0.05,
@@ -86,6 +101,7 @@
 	force = 7
 	throwforce = 5
 	w_class = WEIGHT_CLASS_NORMAL
+	item_weight = 95 GRAMS
 
 	grid_width = 64
 	grid_height = 64
@@ -93,23 +109,35 @@
 /obj/item/alch/golddust
 	name = "gold dust"
 	icon_state = "golddust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/feaudust
 	name = "feau dust"
 	desc = "Combining gold and iron results in this powder with unique alchemical properties."
 	icon_state = "feaudust"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/ozium
 	name = "alchemical ozium"
 	desc = "Alchemical processing has left it unfit for consumption."
 	icon_state = "darkredpowder"
+	item_weight = 75 GRAMS
 
 /obj/item/alch/transisdust
 	name = "transis dust"
 	desc = "A complex mix of herbs that produce a powder which can modify the body."
 	icon_state = "transisdust"
+	item_weight = 75 GRAMS
 
 //BEGIN THE HERBS
+
+/obj/item/alch/herb
+	name = "herb"
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/head_items.dmi'
+	slot_flags = ITEM_SLOT_HEAD | ITEM_SLOT_MASK
+	alternate_worn_layer  = 8.9 //On top of helmet
+	body_parts_covered = NONE
+	item_weight = 9 GRAMS
 
 /obj/item/alch/herb/atropa
 	name = "atropa"
@@ -118,10 +146,6 @@
 /obj/item/alch/herb/matricaria
 	name = "matricaria"
 	icon_state = "matricaria"
-	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK
-	body_parts_covered = NONE
-	w_class = WEIGHT_CLASS_TINY
-	alternate_worn_layer  = 8.9
 
 /obj/item/alch/herb/symphitum
 	name = "symphitum"
@@ -142,10 +166,6 @@
 /obj/item/alch/herb/calendula
 	name = "calendula"
 	icon_state = "calendula"
-	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK
-	body_parts_covered = NONE
-	w_class = WEIGHT_CLASS_TINY
-	alternate_worn_layer  = 8.9
 
 /obj/item/alch/herb/mentha
 	name = "mentha"
@@ -158,38 +178,23 @@
 /obj/item/alch/herb/salvia
 	name = "salvia"
 	icon_state = "salvia"
-	mob_overlay_icon = 'icons/roguetown/clothing/onmob/head_items.dmi'
-	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK
-	body_parts_covered = NONE
-	w_class = WEIGHT_CLASS_TINY
-	alternate_worn_layer  = 8.9
 
 /obj/item/alch/herb/rosa
 	name = "rosa"
 	icon_state = "rosa"
-	mob_overlay_icon = 'icons/roguetown/clothing/onmob/head_items.dmi'
 	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_MOUTH
-	body_parts_covered = NONE
-	w_class = WEIGHT_CLASS_TINY
 	spitoutmouth = FALSE
-	alternate_worn_layer  = 8.9 //On top of helmet
 
 /obj/item/alch/herb/rosa/equipped(mob/living/carbon/human/user, slot)
 	. = ..()
 	if(slot & ITEM_SLOT_MOUTH)
 		icon_state = "rosa_mouth"
-		user.update_inv_mouth()
 	else
 		icon_state = "rosa"
-		user.update_appearance()
 
 /obj/item/alch/herb/euphorbia
 	name = "euphorbia"
 	icon_state = "euphorbia"
-	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK
-	body_parts_covered = NONE
-	w_class = WEIGHT_CLASS_TINY
-	alternate_worn_layer  = 8.9
 
 /obj/item/alch/herb/hypericum
 	name = "hypericum"
@@ -207,6 +212,10 @@
 	name = "artemisia"
 	icon_state = "artemisia"
 
+/obj/item/alch/herb/lavender // Not obtainable currently, will correct later
+	name = "lavender"
+	icon_state = "lavender"
+
 /obj/item/alch/thaumicdust
 	name = "thaumic iron dust"
 	icon_state = "thaumicirondust"
@@ -214,3 +223,4 @@
 	desc = "An odd, sticky clump of various alchemical ingredients. Smelt this down to create an ingot of thaumic iron."
 	smeltresult = /obj/item/ingot/thaumic
 	melting_material = /datum/material/thaumic_iron
+	item_weight = 75 GRAMS

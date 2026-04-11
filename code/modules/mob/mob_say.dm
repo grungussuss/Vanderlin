@@ -1,12 +1,13 @@
 //Speech verbs.
 
 
-/mob/verb/say_verb()
+/mob/verb/say_verb(message as text)
 	set name = "Say"
-	set category = "IC"
+	set category = "IC.Speech"
 	set hidden = 1
 
-	var/message = input(usr, "", "say") as text|null
+	if(!message)
+		message = input(usr, "", "say") as text|null
 	// If they don't type anything just drop the message.
 	set_typing_indicator(FALSE)
 	if(!length(message))
@@ -21,7 +22,7 @@
 ///Whisper verb
 /mob/verb/whisper_verb(message as text)
 	set name = "Whisper"
-	set category = "IC"
+	set category = "IC.Speech"
 	set hidden = 1
 
 	if(GLOB.say_disabled)	//This is here to try to identify lag problems
@@ -34,9 +35,9 @@
 	say(message, bubble_type, spans, sanitize, language, ignore_spam, forced) //only living mobs actually whisper, everything else just talks
 
 ///The me emote verb
-/mob/verb/me_verb()
+/mob/verb/me_verb(message as text)
 	set name = "Me"
-	set category = "IC"
+	set category = "IC.Speech"
 	set hidden = 1
 
 	#ifdef USES_PQ
@@ -45,7 +46,8 @@
 			to_chat(usr, "<span class='warning'>I can't use custom emotes. (LOW PQ)</span>")
 			return
 		#endif
-	var/message = input(usr, "", "me") as text|null
+	if(!message)
+		message = input(usr, "", "me") as text|null
 	// If they don't type anything just drop the message.
 	set_typing_indicator(FALSE)
 	if(!length(message))
@@ -60,7 +62,7 @@
 ///The big me emote verb
 /mob/verb/me_big_verb()
 	set name = "Me(Big)"
-	set category = "IC"
+	set category = "IC.Speech"
 	set hidden = TRUE
 
 	#ifdef USES_PQ
@@ -83,13 +85,11 @@
 
 ///Speak as a dead person (ghost etc)
 /mob/proc/say_dead(message)
-	return
-/*
-	var/name = real_name
-	var/alt_name = ""
+	if(!client)
+		return
 
 	if(GLOB.say_disabled)	//This is here to try to identify lag problems
-		to_chat(usr, "<span class='danger'>Speech is currently admin-disabled.</span>")
+		to_chat(src, "<span class='danger'>Speech is currently admin-disabled.</span>")
 		return
 
 	var/jb = is_banned_from(ckey, "Deadchat")
@@ -100,16 +100,16 @@
 		to_chat(src, "<span class='danger'>I have been banned from deadchat.</span>")
 		return
 
-
-
-	if (src.client)
-		if(src.client.prefs.muted & MUTE_DEADCHAT)
+	if(client)
+		if(client.prefs.muted & MUTE_DEADCHAT)
 			to_chat(src, "<span class='danger'>I cannot talk in deadchat (muted).</span>")
 			return
 
-		if(src.client.handle_spam_prevention(message,MUTE_DEADCHAT))
+		if(client.handle_spam_prevention(message,MUTE_DEADCHAT))
 			return
 
+	var/name = real_name
+	var/alt_name = ""
 	var/mob/dead/observer/O = src
 	if(isobserver(src) && O.deadchat_name)
 		name = "[O.deadchat_name]"
@@ -124,11 +124,12 @@
 	var/spanned = say_quote(message)
 	var/source = "<span class='game'><span class='prefix'>DEAD:</span> <span class='name'>[name]</span>[alt_name]"
 	var/rendered = " <span class='message'>[emoji_parse(spanned)]</span></span>"
-	log_talk(message, LOG_SAY, tag="DEAD")
+	log_talk(message, LOG_SAY, tag = "DEAD")
+
 	if(SEND_SIGNAL(src, COMSIG_MOB_DEADSAY, message) & MOB_DEADSAY_SIGNAL_INTERCEPT)
 		return
+
 	deadchat_broadcast(rendered, source, follow_target = src, speaker_key = key)
-*/
 
 ///Check if this message is an emote
 /mob/proc/check_emote(message, forced)
@@ -187,7 +188,7 @@
 			chop_to = length(key) + 2
 		else if(key == "," && !mods[LANGUAGE_EXTENSION])
 			for(var/datum/language/LD as anything in GLOB.all_languages)
-				if(initial(LD.key) == message[1 + length(message[1])])
+				if(initial(LD.key) == lowertext(message[1 + length(message[1])]))
 					if(!can_speak_in_language(LD))
 						return message
 					mods[LANGUAGE_EXTENSION] = LD

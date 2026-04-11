@@ -1,6 +1,6 @@
 /datum/action/cooldown/spell/control_undead
 	name = "Control Undead"
-	desc = "Attempt to make a undead your ally."
+	desc = "Attempt to make an undead your ally."
 	button_icon_state = "raiseskele"
 	sound = 'sound/vo/smokedrag.ogg'
 	self_cast_possible = FALSE
@@ -8,7 +8,7 @@
 	cast_range = 5
 	spell_type = SPELL_MANA
 	antimagic_flags = MAGIC_RESISTANCE_UNHOLY
-	associated_skill = /datum/skill/magic/arcane
+	associated_skill = /datum/attribute/skill/magic/arcane
 	attunements = list(
 		/datum/attunement/death = 1,
 	)

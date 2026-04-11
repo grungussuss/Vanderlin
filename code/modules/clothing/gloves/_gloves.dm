@@ -27,19 +27,22 @@
 	strip_delay = 2 SECONDS
 	equip_delay_other = 4 SECONDS
 
-	sewrepair = TRUE
+	dyeable = TRUE
 	anvilrepair = null
 	smeltresult = /obj/item/fertilizer/ash
-	sewrepair = TRUE
+	sewrepair = /datum/attribute/skill/misc/sewing/mending
+	dyeable = TRUE
 	fiber_salvage = FALSE
 	salvage_amount = 1
+	salvage_result = /obj/item/natural/cloth
 
 	grid_width = 64
 	grid_height = 32
-	item_weight = 4
+	item_weight = 300 GRAMS
 
 	var/transfer_prints = FALSE
 	abstract_type = /obj/item/clothing/gloves
+	var/unarmed_bonus = 1
 
 /obj/item/clothing/gloves/Initialize(mapload, ...)
 	. = ..()

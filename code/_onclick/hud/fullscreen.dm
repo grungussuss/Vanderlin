@@ -12,7 +12,7 @@
 	screen.icon_state = "[initial(screen.icon_state)][severity]"
 	screen.severity = severity
 	if (client && screen.should_show_to(src))
-		screen.update_for_view(client.view)
+		screen.update_for_view(client.view, src)
 		client.screen += screen
 
 	return screen
@@ -93,7 +93,7 @@
 	var/severity = 0
 	var/show_when_dead = FALSE
 
-/atom/movable/screen/fullscreen/proc/update_for_view(client_view)
+/atom/movable/screen/fullscreen/proc/update_for_view(client_view, mob/mob)
 	if (screen_loc == "CENTER-7,CENTER-7" && view != client_view)
 		var/list/actualview = getviewsize(client_view)
 		view = client_view
@@ -133,6 +133,16 @@
 	. = ..()
 	animate(src, alpha = 255, time = 30)
 
+/atom/movable/screen/fullscreen/briar
+	icon_state = "briarhud"
+	layer = 20.509
+	plane = FULLSCREEN_PLANE
+	alpha = 0
+
+/atom/movable/screen/fullscreen/briar/Initialize(mapload, datum/hud/hud_owner)
+	. = ..()
+	animate(src, alpha = 255, time = 30)
+
 /atom/movable/screen/fullscreen/crit
 	icon_state = "passage"
 	layer = 20.51
@@ -155,14 +165,14 @@
 //	layer = 20.09
 	layer = 20.512
 	plane = ABOVE_HUD_PLANE
-	mouse_opacity = 1
+	mouse_opacity = MOUSE_OPACITY_ICON
 	no_over_text = FALSE
 
 /atom/movable/screen/fullscreen/crit/dying/Click()
 	if(isliving(usr))
 		var/mob/living/L = usr
 		if(L.stat != DEAD)
-			if(alert("Are you done living?", "", "Yes", "No") == "Yes")
+			if(tgui_alert(L, "Are you done living?", "", list("Yes", "No")) == "Yes")
 				L.succumb(reaper = TRUE)
 
 /atom/movable/screen/fullscreen/crit/death
@@ -179,6 +189,10 @@
 	icon_state = "oxydamageoverlay"
 	layer = BLIND_LAYER
 
+/atom/movable/screen/fullscreen/inqvision
+	icon_state = "inqvision"
+	layer = BLIND_LAYER
+
 /atom/movable/screen/fullscreen/blackimageoverlay
 	icon_state = "blackimageoverlay"
 	layer = BLIND_LAYER
@@ -187,6 +201,11 @@
 /atom/movable/screen/fullscreen/blind
 	icon_state = "blind"
 	layer = BLIND_LAYER
+	plane = FULLSCREEN_PLANE
+
+/atom/movable/screen/fullscreen/zezuspsyst
+	icon_state = "hey"
+	layer = CRIT_LAYER
 	plane = FULLSCREEN_PLANE
 
 /atom/movable/screen/fullscreen/curse

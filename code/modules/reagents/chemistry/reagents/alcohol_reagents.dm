@@ -35,6 +35,14 @@
 
 		age_timer = addtimer(CALLBACK(src, PROC_REF(age_beer)), adjusted_progress, TIMER_OVERRIDE | TIMER_STOPPABLE | TIMER_UNIQUE)
 
+/datum/reagent/consumable/ethanol/on_mob_metabolize(mob/living/L)
+	. = ..()
+	L.increase_chem_effect(CE_PAINKILLER, boozepwr/5, "[type]")
+
+/datum/reagent/consumable/ethanol/on_mob_end_metabolize(mob/living/L)
+	. = ..()
+	L.decrease_chem_effect(CE_PAINKILLER, boozepwr/5, "[type]")
+
 /datum/reagent/consumable/ethanol/proc/age_beer()
 	var/old_volume = volume
 	var/datum/reagents/old_holder = holder
@@ -214,7 +222,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 /datum/reagent/consumable/ethanol/aurorian
 	name = "Aurorian"
 	boozepwr = 5
-	taste_description = "subtle herbacious undertones"
+	taste_description = "subtle herbaceous undertones"
 	color = "#5D8A8A"
 	quality = DRINK_NICE
 
@@ -280,7 +288,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 	quality = DRINK_NICE
 
 /datum/reagent/consumable/ethanol/jackberrywine
-	name = "Jackberry Wine"
+	name = "Jacksberry Wine"
 	boozepwr = 15
 	taste_description = "sickly sweet young wine"
 	color = "#3b2342"
@@ -289,7 +297,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 	age_time = 10 MINUTES
 
 /datum/reagent/consumable/ethanol/jackberrywine/aged
-	name = "Aged Jackberry Wine"
+	name = "Aged Jacksberry Wine"
 	boozepwr = 30
 	taste_description = "sickly sweet aged wine"
 	color = "#402249"
@@ -297,7 +305,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 	age_path = /datum/reagent/consumable/ethanol/jackberrywine/delectable
 
 /datum/reagent/consumable/ethanol/jackberrywine/delectable
-	name = "Delectable Jackberry Wine"
+	name = "Delectable Jacksberry Wine"
 	boozepwr = 30
 	taste_description = "sickly sweet delectably aged wine"
 	color = "#652679"
@@ -332,7 +340,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 /datum/reagent/consumable/ethanol/tangerine
 	name = "Tangerine Wine"
 	boozepwr = 15
-	taste_description = "bitter sweet young wine"
+	taste_description = "bittersweet young wine"
 	color = "#e7aa59"
 	quality = DRINK_NICE
 	age_path = /datum/reagent/consumable/ethanol/tangerine/aged
@@ -340,7 +348,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 /datum/reagent/consumable/ethanol/tangerine/aged
 	name = "Aged Tangerine Wine"
 	boozepwr = 30
-	taste_description = "bitter sweet aged wine"
+	taste_description = "bittersweet aged wine"
 	color = "#d68d2d"
 	quality = DRINK_GOOD
 	age_path = /datum/reagent/consumable/ethanol/tangerine/delectable
@@ -348,7 +356,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 /datum/reagent/consumable/ethanol/tangerine/delectable
 	name = "Delectable Tangerine Wine"
 	boozepwr = 30
-	taste_description = "bitter sweet delectably aged wine"
+	taste_description = "bittersweet delectably aged wine"
 	color = "#eb9321"
 	quality = DRINK_VERYGOOD
 	age_path = null
@@ -356,7 +364,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 /datum/reagent/consumable/ethanol/raspberry
 	name = "Raspberry Wine"
 	boozepwr = 15
-	taste_description = "bitter sweet young wine"
+	taste_description = "bittersweet young wine"
 	color = "#ee5ea6"
 	quality = DRINK_NICE
 	age_path = /datum/reagent/consumable/ethanol/raspberry/aged
@@ -364,7 +372,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 /datum/reagent/consumable/ethanol/raspberry/aged
 	name = "Aged Raspberry Wine"
 	boozepwr = 30
-	taste_description = "bitter sweet aged wine"
+	taste_description = "bittersweet aged wine"
 	color = "#d83788"
 	quality = DRINK_GOOD
 	age_path = /datum/reagent/consumable/ethanol/raspberry/delectable
@@ -372,7 +380,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 /datum/reagent/consumable/ethanol/raspberry/delectable
 	name = "Delectable Raspberry Wine"
 	boozepwr = 30
-	taste_description = "bitter sweet delectably aged wine"
+	taste_description = "bittersweet delectably aged wine"
 	color = "#db0d74"
 	quality = DRINK_VERYGOOD
 	age_path = null
@@ -539,15 +547,15 @@ All effects don't start immediately, but rather get worse over time; the rate is
 
 
 /datum/status_effect/buff/murkwine
-	id = "murkwine"
+	id = "Murk-Knowledge"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/drunkmurk
-	effectedstats = list("intelligence" = 5)
+	effectedstats = list(STAT_INTELLIGENCE = 5)
 	duration = 2 MINUTES
 
 /datum/status_effect/buff/nocshine
-	id = "nocshine"
+	id = "Noc-Shine Strength"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/drunknoc
-	effectedstats = list("strength" = 1, "endurance" = 1)
+	effectedstats = list(STAT_STRENGTH = 1, STAT_ENDURANCE = 1)
 	duration = 2 MINUTES
 
 /atom/movable/screen/alert/status_effect/buff/drunkmurk
@@ -563,7 +571,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 /datum/reagent/consumable/ethanol/murkwine // not Toilet wine
 	name = "Mürkwine"
 	boozepwr = 50  // bubba's best
-	taste_description = "hints of questionable choices--a bouqet of murkwater and pure ethanol"
+	taste_description = "hints of questionable choices--a bouquet of murkwater and pure ethanol"
 	color = "#4b1e00"
 
 /datum/reagent/consumable/ethanol/murkwine/on_mob_life(mob/living/carbon/M)
@@ -602,11 +610,49 @@ All effects don't start immediately, but rather get worse over time; the rate is
 	taste_description = "a green numbness, then a burning vigor in the heart" // heartburn (healing)
 	color = "#86cca3"
 	quality = DRINK_VERYGOOD // good stuff!
+	age_path = /datum/reagent/consumable/ethanol/luxwine/aged
 
 /datum/reagent/consumable/ethanol/luxwine/on_mob_life(mob/living/carbon/M) // stolen healthpot code. i am shameless.
+	M.apply_status_effect(/datum/status_effect/buff/lux_drank)
 	if(volume > 0.99) // i have no clue if this works.
 		M.adjustBruteLoss(-1*REM, 0)
 		M.adjustFireLoss(-1*REM, 0)
+	..()
+
+/datum/reagent/consumable/ethanol/luxwine/on_mob_end_metabolize(mob/living/M)
+	M.remove_status_effect(/datum/status_effect/buff/lux_drank)
+
+/datum/reagent/consumable/ethanol/luxwine/aged
+	name = "Aged Luxintenebre"
+	boozepwr = 80
+	taste_description = "a caressing dullness, then a fiery sensation in the heart"
+	color = "#52c984"
+	quality = DRINK_VERYGOOD
+	age_path = /datum/reagent/consumable/ethanol/luxwine/delectable
+
+/datum/reagent/consumable/ethanol/luxwine/aged/on_mob_life(mob/living/carbon/M)
+	if(volume > 0.99)
+		M.adjustOrganLoss(ORGAN_SLOT_HEART, 0.05*REM)
+		M.adjustBruteLoss(-2*REM, 0)
+		M.adjustFireLoss(-2*REM, 0)
+	..()
+
+/datum/reagent/consumable/ethanol/luxwine/delectable
+	name = "Delectable Luxintenebre"
+	boozepwr = 100
+	taste_description = "a comforting warmth, then a searing wound in the heart"
+	color = "#11db65"
+	quality = DRINK_FANTASTIC
+	age_path = null
+
+/datum/reagent/consumable/ethanol/luxwine/delectable/on_mob_life(mob/living/carbon/M)
+	var/list/wCount = M.get_wounds()
+	if(wCount.len > 0)
+		M.heal_wounds(3) //at a motabalism of .5 U a tick this translates to 120WHP healing with 20 U Most wounds are unsewn 15-100. This is powerful on single wounds but rapidly weakens at multi wounds.
+	if(volume > 0.99)
+		M.adjustOrganLoss(ORGAN_SLOT_HEART, 0.25*REM)
+		M.adjustBruteLoss(-5*REM, 0)
+		M.adjustFireLoss(-5*REM, 0)
 	..()
 
 /datum/reagent/consumable/ethanol/whipwine // dont ask
@@ -618,7 +664,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 
 /datum/reagent/consumable/ethanol/komuchisake // if you put this outside the lich dungeon i'll kill you
 	name = "Divine Snake Wine"
-	description = "The True Form of the Whipwine. The Magickal Snake Wine was an exclusively produced medicinal wine from over three centures ago in the Kazengun Shogunate..."
+	description = "The True Form of the Whipwine. The Magickal Snake Wine was an exclusively produced medicinal wine from over three centuries ago in the Kazengun Shogunate..."
 	boozepwr = 60 // ancient lichebrau...
 	taste_description = "bitterness, pain, iron, and ancient mistakes" // what did you expect [2]
 	color = "#553837"
@@ -646,7 +692,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 /datum/reagent/consumable/ethanol/shejiu
 	name = "Shejiu"
 	boozepwr = 50
-	taste_description = "musky and strong alcohol with a hint of gameiness"
+	taste_description = "musky and strong alcohol with a hint of gaminess"
 	color = "#C49A6C"
 	quality = DRINK_VERYGOOD
 

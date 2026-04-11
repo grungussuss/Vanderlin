@@ -1,13 +1,63 @@
+/datum/attribute_holder/sheet/job/pyromaniac
+	raw_attribute_list = list(
+		STAT_ENDURANCE = 3,
+		STAT_CONSTITUTION = 3,
+		STAT_INTELLIGENCE = 3,
+		/datum/attribute/skill/combat/bows = 20,
+		/datum/attribute/skill/combat/crossbows = 20,
+		/datum/attribute/skill/combat/knives = 20,
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/athletics = 40,
+		/datum/attribute/skill/combat/wrestling = 30,
+		/datum/attribute/skill/combat/unarmed = 30,
+		/datum/attribute/skill/misc/climbing = 40,
+		/datum/attribute/skill/misc/reading = 20,
+		/datum/attribute/skill/craft/traps = 40,
+		/datum/attribute/skill/craft/alchemy = 40,
+		/datum/attribute/skill/craft/crafting = 20,
+		/datum/attribute/skill/craft/engineering = 30,
+		/datum/attribute/skill/labor/farming = 10,
+		/datum/attribute/skill/craft/bombs = 40,
+	)
+
 /datum/job/advclass/wretch/pyromaniac
 	title = "Pyromaniac"
 	tutorial = "A notorious arsonist with a penchant for fire, you wield your own personal vendetta against the chaotic forces within Faience. Bring mayhem and destruction with flame and misfortune! Just... try not to hit yourself with your explosives - you aren't fireproof, after all."
 	allowed_sexes = list(MALE, FEMALE)
 	allowed_races = RACES_PLAYER_ALL
 	outfit = /datum/outfit/wretch/pyromaniac
-	category_tags = list(CTAG_WRETCH)
 	total_positions = 2
 
-/datum/outfit/wretch/pyromaniac/pre_equip(mob/living/carbon/human/H)
+	attribute_sheet = /datum/attribute_holder/sheet/job/pyromaniac
+
+	traits = list(
+		TRAIT_MEDIUMARMOR,
+		TRAIT_FORAGER
+	)
+
+/datum/job/advclass/wretch/pyromaniac/on_roundstart(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+
+	var/static/list/selectableweapon = list(
+		"Bow" = /obj/item/gun/ballistic/bow/short,
+		"Crossbow" = /obj/item/gun/ballistic/bow/cross,
+	)
+	var/weaponschoice = spawned.select_equippable(player_client, selectableweapon, message = "Choose Your Weapon of choice", title = "PYROMANIAC")
+	if(!weaponschoice)
+		return
+
+	switch(weaponschoice)
+		if("Bow")
+			var/obj/item/ammo_holder/quiver/arrows/pyro/P = new(get_turf(spawned))
+			spawned.equip_to_appropriate_slot(P)
+			to_chat(spawned, span_info("You are able to make more bow ammunitions with iron, blast powder and some planks."))
+		if("Crossbow")
+			var/obj/item/ammo_holder/quiver/bolts/pyro/P = new(get_turf(spawned))
+			spawned.equip_to_appropriate_slot(P)
+			to_chat(spawned, span_info("You are able to make more crossbow ammunitions with iron, blast powder and some planks."))
+
+/datum/outfit/wretch/pyromaniac
+	name = "Pyromaniac (Wretch)"
 	head = /obj/item/clothing/head/roguehood/colored/red
 	mask = /obj/item/clothing/face/facemask
 	neck = /obj/item/clothing/neck/chaincoif/iron
@@ -29,42 +79,3 @@
 		/obj/item/flint = 1,
 		/obj/item/reagent_containers/glass/bottle/stronghealthpot = 1,
 	)
-	H.adjust_skillrank(/datum/skill/combat/bows, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/crossbows, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/knives, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/swimming, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/athletics, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/climbing, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/traps, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/alchemy, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/engineering, 3, TRUE) //...Apparently to craft pyro ammos?
-	H.adjust_skillrank(/datum/skill/labor/farming, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/bombs, 4, TRUE) //To craft bombs.
-	H.change_stat(STATKEY_END, 3)
-	H.change_stat(STATKEY_CON, 3)
-	H.change_stat(STATKEY_INT, 3)
-	ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_FORAGER, TRAIT_GENERIC)
-
-/datum/outfit/wretch/pyromaniac/post_equip(mob/living/carbon/human/H, visuals_only)
-	. = ..()
-	var/static/list/selectableweapon = list(
-		"Bow" = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/short,
-		"Crossbow" = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow,
-	)
-	var/weaponschoice = H.select_equippable(H, selectableweapon, message = "Choose Your Weapon of choice", title = "PYROMANIAC")
-	if(!weaponschoice)
-		return
-	switch(weaponschoice)
-		if("Bow")
-			var/obj/item/ammo_holder/quiver/arrows/pyro/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
-		if("Crossbow")
-			var/obj/item/ammo_holder/quiver/bolts/pyro/P = new(get_turf(src))
-			H.equip_to_appropriate_slot(P)
-	to_chat(H, span_info("You are able to make more ammunitions for your weapon of choice with iron, blast powder and some planks."))
-	wretch_select_bounty(H)

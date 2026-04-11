@@ -4,8 +4,9 @@
 	desc = "A cuirass of steel. Lightweight and highly durable."
 	icon_state = "cuirass"
 	item_state = "cuirass"
-	anvilrepair = /datum/skill/craft/armorsmithing
-	smeltresult = /obj/item/ingot/steel
+	anvilrepair = /datum/attribute/skill/craft/armor_repair
+	melt_amount = 75
+	melting_material = /datum/material/steel
 	boobed = FALSE
 	sellprice = VALUE_STEEL_ARMOR
 
@@ -14,7 +15,7 @@
 	body_parts_covered = COVERAGE_TORSO
 	prevent_crits = ALL_EXCEPT_BLUNT
 	max_integrity = INTEGRITY_STRONG
-	item_weight = 7 * STEEL_MULTIPLIER
+	item_weight = 7 KILOGRAMS
 
 //................ Grenzelhoft Cuirass ............... //
 /obj/item/clothing/armor/cuirass/grenzelhoft
@@ -26,6 +27,7 @@
 	boobed = TRUE
 
 	armor = ARMOR_PLATE_GOOD
+	item_weight = 13.45 KILOGRAMS
 
 /obj/item/clothing/armor/cuirass/rare
 	abstract_type = /obj/item/clothing/armor/cuirass/rare
@@ -52,12 +54,12 @@
 
 	armor = ARMOR_PLATE_BAD
 	body_parts_covered = COVERAGE_VEST
-	max_integrity = INTEGRITY_STANDARD
-	item_weight = 7 * IRON_MULTIPLIER
+	max_integrity = INTEGRITY_STRONG
+	item_weight = 7 KILOGRAMS
 
 //................ Rusted Breastplate ............... //
 /obj/item/clothing/armor/cuirass/iron/rust
-	name = "rusted curiass"
+	name = "rusted cuirass"
 	desc = "Old but still useful to keep sharp objects from your innards."
 	icon = 'icons/roguetown/clothing/special/rust_armor.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/rust_armor.dmi'
@@ -66,7 +68,7 @@
 	item_state = "rustcuriass"
 	sellprice = VALUE_IRON_ARMOR/2
 
-	max_integrity = INTEGRITY_POOR
+	max_integrity = INTEGRITY_STANDARD
 
 //................ Scourge Breastplate ............... //
 /obj/item/clothing/armor/cuirass/iron/shadowplate
@@ -89,7 +91,7 @@
 	body_parts_covered = CHEST
 	prevent_crits = ONLY_VITAL_ORGANS
 	max_integrity = INTEGRITY_POOR
-	item_weight = 5.5 * COPPER_MULTIPLIER
+	item_weight = 6.4 KILOGRAMS
 
 /obj/item/clothing/armor/cuirass/vampire
 	name = "ancient plate"
@@ -100,4 +102,34 @@
 	armor = ARMOR_PLATE_GOOD
 	body_parts_covered = COVERAGE_TORSO
 	prevent_crits = ALL_CRITICAL_HITS_VAMP
-	item_weight = 5.5 * IRON_MULTIPLIER
+	item_weight = 7 KILOGRAMS
+
+/obj/item/clothing/armor/cuirass/fencer
+	name = "fencer's cuirass"
+	desc = "An expertly smithed form-fitting steel cuirass that is much lighter and agile, but breaks with much more ease. It's thinner, but backed with silk and leather."	// Experimental.
+	armor_class = AC_LIGHT
+	max_integrity = 300
+	melt_amount = 75
+	icon_state = "fencercuirass"
+	item_state = "fencercuirass"
+
+/obj/item/clothing/armor/cuirass/psydon
+	name = "psydonian chestplate"
+	desc = "An expertly smithed form-fitting steel cuirass that is much lighter and agile, but breaks with much more ease. It's thinner, but backed with silk and leather."
+	melt_amount = 75
+	icon_state = "ornatechestplate"
+	item_state = "ornatechestplate"
+
+/obj/item/clothing/armor/cuirass/fluted
+	name = "fluted cuirass"
+	icon_state = "flutedcuirass"
+	desc = "A sturdy steel cuirass with tassets. Supposedly protective, though maybe not against crossbow bolts."
+
+	body_parts_covered = CHEST | VITALS | LEGS
+	max_integrity = 300
+
+/obj/item/clothing/armor/cuirass/ornate
+	name = "psydonian cuirass"
+	icon_state = "ornatecuirass"
+	desc = "An ornate steel cuirass with tassets, favored by both the Oratorium Throni Vacui and the Order of the Silver Psycross. \
+			Made to endure."

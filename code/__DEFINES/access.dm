@@ -10,9 +10,9 @@
 #define ACCESS_FELDSHER "doctor"
 #define ACCESS_MATRON "orphanage"
 #define ACCESS_ELDER "elder"
-#define ACCESS_VETERAN "veteran"
 #define ACCESS_MERC "mercenary"
-#define ACCESS_GAFFER "gaffer"
+#define ACCESS_TOMBWARDEN "tombwarden"
+#define ACCESS_TOMB "tomb"
 #define ACCESS_TOWER "tower"
 #define ACCESS_WAREHOUSE "warehouse"
 #define ACCESS_ARTIFICER "artificer"
@@ -45,6 +45,9 @@
 #define ACCESS_AT_ARMS "at_arms"
 #define ACCESS_GUEST "guest"
 #define ACCESS_PHYSICIAN "physician"
+#define ACCESS_NOBLE3 "nobles3"
+#define ACCESS_NOBLE2 "nobles2"
+#define ACCESS_NOBLE1 "nobles1"
 
 // Shops
 #define ACCESS_SHOP_I "shop1"
@@ -88,3 +91,6 @@
 #define ACCESS_APART_XVIII "apartment18"
 #define ACCESS_APART_XIX "apartment19"
 #define ACCESS_APART_XX "apartment20"
+
+// Other
+#define ACCESS_BOGWITCH "bogwitch"

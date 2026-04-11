@@ -11,8 +11,8 @@
 	time = 1.6 SECONDS
 	surgery_flags = SURGERY_BLOODY
 	surgery_flags_blocked = SURGERY_INCISED
-	skill_min = SKILL_LEVEL_NOVICE
-	skill_median = SKILL_LEVEL_APPRENTICE
+	skill_min = SKILL_RANK_NOVICE
+	skill_median = SKILL_RANK_APPRENTICE
 	preop_sound = 'sound/surgery/scalpel1.ogg'
 	success_sound = 'sound/surgery/scalpel2.ogg'
 
@@ -40,8 +40,8 @@
 	)
 	time = 2.4 SECONDS
 	surgery_flags_blocked = SURGERY_CLAMPED
-	skill_min = SKILL_LEVEL_JOURNEYMAN
-	skill_median = SKILL_LEVEL_JOURNEYMAN
+	skill_min = SKILL_RANK_NOVICE
+	skill_median = SKILL_RANK_JOURNEYMAN
 	preop_sound = 'sound/surgery/hemostat1.ogg'
 
 /datum/surgery_step/clamp/preop(mob/user, mob/living/target, target_zone, obj/item/tool, datum/intent/intent)
@@ -69,8 +69,8 @@
 	)
 	time = 2.4 SECONDS
 	surgery_flags_blocked = SURGERY_RETRACTED
-	skill_min = SKILL_LEVEL_JOURNEYMAN
-	skill_median = SKILL_LEVEL_JOURNEYMAN
+	skill_min = SKILL_RANK_NOVICE
+	skill_median = SKILL_RANK_JOURNEYMAN
 	preop_sound = 'sound/surgery/retractor1.ogg'
 
 /datum/surgery_step/retract/preop(mob/user, mob/living/target, target_zone, obj/item/tool, datum/intent/intent)
@@ -97,8 +97,8 @@
 	)
 	time = 2.4 SECONDS
 	surgery_flags = SURGERY_BLOODY
-	skill_min = SKILL_LEVEL_NOVICE
-	skill_median = SKILL_LEVEL_APPRENTICE
+	skill_min = SKILL_RANK_NOVICE
+	skill_median = SKILL_RANK_APPRENTICE
 
 /datum/surgery_step/cauterize/validate_bodypart(mob/user, mob/living/carbon/target, obj/item/bodypart/bodypart, target_zone)
 	. = ..()
@@ -151,8 +151,8 @@
 	time = 5 SECONDS
 	surgery_flags = SURGERY_INCISED | SURGERY_RETRACTED
 	surgery_flags_blocked = SURGERY_BROKEN
-	skill_min = SKILL_LEVEL_JOURNEYMAN
-	skill_median = SKILL_LEVEL_EXPERT
+	skill_min = SKILL_RANK_NOVICE
+	skill_median = SKILL_RANK_EXPERT
 	preop_sound = 'sound/surgery/scalpel1.ogg'
 	success_sound = 'sound/surgery/organ2.ogg'
 
@@ -180,33 +180,5 @@
 			if(BODY_ZONE_PRECISE_GROIN)
 				fracture_type = /datum/wound/fracture/groin
 		bodypart.add_wound(fracture_type)
-	target.emote("scream")
-	return TRUE
-
-/// Drill bone
-/datum/surgery_step/drill
-	name = "Drill bone"
-	implements = list(
-		TOOL_DRILL = 80,
-		TOOL_SCREWDRIVER = 25,
-	)
-	time = 3 SECONDS
-	surgery_flags = SURGERY_BLOODY | SURGERY_INCISED | SURGERY_RETRACTED
-	surgery_flags_blocked = SURGERY_BROKEN
-	skill_min = SKILL_LEVEL_JOURNEYMAN
-	skill_median = SKILL_LEVEL_EXPERT
-
-/datum/surgery_step/drill/preop(mob/user, mob/living/carbon/target, target_zone, obj/item/tool, datum/surgery/surgery)
-	display_results(user, target, "<span class='notice'>I begin to drill into [target]'s [parse_zone(target_zone)]...</span>",
-		"<span class='notice'>[user] begins to drill into [target]'s [parse_zone(target_zone)].</span>",
-		"<span class='notice'>[user] begins to drill into [target]'s [parse_zone(target_zone)].</span>")
-	return TRUE
-
-/datum/surgery_step/drill/success(mob/user, mob/living/carbon/target, target_zone, obj/item/tool, datum/surgery/surgery)
-	display_results(user, target, "<span class='notice'>I drill into [target]'s [parse_zone(target_zone)].</span>",
-		"<span class='notice'>[user] drills into [target]'s [parse_zone(target_zone)]!</span>",
-		"<span class='notice'>[user] drills into [target]'s [parse_zone(target_zone)]!</span>")
-	var/obj/item/bodypart/bodypart = target.get_bodypart(check_zone(target_zone))
-	bodypart?.add_wound(/datum/wound/puncture/drilling)
 	target.emote("scream")
 	return TRUE

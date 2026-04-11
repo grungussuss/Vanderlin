@@ -1,12 +1,13 @@
 /obj/item/phantom_ear
 	name = "Phantom Ear"
-	desc = "A spectral fascimile of an ear."
+	desc = "A spectral facsimile of an ear."
 	var/chat_icon = 'icons/Phantom_Ear_Icon.dmi'
 	var/chat_icon_state = "sparkly_ear_icon"
 	icon = 'icons/roguetown/misc/phantomear.dmi'
 	icon_state = "ear_ring"
 	invisibility = INVISIBILITY_LEYLINES
 	w_class = WEIGHT_CLASS_TINY
+	item_weight = 5 GRAMS
 	var/hear_radius = 2
 	var/muted = FALSE
 	var/datum/weakref/linked_living
@@ -43,7 +44,7 @@
 /obj/item/phantom_ear/proc/timed_delete()
 	if(QDELETED(src))
 		return
-	src.visible_message(span_warning("The [src] escapes this worlds grasp!"))
+	src.visible_message(span_warning("The [src] escapes this world's grasp!"))
 	if(linked_living)
 		to_chat(linked_living.resolve(), span_warning("I feel a tension release, my phantom ear has safely escaped!"))
 	qdel(src)
@@ -53,7 +54,7 @@
 	user.visible_message(span_warning("[user] thrusts [user.p_their()] hand into the air and clenches tightly, as a pale ear materializes in its grasp!"))
 	playsound(src, 'sound/vo/mobs/rat/rat_life.ogg', 100, FALSE, -1)
 	name = "Phantom Ear"
-	desc = "A spectral fascimile of an ear that squirms in your hand."
+	desc = "A spectral facsimile of an ear that squirms in your hand."
 	icon_state = "round_round_ear"
 	hear_radius = 0
 	invisibility = NONE
@@ -61,7 +62,7 @@
 		to_chat(linked_living.resolve(), span_warning("I feel a strange tightness in the side of my head."))
 	addtimer(CALLBACK(src, PROC_REF(timed_delete)), 2 MINUTES)
 
-/obj/item/phantom_ear/attack_self(mob/user, params)
+/obj/item/phantom_ear/attack_self(mob/user, list/modifiers)
 	if(user != linked_living?.resolve())
 		user.visible_message(span_boldwarning("[user] crushed the [src] in [user.p_their()] hand!"))
 		playsound(src, 'sound/vo/mobs/rat/rat_death.ogg', 100, FALSE, -1)
@@ -107,7 +108,7 @@
 	if(!isliving(speaker))
 		return
 	var/mob/living/living_speaker = speaker
-	var/perception = living_speaker.STAPER
+	var/perception = GET_MOB_ATTRIBUTE_VALUE(living_speaker, STAT_PERCEPTION)
 	if(invisibility && !living_speaker.is_blind() && living_speaker != owner && perception > 13)
 		if(!prob(20 + ((perception - 14) * 5)))
 			return

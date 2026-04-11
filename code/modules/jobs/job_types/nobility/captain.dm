@@ -1,5 +1,43 @@
+/datum/attribute_holder/sheet/job/captain
+	raw_attribute_list = list(
+		STAT_STRENGTH = 2,
+		STAT_PERCEPTION = 2,
+		STAT_INTELLIGENCE = 1,
+		STAT_CONSTITUTION = 1,
+		STAT_ENDURANCE = 2,
+		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/wrestling = 40,
+		/datum/attribute/skill/combat/axesmaces = 40,
+		/datum/attribute/skill/combat/shields = 20,
+		/datum/attribute/skill/combat/unarmed = 30,
+		/datum/attribute/skill/combat/knives = 30,
+		/datum/attribute/skill/combat/polearms = 30,
+		/datum/attribute/skill/combat/whipsflails = 20,
+		/datum/attribute/skill/combat/crossbows = 30,
+		/datum/attribute/skill/combat/bows = 20,
+		/datum/attribute/skill/misc/athletics = 40,
+		/datum/attribute/skill/misc/swimming = 30,
+		/datum/attribute/skill/misc/climbing = 30,
+		/datum/attribute/skill/misc/riding = 30,
+		/datum/attribute/skill/misc/reading = 20,
+		/datum/attribute/skill/labor/mathematics = 30,
+	)
+
+/datum/attribute_holder/sheet/job/captain/law
+	raw_attribute_list = list()
+	clamped_adjustment = list(
+		/datum/attribute/skill/combat/swords = list(20, 50),
+		/datum/attribute/skill/combat/shields = list(20, 40),
+	)
+
+/datum/attribute_holder/sheet/job/captain/justice
+	raw_attribute_list = list()
+	clamped_adjustment = list(
+		/datum/attribute/skill/combat/polearms = list(20, 50),
+	)
+
 /datum/job/captain
-	title = "Captain"
+	title = JOB_GUARD_CAPTAIN
 	tutorial = "Law and Order, your divine reason for existence. \
 	You have been given command over the town and keep garrison to help ensure order and peace within the city, \
 	and defend it against the many dangers of the peninsula."
@@ -9,32 +47,67 @@
 	faction = FACTION_TOWN
 	total_positions = 1
 	spawn_positions = 1
-	min_pq = 15
 	bypass_lastclass = TRUE
+	honorary = JOB_GUARD_CAPTAIN
 
 	allowed_races = RACES_PLAYER_NONDISCRIMINATED
+	blacklisted_species = list(SPEC_ID_HALFLING)
 
 	outfit = /datum/outfit/captain
-	spells = list(/datum/action/cooldown/spell/undirected/list_target/convert_role/guard)
+	spells = list(
+		/datum/action/cooldown/spell/undirected/list_target/convert_role/guard,
+		/datum/action/cooldown/spell/undirected/list_target/convert_role/serjeant
+		)
 	give_bank_account = 120
 	cmode_music = 'sound/music/cmode/antag/CombatSausageMaker.ogg'
 	noble_income = 11
 
+	exp_type = list(EXP_TYPE_GARRISON)
+	exp_types_granted = list(EXP_TYPE_GARRISON, EXP_TYPE_NOBLE, EXP_TYPE_LEADERSHIP)
+	exp_requirements = list(
+		EXP_TYPE_GARRISON = 1500
+	)
+
 	job_bitflag = BITFLAG_ROYALTY | BITFLAG_GARRISON
 
-/datum/job/captain/after_spawn(mob/living/spawned, client/player_client)
-	..()
-	var/mob/living/carbon/human/H = spawned
-	var/prev_real_name = H.real_name
-	var/prev_name = H.name
-	var/honorary = "Sir"
-	if(H.gender == FEMALE)
-		honorary = "Dame"
-	H.real_name = "[honorary] [prev_real_name]"
-	H.name = "[honorary] [prev_name]"
+	attribute_sheet = /datum/attribute_holder/sheet/job/captain
 
-/datum/outfit/captain/pre_equip(mob/living/carbon/human/H)
-	..()
+	traits = list(
+		TRAIT_NOBLE_BLOOD,
+		TRAIT_NOBLE_POWER,
+		TRAIT_HEAVYARMOR,
+	)
+	mind_traits = list(TRAIT_KNOWBANDITS)
+	verbs = list(
+		/mob/proc/haltyell
+	)
+
+
+/datum/job/captain/after_spawn(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+
+	if(spawned.dna?.species?.id == SPEC_ID_HUMEN)
+		spawned.dna.species.soundpack_m = new /datum/voicepack/male/knight()
+
+/datum/job/captain/on_roundstart(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+
+	var/static/list/selectableweapon = list(
+		"Law and Order" = list(/obj/item/weapon/sword/sabre/captain, /obj/item/weapon/shield/tower/buckleriron/captain),
+		"Deliverer of Justice" = /obj/item/weapon/polearm/halberd/bardiche/captain,
+	)
+
+	var/choice = spawned.select_equippable(player_client, selectableweapon, message = "Choose thy blade", title = JOB_GUARD_CAPTAIN)
+	if(!choice)
+		return
+	switch(choice)
+		if("Law and Order")
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/captain/law)
+		if("Deliverer of Justice")
+			spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/captain/justice)
+
+/datum/outfit/captain
+	name = JOB_GUARD_CAPTAIN
 	head = /obj/item/clothing/head/helmet/visored/captain
 	gloves = /obj/item/clothing/gloves/plate
 	pants = /obj/item/clothing/pants/platelegs/captain
@@ -43,44 +116,10 @@
 	shirt = /obj/item/clothing/shirt/undershirt/colored/guard
 	shoes = /obj/item/clothing/shoes/boots
 	backl = /obj/item/storage/backpack/satchel
-	backr = /obj/item/weapon/shield/tower/metal
 	belt = /obj/item/storage/belt/leather/plaquesilver
-	beltl = /obj/item/weapon/sword/sabre/dec
 	beltr = /obj/item/weapon/mace/cudgel
 	cloak = /obj/item/clothing/cloak/captain
-	scabbards = list(/obj/item/weapon/scabbard/sword/noble)
-	backpack_contents = list(/obj/item/storage/keyring/captain = 1, /obj/item/signal_horn = 1)
-	H.adjust_skillrank(/datum/skill/combat/swords, 5, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/axesmaces, 4, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/shields, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/knives, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/polearms, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/whipsflails, 2, TRUE)
-
-	H.adjust_skillrank(/datum/skill/combat/crossbows, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/bows, 2, TRUE)
-
-	H.adjust_skillrank(/datum/skill/misc/athletics, 4, TRUE)
-
-	H.adjust_skillrank(/datum/skill/misc/swimming, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/riding, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/reading, 2, TRUE)
-
-	H.adjust_skillrank(/datum/skill/labor/mathematics, 3, TRUE)
-
-	H.change_stat(STATKEY_STR, 2)
-	H.change_stat(STATKEY_PER, 2)
-	H.change_stat(STATKEY_INT, 1)
-	H.change_stat(STATKEY_CON, 1)
-	H.change_stat(STATKEY_END, 2)
-
-	ADD_TRAIT(H, TRAIT_NOBLE, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
-	ADD_TRAIT(H, TRAIT_KNOWBANDITS, TRAIT_GENERIC)
-	H.verbs |= /mob/proc/haltyell
-
-	if(H.dna?.species?.id == SPEC_ID_HUMEN)
-		H.dna.species.soundpack_m = new /datum/voicepack/male/knight()
+	backpack_contents = list(
+		/obj/item/storage/keyring/captain = 1,
+		/obj/item/signal_horn = 1
+	)

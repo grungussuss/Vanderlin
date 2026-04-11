@@ -6,7 +6,12 @@
 	max_occurrences = 1
 	min_players = 0
 	req_omen = TRUE
-	todreq = list("dusk", "night")
+	todreq = list(DUSK, NIGHT)
+
+	tags = list(
+		TAG_HAUNTED,
+		TAG_CURSE,
+	)
 
 /datum/round_event/lightsout
 	announceWhen	= 1

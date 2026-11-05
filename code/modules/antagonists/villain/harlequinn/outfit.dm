@@ -16,7 +16,7 @@
 		/datum/attribute/skill/combat/swords = 30,
 		/datum/attribute/skill/combat/polearms = 30,
 		/datum/attribute/skill/combat/knives = 30,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/athletics = 10,
 		/datum/attribute/skill/misc/lockpicking = 10,
 	)
@@ -31,17 +31,17 @@
 	pants = /obj/item/clothing/pants/trou/leather
 	armor = /obj/item/clothing/armor/leather/jacket
 	beltl = /obj/item/weapon/knife/dagger/steel
+	beltr = /obj/item/flashlight/flare/torch/lantern
 	backr = /obj/item/storage/backpack/satchel
 	backl = /obj/item/storage/belt/pouch/coins/poor
 	cloak = /obj/item/clothing/cloak/half/shadowcloak
 	head = /obj/item/clothing/head/roguehood/colored/black
 
 	H.add_spell(/datum/action/cooldown/spell/undirected/shadow_step, TRUE)
-	H.add_spell(/datum/action/cooldown/spell/enhanced_mimicry, TRUE)
 	H.attributes?.add_sheet(/datum/attribute_holder/sheet/job/harlequin)
 
 	backpack_contents = list(
-		/obj/item/harlequinn_disguise_kit,
+		/obj/item/harlequin_disguise_kit,
 		/obj/item/reagent_containers/glass/bottle/poison,
 		/obj/item/lockpick,
 		/obj/item/rope,

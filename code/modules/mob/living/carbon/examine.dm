@@ -33,7 +33,7 @@
 
 	//The wrap-up. Anything else we need to do before we start spanning things, we do it here.
 	//Note that this also sends a copy of our subjective pronouns.
-	SEND_SIGNAL(src, COMSIG_PARENT_EXAMINE, user, examine_sections, P)
+	SEND_SIGNAL(src, COMSIG_ATOM_EXAMINE, user, examine_sections, P)
 
 
 	// round any decimal sections up to the rest of the group
@@ -76,15 +76,26 @@
 	LAZYADDASSOCLIST(., EXAMINE_SECT_NAME, span_larger("[get_examine_string(user, TRUE)]."))
 	// Our face
 	var/can_see_face = IsAdminGhost(user) || is_human_part_visible(src, HIDEFACE)
-	LAZYADDASSOC(., EXAMINE_SECT_FACE+0.5, can_see_face ? get_examine_face(user, P, .) : get_examine_noface(user, P, .))
+	LAZYADDASSOC(., EXAMINE_SECT_FACE, can_see_face ? get_examine_face(user, P, .) : get_examine_noface(user, P, .))
 	// Our gear
-	LAZYADDASSOC(., EXAMINE_SECT_GEAR+0.5, get_examine_gear(user, P, .))
+	LAZYADDASSOC(., EXAMINE_SECT_GEAR, get_examine_gear(user, P, .))
 	/// Our physical aspects
-	LAZYADDASSOC(., EXAMINE_SECT_BODY+0.5, get_examine_body(user, P, .))
+	LAZYADDASSOC(., EXAMINE_SECT_BODY, get_examine_body(user, P, .))
 	/// Warnings
-	LAZYADDASSOC(., EXAMINE_SECT_WARNING+0.5, get_examine_warnings(user, P, .))
+	LAZYADDASSOC(., EXAMINE_SECT_WARNING, get_examine_warnings(user, P, .))
 	/// Our health
-	LAZYADDASSOC(., EXAMINE_SECT_HEALTH+0.5, get_examine_health(user, P, .))
+	LAZYADDASSOC(., EXAMINE_SECT_HEALTH, get_examine_health(user, P, .))
+
+	if(ishuman(user) && iscarbon(src) && CAN_HAVE_BLOOD(src))
+		var/mob/living/carbon/human/human_user = user
+		if(HAS_TRAIT(human_user, TRAIT_BLOOD_SENSE))
+			var/cached_blood_volume = get_blood_volume()
+			var/vitae = 0
+			var/datum/blood_type/BT = get_blood_type()
+			if(istype(BT) && BT.vitae)
+				vitae = round(cached_blood_volume * BT.vitae)
+			LAZYADDASSOCLIST(., EXAMINE_SECT_PREGEAR, span_bloody("Blood Volume: [round(cached_blood_volume)] ([vitae] VT)"))
+			LAZYADDASSOCLIST(., EXAMINE_SECT_PREGEAR, span_bloody("Vitae Reserves: [round(bloodpool)]/[maxbloodpool] VTR"))
 
 	// Antag stuff. This throws itself wherever it feels like.
 	for(var/datum/antagonist/antag_datum in user.mind?.antag_datums)
@@ -104,6 +115,9 @@
 
 	// Species, just below the name
 	var/datum/species/species = dna?.species
+	var/datum/component/disguise/spy = GetComponent(/datum/component/disguise)
+	if(spy)
+		species = spy.examine_species
 	if(species)
 		var/species_name = "\improper [user.mind?.has_antag_datum(/datum/antagonist/maniac) ? "disgusting pig" : species.name]"
 		LAZYADDASSOCLIST(examine_list, EXAMINE_SECT_SPECIES, "[P[THEYRE]] \a [species_name].")
@@ -146,7 +160,7 @@
 			. += span_nicegreen("Ahh... my old friend!")
 			user.add_stress(/datum/stress_event/saw_old_party)
 		// Intolerant
-		else if(!HAS_TRAIT(user, TRAIT_TOLERANT)) // friendship is kinda like tolerance after all
+		else if(user.has_quirk(/datum/quirk/vice/paranoid))
 			if(!isdarkelf(user) && isdarkelf(src))
 				user.add_stress(/datum/stress_event/delf)
 			if(!istiefling(user) && istiefling(src))
@@ -165,12 +179,10 @@
 			. += span_boldred(mind?.special_role == ROLE_BANDIT ? "BANDIT!" : "OUTLAW!")
 
 		// Court Agents
-		var/list/known_frumentarii = user.mind?.cached_frumentarii
-		if(name in known_frumentarii)
-			if(known_frumentarii[name])
-				. += span_smallgreen("[P[THEYRE]] an agent of the court.")
-			else
-				. += span_redtextsmall("[P[THEYRE]] an ex-agent of the court.")
+		if(HAS_MIND_TRAIT(user, TRAIT_KNOWCOURTAGENTS) && (real_name in GLOB.court_agents))
+			. += span_smallgreen ("An Agent of the Court.")
+		else if(HAS_MIND_TRAIT(user, TRAIT_KNOWCOURTAGENTS) && (real_name in GLOB.ex_court_agents))
+			. += span_redtextsmall ("An Ex-Agent of the Court.")
 
 		// Faceless
 		if(HAS_TRAIT(src, TRAIT_FACELESS))
@@ -178,20 +190,21 @@
 		// Foreigner
 		if(HAS_TRAIT(src, TRAIT_FOREIGNER) && !HAS_TRAIT(user, TRAIT_FOREIGNER))
 			. += span_tinywarning("A foreigner.")
-			user.add_stress(/datum/stress_event/para/foreigner)
+			if(user.has_quirk(/datum/quirk/vice/paranoid))
+				user.add_stress(/datum/stress_event/para/foreigner)
+			else
+				user.add_stress(/datum/stress_event/foreigner)
 		// Thuild
 		if(HAS_TRAIT(src, TRAIT_THIEVESGUILD) && HAS_TRAIT(user, TRAIT_THIEVESGUILD))
 			. += span_smallgreen("A member of the Thieves' Guild.")
 		// Cabal
 		if(HAS_TRAIT(user, TRAIT_CABAL) && (istype(patron, /datum/patron/inhumen/zizo) || HAS_TRAIT(src, TRAIT_CABAL)))
 			. += span_purple("A fellow seeker of Her ascension.")
-		// Centrist
-		if(HAS_TRAIT(user, TRAIT_DIVINE_SERVANT) && (HAS_TRAIT(src, TRAIT_DIVINE_CENTRIST) && !HAS_TRAIT(src, TRAIT_DIVINE_SERVANT)))
-			. += SPAN_GOD_ASTRATA("An 'Enlightened Centrist'. Shame!")
 
 		// The disgusing inquistion section
-		if(HAS_MIND_TRAIT(user, TRAIT_INQUISITION) && (real_name in GLOB.inquis_suspect_players))
-			. += span_userdanger("SUSPECTED OF HERESY...")
+		if(HAS_TRAIT(user, TRAIT_INQUISITION))
+			if(real_name in GLOB.inquis_suspect_players)
+				. += span_userdanger("SUSPECTED OF HERESY...")
 
 		var/they_pur = HAS_TRAIT(user, TRAIT_PURITAN)
 		var/they_inquis = HAS_TRAIT(user, TRAIT_INQUISITION)
@@ -221,7 +234,7 @@
 				disgust_msg = span_necrosis("[P[THEY]] look[pl] really disgusted.")
 			if(DISGUST_LEVEL_DISGUSTED to INFINITY)
 				disgust_msg = span_necrosis(html_tag("B", "[P[THEY]] look[pl] extremely disgusted."))
-		if(disgust_msg && HAS_TRAIT(user, TRAIT_EMPATH) || disgust >= DISGUST_LEVEL_DISGUSTED)
+		if(disgust_msg && (HAS_TRAIT(user, TRAIT_EMPATH) || HAS_TRAIT(user, TRAIT_DEVIL_MARKED_LEVIATHAN)) || disgust >= DISGUST_LEVEL_DISGUSTED)
 			. += disgust_msg
 
 		// Stress
@@ -237,7 +250,7 @@
 				stress_msg = span_tinywarning("[P[THEY]] look[pl] stressed.")
 			if(STRESS_NEUTRAL to STRESS_BAD)
 				stress_msg = span_tinynotice("[P[THEY]] look[pl] a little stressed.")
-		if(stress_msg && HAS_TRAIT(user, TRAIT_EMPATH) || stress >= STRESS_INSANE)
+		if(stress_msg && (HAS_TRAIT(user, TRAIT_EMPATH) || HAS_TRAIT(user, TRAIT_DEVIL_MARKED_LEVIATHAN)) || stress >= STRESS_INSANE)
 			. += stress_msg
 
 		//Drunkenness
@@ -271,6 +284,8 @@
 	. = list()
 	var/list/unobscured = get_unobscured_items(FALSE)
 	for(var/obj/item/I as anything in unobscured)
+		if(istype(I, /obj/item/clothing/armor/regenerating/skin)) //disciple skin and similiar no longer show up on examining
+			continue
 		var/slot_title = null
 		switch(unobscured[I]) // this could probably be abstracted into its own proc at some point
 			if(ITEM_SLOT_SHIRT, ITEM_SLOT_ARMOR, ITEM_SLOT_PANTS, ITEM_SLOT_CLOAK, ITEM_SLOT_SHOES)
@@ -299,13 +314,22 @@
 				slot_title = " on [P[THEIR]] left side"
 			if(ITEM_SLOT_BELT_R)
 				slot_title = " on [P[THEIR]] right side"
-		. += "[I.get_examine_icon(user)] - [P[THEYVE]] [I.get_examine_string(user)][slot_title]."
+		. += "[I.get_examine_icon(user)] - [P[THEYVE]] [get_item_examine_label(I, user, I.get_examine_string(user, FALSE, TRUE))][slot_title]."
 	for(var/obj/item/I in held_items)
 		if(I.item_flags & ABSTRACT)
 			continue
 		var/wielding = I.is_wielded()
-		. += "[I.get_examine_icon(user)] - [P[THEYRE]] [wielding ? "wielding" : "holding"] [I.get_examine_string(user)] in [P[THEIR]] [wielding ? "hands" : get_held_index_name(get_held_index_of_item(I))]."
+		. += "[I.get_examine_icon(user)] - [P[THEYRE]] [wielding ? "wielding" : "holding"] [get_item_examine_label(I, user, I.get_examine_string(user, FALSE, TRUE))] in [P[THEIR]] [wielding ? "hands" : get_held_index_name(get_held_index_of_item(I))]."
 
+/mob/living/proc/get_item_examine_label(obj/item/I, mob/living/user, item_examine_string)
+	if(isnull(item_examine_string))
+		item_examine_string = I.get_examine_string(user)
+	var/list/examine_highlight_status = I.get_examine_highlight_status(user)
+	if(length(examine_highlight_status))
+		var/datum/examine_highlight/highlight_type = examine_highlight_status[1]
+		var/heresy_examine_tooltip = I.get_examine_highlight_description(examine_highlight_status) + "<br>" + highlight_type.explanation
+		item_examine_string = span_tooltip_dangerous_html(heresy_examine_tooltip, I.get_examine_highlight_labeled_string(highlight_type, item_examine_string))
+	return item_examine_string
 
 /// Things that are physical but do not need to see your face to establish.
 /// Since these tend to vary in location items must be added to the list manually.
@@ -360,10 +384,12 @@
 		switch(final_str - GET_MOB_ATTRIBUTE_VALUE(L, STAT_STRENGTH))
 			if(5 to INFINITY)
 				str_msg = span_bold("[P[THEY]] look[pl] much stronger than me.")
-				user.add_stress(/datum/stress_event/para/str)
+				if(user.has_quirk(/datum/quirk/vice/paranoid))
+					user.add_stress(/datum/stress_event/para/str)
 			if(1 to 5)
 				str_msg = "[P[THEY]] look[pl] stronger than me."
-				user.add_stress(/datum/stress_event/para/str)
+				if(user.has_quirk(/datum/quirk/vice/paranoid))
+					user.add_stress(/datum/stress_event/para/str)
 			if(0)
 				str_msg = "[P[THEY]] look[pl] about as strong as me."
 			if(-5 to -1)
@@ -434,9 +460,9 @@
 	var/fire_str
 	if(on_fire)
 		fire_str = span_boldwarning("on fire!")
-		if(L?.has_quirk(/datum/quirk/vice/pyromaniac)) // living only
+		if(L?.has_quirk(/datum/quirk/vice/addiction/pyromaniac)) // living only
 			fire_str += span_boldred(" IT'S BEAUTIFUL!")
-			L.sate_addiction(/datum/quirk/vice/pyromaniac)
+			L.sate_addiction(/datum/quirk/vice/addiction/pyromaniac)
 	else if(fire_stacks + divine_fire_stacks > 0)
 		fire_str += "covered in something flammable."
 	else if(fire_stacks < 0 && !on_fire)
@@ -504,22 +530,26 @@
 	// Health statuses
 	if(stat == DEAD || (HAS_TRAIT(src, TRAIT_FAKEDEATH)))
 		appears_dead = TRUE
-		if(suiciding)
+		if(HAS_TRAIT(src, TRAIT_SUICIDED))
 			. += span_red("[P[THEY]] appear[pl] to have committed suicide... there is no hope of recovery.")
 		if(hellbound)
 			. += span_red("[P[THEIR]] soul seems to have been ripped out of [P[THEIR]] body. Revival is impossible.")
 
 	if(!getorganslot(ORGAN_SLOT_BRAIN) || (stat == DEAD && (IsAdminGhost(user) || self_inspect)))
 		. += span_boldred("[P[THEYRE]] dead.")
-	else if(appears_dead || stat >= UNCONSCIOUS)
+	else if(appears_dead || HAS_TRAIT(src, TRAIT_CRITICAL_CONDITION))
 		. += span_boldwarning("[P[THEYRE]] unconscious.")
-	else if(InCritical())
-		. += span_warning("[P[THEYRE]] barely unconscious.")
+	else
+		switch(stat)
+			if(UNCONSCIOUS)
+				. += span_boldwarning("[P[THEYRE]] unconscious.")
+			if(SOFT_CRIT)
+				. += span_notice("[P[THEYRE]] barely conscious.")
 
 	// Blood volume
-	if(!SEND_SIGNAL(src, COMSIG_DISGUISE_STATUS))
+	if(!SEND_SIGNAL(src, COMSIG_DISGUISE_STATUS) && CAN_HAVE_BLOOD(src))
 		var/blood_lvl_msg
-		switch(blood_volume)
+		switch(get_blood_volume())
 			if(-INFINITY to BLOOD_VOLUME_SURVIVE)
 				blood_lvl_msg = html_tag("B", "[P[THEYRE]] extremely pale and sickly.")
 			if(BLOOD_VOLUME_SURVIVE to BLOOD_VOLUME_BAD)
@@ -533,6 +563,8 @@
 
 	// Bleeding
 	var/bleed_rate = get_bleed_rate()
+	for(var/obj/item/organ/artery/artery as anything in getorganslotlist(ORGAN_SLOT_ARTERY))
+		bleed_rate += artery.blood_flow * (artery.damage/artery.maxHealth)
 	if(bleed_rate)
 		var/bleed_wording = "bleeding"
 		switch(bleed_rate)
@@ -574,7 +606,7 @@
 			. += span_tinywarning("[P[THEY]] look[pl] [nutrition_msg].")
 		var/hydration_msg
 		switch(hydration)
-			if(HYDRATION_LEVEL_THIRSTY to HYDRATION_LEVEL_SMALLTHIRST)
+			if(HYDRATION_LEVEL_THIRSTY to HYDRATION_LEVEL_HYDRATED)
 				hydration_msg = "like [P[THEIR]] mouth is dry"
 			if(HYDRATION_LEVEL_DEHYDRATED to HYDRATION_LEVEL_THIRSTY)
 				hydration_msg = "thirsty"

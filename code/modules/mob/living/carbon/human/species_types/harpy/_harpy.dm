@@ -5,7 +5,8 @@
 
 /datum/attribute_holder/sheet/job/species/harpy
 	raw_attribute_list = list(
-		/datum/attribute/skill/misc/music = 10
+		/datum/attribute/skill/misc/music = 10,
+		/datum/attribute/skill/misc/climbing = 5 
 	)
 
 /datum/attribute_holder/sheet/job/species/harpy/stats
@@ -98,6 +99,7 @@
 
 	organs = list(
 		ORGAN_SLOT_BRAIN = /obj/item/organ/brain,
+		ORGAN_SLOT_SPLEEN = /obj/item/organ/spleen,
 		ORGAN_SLOT_HEART = /obj/item/organ/heart,
 		ORGAN_SLOT_LUNGS = /obj/item/organ/lungs,
 		ORGAN_SLOT_EYES = /obj/item/organ/eyes,

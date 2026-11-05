@@ -14,7 +14,7 @@
 	ventcrawler = VENTCRAWLER_ALWAYS
 	emote_see = list("pecks at the ground.","flaps its wings viciously.")
 	speak_chance = 2
-	faction = list("chickens")
+	faction = list(FACTION_NEUTRAL)
 
 	botched_butcher_results = list(/obj/item/reagent_containers/food/snacks/meat/poultry/cutlet = 1)
 	butcher_results = list(/obj/item/reagent_containers/food/snacks/fat = 1,
@@ -60,8 +60,10 @@
 	base_constitution = 1
 	base_strength = 1
 	base_speed = 5
-	tame = TRUE
+	start_tamed = TRUE
 	indexed = TRUE
+
+	living_flags = MOVES_ON_ITS_OWN|CAN_BE_FIREMANNED
 
 	var/production = 0
 
@@ -200,7 +202,7 @@
 	icon_state = "nest"
 	density = FALSE
 	anchored = TRUE
-	can_buckle = 1
+	can_buckle = TRUE
 	layer = 2.8
 	max_integrity = 40
 //  removed to prevent infinite fiber farming

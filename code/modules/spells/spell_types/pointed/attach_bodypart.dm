@@ -6,8 +6,9 @@
 	charge_sound = 'sound/magic/holycharging.ogg'
 
 	cast_range = 2
-	spell_type = SPELL_MIRACLE
+	spell_type = SPELL_DIVINE_MIRACLE
 	antimagic_flags = MAGIC_RESISTANCE_HOLY
+	spell_flags = SPELL_DEVIL_BLOCKED
 	associated_skill = /datum/attribute/skill/magic/holy
 	required_items = list(/obj/item/clothing/neck/psycross/silver)
 
@@ -29,6 +30,11 @@
 		limb.heal_damage(limb.brute_dam, limb.burn_dam)//heals the limb by the amount of burn and brute damage it has
 		for(var/datum/wound/limb_wounds as anything in limb.wounds)
 			qdel(limb_wounds)
+		for(var/datum/injury/limb_wounds as anything in limb.injuries)
+			if(!limb_wounds.can_heal())
+				continue
+			qdel(limb_wounds)
+		limb.update_damages()
 		cast_on.visible_message(
 			span_info("\The [limb] attaches itself to [cast_on]!"),
 			span_notice("\The [limb] attaches itself to me!")
@@ -83,16 +89,8 @@
 	cast_on.update_body()
 
 /datum/action/cooldown/spell/attach_bodypart/proc/get_organs(mob/living/carbon/target, mob/living/user)
-	var/list/missing_organs = list(
-		ORGAN_SLOT_EARS,
-		ORGAN_SLOT_EYES,
-		ORGAN_SLOT_TONGUE,
-		ORGAN_SLOT_HEART,
-		ORGAN_SLOT_LUNGS,
-		ORGAN_SLOT_LIVER,
-		ORGAN_SLOT_STOMACH,
-		ORGAN_SLOT_APPENDIX,
-	)
+	var/list/missing_organs = GLOB.organ_process_order
+
 	for(var/missing_organ_slot in missing_organs)
 		if(!target.getorganslot(missing_organ_slot))
 			continue
@@ -155,3 +153,23 @@
 		limbs += dismembered
 	return limbs
 
+/datum/action/cooldown/spell/attach_bodypart/blood_magic
+	name = "Bloodstitch"
+	button_icon_state = "giants_strength"
+	sound = 'sound/gore/organ2.ogg'
+	charge_sound = 'sound/magic/chargingold.ogg'
+
+	associated_skill = /datum/attribute/skill/magic/blood
+	spell_type = SPELL_BLOOD
+	required_form = FORM_BLOOD
+	required_technique = TECHNIQUE_RESTORATION
+	spell_flags = NONE
+	heretical_spell = TRUE
+	required_level = 3
+	required_items = list()
+
+	charge_required = TRUE
+	charge_time = 2 SECONDS
+	cooldown_time = 30 SECONDS
+	spell_cost = 125
+	initial_charges = 5

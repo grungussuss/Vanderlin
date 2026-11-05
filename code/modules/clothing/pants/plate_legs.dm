@@ -16,19 +16,21 @@
 	pickup_sound = "rustle"
 	break_sound = 'sound/foley/breaksound.ogg'
 	anvilrepair = /datum/attribute/skill/craft/armor_repair
-	melt_amount = 75
 	melting_material = /datum/material/steel
+	melt_amount = 100
+	smeltresult = null
 	r_sleeve_status = SLEEVE_NOMOD
 	l_sleeve_status = SLEEVE_NOMOD
 	clothing_flags = CANT_SLEEP_IN
 
 	armor_class = AC_HEAVY
-	armor = ARMOR_PLATE
-	max_integrity = INTEGRITY_STRONGEST
+	armor_type = /datum/armor/pants/plate
+	max_integrity = INTEGRITY_OLD_STRONGEST
 	prevent_crits = ALL_EXCEPT_BLUNT
 	item_weight = 3.95 KILOGRAMS
 
 	material_category = ARMOR_MAT_PLATE
+	pickpocket_difficulty = SKILL_RANK_EXPERT
 
 /obj/item/clothing/pants/platelegs/Initialize()
 	. = ..()
@@ -39,10 +41,10 @@
 	desc = "Cuisses made of plated iron, offering additional protection against blunt force."
 	icon_state = "iplate_legs"
 	item_state = "iplate_legs"
-	smeltresult = /obj/item/ingot/iron
+	melting_material = /datum/material/iron
 
-	armor = ARMOR_PLATE_BAD
-	max_integrity = INTEGRITY_STRONG
+	armor_type = /datum/armor/pants/plate/bad
+	max_integrity = INTEGRITY_OLD_STRONG
 	item_weight = 3.95 KILOGRAMS
 
 /obj/item/clothing/pants/platelegs/captain
@@ -63,8 +65,8 @@
 	item_state = "rustpants"
 	smeltresult = /obj/item/ingot/iron
 	sellprice = VALUE_IRON_ARMOR/2
-	armor = ARMOR_PLATE_BAD
-	max_integrity = INTEGRITY_STANDARD
+	armor_type = /datum/armor/pants/plate/bad
+	max_integrity = INTEGRITY_OLD_STANDARD
 
 /obj/item/clothing/pants/platelegs/blk
 	name = "blacksteel legs"
@@ -74,40 +76,55 @@
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
 	sleeved = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
 	anvilrepair = /datum/attribute/skill/craft/blacksmithing
-	smeltresult = /obj/item/ingot/blacksteel
+	melting_material = /datum/material/blacksteel
 	armor_class = AC_MEDIUM
-	armor = ARMOR_PLATE_GOOD
-	item_weight = 4.95 KILOGRAMS
+	armor_type = /datum/armor/pants/plate/good
+	item_weight = 3 KILOGRAMS
 	sellprice = VALUE_SILVER_ITEM * 2
+	max_integrity = INTEGRITY_OLD_BLACKSTEEL
 
 //............... Evil Pants ............... //
 
-/obj/item/clothing/pants/platelegs/zizo
+/obj/item/clothing/pants/platelegs/inhumen
+	name = "BASE INHUMEN LEGS"
+	abstract_type = /obj/item/clothing/pants/platelegs/inhumen
+	misc_flags = CRAFTING_TEST_EXCLUDE
+	icon = 'icons/roguetown/clothing/special/evilarmor.dmi'
+	icon_state = "zizocloth"
+	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
+	sleeved = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
+	sellprice = 0 // Incredibly evil armor, this should be burnt, nobody wants this
+
+/obj/item/clothing/pants/platelegs/inhumen/zizo
 	name = "darksteel garments"
 	desc = "Leg garments worn by true anointed of the Dame of Progress. In Her name."
 	icon_state = "zizocloth"
-	icon = 'icons/roguetown/clothing/special/evilarmor.dmi'
-	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sleeved = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sellprice = 0 // Incredibly evil Zizoid armor, this should be burnt, nobody wants this
+	melting_material = /datum/material/avantyne
+	melt_amount = 100
+	max_integrity = INTEGRITY_OLD_STRONGEST * INTEGRITY_MOD_DARKSTEEL
 
-/obj/item/clothing/pants/platelegs/matthios
+/obj/item/clothing/pants/platelegs/inhumen/zizo/alt
+	name = "darksteel plate skirt"
+	desc = "Ribbed darksteel plates with a dark cloth skirt attached. Serve in Her name."
+	icon_state = "zizoplatelegs_med"
+
+/obj/item/clothing/pants/platelegs/inhumen/matthios
 	name = "gilded leggings"
 	desc = "Plate leggings. perfect for sprinting away after a theft of mammon, or life."
 	icon_state = "matthioslegs"
-	icon = 'icons/roguetown/clothing/special/evilarmor.dmi'
-	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sleeved = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sellprice = 0 // See above comment
+	examine_highlight_type = /datum/examine_highlight/heresy_alarming/matthios
 
-/obj/item/clothing/pants/platelegs/graggar
+/obj/item/clothing/pants/platelegs/inhumen/graggar
 	name = "vicious leggings"
 	desc = "A sinister pair of plate chausses that have born witness many violent atrocities."
 	icon_state = "graggarplatelegs"
-	icon = 'icons/roguetown/clothing/special/evilarmor.dmi'
-	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sleeved = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sellprice = 0 // See above comment
+	examine_highlight_type = /datum/examine_highlight/heresy_alarming/graggar
+
+/obj/item/clothing/pants/platelegs/inhumen/baotha
+	name = "saccharine garments"
+	desc = "Leg garments worn by those who see the truth of freedom through addiction."
+	icon_state = "baothaskirt"
+	examine_highlight_type = /datum/examine_highlight/heresy_alarming/baotha
 
 //.............. Silver Platelegs .................//
 
@@ -116,9 +133,9 @@
 	desc = "A finely forged pair of silver plate leggings, offering additional protection against blunt force."
 	icon_state = "silverlegs"
 	allowed_ages = ALL_AGES_LIST //placeholder until younglings have onmob sprites for this item
-	armor = ARMOR_PLATE_SILVER
-	smeltresult = /obj/item/ingot/silver
-	item_weight = 5.42 KILOGRAMS
+	armor_type = /datum/armor/pants/plate/silver
+	melting_material = /datum/material/silver
+	item_weight = 3.95 KILOGRAMS
 	sellprice = VALUE_SILVER_ARMOR
 
 /obj/item/clothing/pants/platelegs/silver/Initialize(mapload)

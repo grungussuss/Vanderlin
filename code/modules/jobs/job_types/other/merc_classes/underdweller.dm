@@ -11,7 +11,7 @@
 		/datum/attribute/skill/craft/crafting = 20,
 		/datum/attribute/skill/craft/engineering = 10,
 		/datum/attribute/skill/misc/lockpicking = 20,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/swimming = 10,
 		/datum/attribute/skill/misc/climbing = 40,
 		/datum/attribute/skill/misc/medicine = 10,
@@ -21,14 +21,14 @@
 
 /datum/attribute_holder/sheet/job/underdweller/dwarf
 	raw_attribute_list = list(
-		/datum/attribute/skill/combat/axesmaces = 30,
-		/datum/attribute/skill/combat/shields = 20,
+		/datum/attribute/skill/combat/axesmaces = 36,
+		/datum/attribute/skill/combat/shields = 30,
 		/datum/attribute/skill/craft/bombs = 40,
 	)
 
 /datum/attribute_holder/sheet/job/underdweller/other
 	raw_attribute_list = list(
-		/datum/attribute/skill/combat/swords = 30,
+		/datum/attribute/skill/combat/swords = 36,
 	)
 
 /datum/job/advclass/mercenary/underdweller
@@ -39,6 +39,7 @@
 		SPEC_ID_DROW,\
 		SPEC_ID_HALF_DROW,\
 		SPEC_ID_KOBOLD,\
+		SPEC_ID_DWARF_ORC,\
 	)
 	outfit = /datum/outfit/mercenary/underdweller
 	category_tags = list(CTAG_MERCENARY)
@@ -55,7 +56,7 @@
 	spawned.merctype = 3
 
 	// Species-specific adjustments
-	if(spawned.dna?.species?.id == SPEC_ID_DWARF)
+	if(spawned.dna?.species?.id == SPEC_ID_DWARF || spawned.dna?.species?.id == SPEC_ID_DWARF_ORC)
 		spawned.cmode_music = 'sound/music/cmode/adventurer/CombatOutlander2.ogg'
 		spawned.attributes?.add_sheet(/datum/attribute_holder/sheet/job/underdweller/dwarf)
 	else
@@ -64,10 +65,12 @@
 
 /datum/outfit/mercenary/underdweller
 	name = "Underdweller (Mercenary)"
+	head = /obj/item/clothing/head/helmet/leather
 	pants = /obj/item/clothing/pants/trou/leather
 	armor = /obj/item/clothing/armor/cuirass/iron
 	shoes = /obj/item/clothing/shoes/boots/armor/light
 	belt = /obj/item/storage/belt/leather/mercenary
+	beltl = /obj/item/weapon/sword/sabre
 	beltr = /obj/item/weapon/knife/hunting
 	neck = /obj/item/clothing/neck/chaincoif/iron
 	backl = /obj/item/storage/backpack/backpack
@@ -85,11 +88,7 @@
 	shirt = shirt_type
 
 	// Species-specific equipment (visual equipment)
-	if(equipped_human.dna?.species?.id == SPEC_ID_DWARF)
+	if(equipped_human.dna?.species?.id == SPEC_ID_DWARF || equipped_human.dna?.species?.id == SPEC_ID_DWARF_ORC)
 		head = /obj/item/clothing/head/helmet/leather/minershelm
 		beltl = /obj/item/weapon/pick/paxe // Dorfs get a pick as their primary weapon and axes/maces to use it
 		backr = /obj/item/weapon/shield/wood
-	else
-		// No miner's helm for Delves or kobolds as they have nitevision now.
-		beltl = /obj/item/weapon/sword/sabre // Dark elves get a sabre as their primary weapon and swords skill, who woulda thought
-		head = /obj/item/clothing/head/helmet/leather // similar to the miner helm, except not as cool of course

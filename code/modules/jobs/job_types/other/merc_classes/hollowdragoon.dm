@@ -5,7 +5,7 @@
 		STAT_SPEED = -1,
 		STAT_INTELLIGENCE = -1,
 		/datum/attribute/skill/misc/riding = 40,
-		/datum/attribute/skill/combat/polearms = 30,
+		/datum/attribute/skill/combat/polearms = 33,
 		/datum/attribute/skill/labor/taming = 30,
 		/datum/attribute/skill/combat/bows = 20,
 		/datum/attribute/skill/combat/swords = 20,
@@ -14,7 +14,7 @@
 		/datum/attribute/skill/combat/wrestling = 20,
 		/datum/attribute/skill/craft/crafting = 10,
 		/datum/attribute/skill/misc/climbing = 10,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/athletics = 30
 	)
 
@@ -35,6 +35,7 @@
 
 	traits = list(
 		TRAIT_HEAVYARMOR,
+		TRAIT_MEDIUMARMOR,
 		TRAIT_DEADNOSE
 	)
 

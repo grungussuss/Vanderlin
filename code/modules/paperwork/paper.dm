@@ -154,7 +154,7 @@
 		return
 	if(!user.can_read(src))
 		if(info)
-			user.adjust_experience(/datum/attribute/skill/misc/reading, 2, FALSE)
+			user.adjust_experience(/datum/attribute/skill/educated/reading, 2, FALSE)
 		return
 	if(mailer)
 		return
@@ -207,7 +207,7 @@
 		return
 	var/n_name = stripped_input(usr, "What would you like to label the paper?", "Paper Labelling", null, MAX_NAME_LEN)
 	if((loc == usr && usr.stat == CONSCIOUS))
-		name = "paper[(n_name ? text("- '[n_name]'") : null)]"
+		name = "paper[(n_name ? "- '[n_name]'" : null)]"
 	add_fingerprint(usr)
 
 
@@ -418,7 +418,7 @@
 		return ..()
 
 	if(P.type == /obj/item/paper) //Make a manuscript
-		if(GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/misc/reading) <= 0)
+		if(GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/educated/reading) <= 0)
 			to_chat(user, span_warning("I fumble with [src] and fail to form the manuscript!"))
 			user.changeNext_move(2 SECONDS, user.active_hand_index) //lmao
 			return

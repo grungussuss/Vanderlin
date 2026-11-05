@@ -3,7 +3,7 @@
 	desc = "Steel plate armor with shoulder guards. An incomplete, bulky set of excellent armor."
 	icon_state = "halfplate"
 	anvilrepair = /datum/attribute/skill/craft/armor_repair
-	melt_amount = 75
+	melt_amount = 100
 	melting_material = /datum/material/steel
 	equip_delay_self = 4 SECONDS
 	unequip_delay_self = 4 SECONDS
@@ -13,12 +13,12 @@
 	clothing_flags = CANT_SLEEP_IN
 	//Plate doesn't protect a lot against blunt
 	armor_class = AC_HEAVY
-	armor = ARMOR_PLATE
+	armor_type = /datum/armor/plate
 	body_parts_covered = COVERAGE_ALL_BUT_LEGS //Has shoulder guards, and nothing else to suggest leg protection
 	prevent_crits = ALL_EXCEPT_BLUNT
-	max_integrity = INTEGRITY_STRONGEST
+	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL
 	stand_speed_reduction = 1.2
-	item_weight = 8.4 KILOGRAMS
+	item_weight = 9 KILOGRAMS
 
 /obj/item/clothing/armor/plate/Initialize()
 	. = ..()
@@ -29,10 +29,44 @@
 	desc = "Iron plate armor with shoulder guards. An incomplete, bulky set of good armor."
 	icon_state = "ihalfplate"
 	item_state = "ihalfplate"
-	smeltresult = /obj/item/ingot/iron
+	melting_material = /datum/material/iron
 	sellprice = VALUE_IRON_ARMOR
-	armor = ARMOR_PLATE_BAD
-	max_integrity = INTEGRITY_STRONG
+	armor_type = /datum/armor/plate/bad
+	max_integrity = ARMOR_INT_CHEST_PLATE_IRON
+
+/obj/item/clothing/armor/plate/iron/banded
+	name = "banded iron armor"
+	desc = "An iron chestplate, pauldrons and tassets worn over a fur vest and padded with heavy leathers. It's primarily worn in the cold north, where armor has to sometimes be cobbled together due to logistical shortages. It leaves the stomach exposed for maneuverability."
+	max_integrity = ARMOR_INT_CHEST_PLATE_IRON + 25
+	icon_state = "ibandedarmor"
+	item_state = "ibandedarmor"
+	armor_class = AC_HEAVY
+	body_parts_covered = CHEST | ARMS | LEGS | GROIN
+
+/obj/item/clothing/armor/heartfelt
+	slot_flags = ITEM_SLOT_ARMOR
+	name = "coat of armor"
+	desc = "A lordly coat of armor."
+	body_parts_covered = COVERAGE_ALL_BUT_LEGS
+	icon_state = "heartfelt"
+	item_state = "heartfelt"
+	armor_type = /datum/armor/plate
+	allowed_sex = list(MALE, FEMALE)
+	nodismemsleeves = TRUE
+	blocking_behavior = null
+	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL
+	anvilrepair = /datum/attribute/skill/craft/armor_repair
+	melting_material = /datum/material/steel
+	melt_amount = 375
+	armor_class = AC_HEAVY
+
+/obj/item/clothing/armor/heartfelt/hand
+	slot_flags = ITEM_SLOT_ARMOR
+	name = "coat of armor"
+	desc = "A lordly coat of armor."
+	body_parts_covered = COVERAGE_ALL_BUT_LEGS
+	icon_state = "heartfelt_hand"
+	item_state = "heartfelt_hand"
 
 //................ Full Plate Armor ............... //
 /obj/item/clothing/armor/plate/full
@@ -44,9 +78,30 @@
 	unequip_delay_self = 7 SECONDS
 	sellprice = VALUE_FULL_PLATE
 
-	armor = ARMOR_PLATE
+	armor_type = /datum/armor/plate
 	body_parts_covered = COVERAGE_FULL
-	item_weight = 17 KILOGRAMS
+	item_weight = 15 KILOGRAMS
+	melt_amount = 150
+
+
+/obj/item/clothing/armor/plate/full/samsibsa
+	name = "samsibsa scaleplate"
+	desc = "A heavy set of armour worn by the kouken of distant Blackmeadow. As opposed to the plate armour utilized by most of Psydonia and the West, samsiba-cheolpan is made of thirty-four rows of composite scales, each an ultra-thin sheet of blacksteel gilded over steel. </br> It is an extremely common practice to engrave characters onto individual plates - such as LUCK, HONOR, or HEAVEN."
+	icon_state = "kazengunheavy"
+	item_state = "kazengunheavy"
+	detail_tag = "_detail"
+	color = null
+	detail_color = CLOTHING_WHITE
+	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL - 50 //slightly worse
+	detail_tag = "_detail"
+
+/obj/item/clothing/armor/plate/full/samsibsa/attack_hand_secondary(mob/user, list/modifiers)
+	. = ..()
+	var/choice = tgui_input_list(user, "Choose a color.", "Uniform colors", GLOB.noble_dyes)
+	if(!choice)
+		return
+	detail_color = GLOB.noble_dyes[choice]
+	update_appearance(UPDATE_ICON)
 
 /obj/item/clothing/armor/plate/full/iron
 	name = "iron plate armor"
@@ -54,11 +109,11 @@
 	icon_state = "iplate"
 	item_state = "iplate"
 	sellprice = VALUE_IRON_ARMOR*2
-	smeltresult = /obj/item/ingot/iron
+	melting_material = /datum/material/iron
 
-	armor = ARMOR_PLATE_BAD
-	max_integrity = INTEGRITY_STRONG
-	item_weight = 17 KILOGRAMS
+	armor_type = /datum/armor/plate/bad
+	max_integrity = ARMOR_INT_CHEST_PLATE_IRON
+	item_weight = 15 KILOGRAMS
 
 //................ Rusted Half-plate ............... //
 /obj/item/clothing/armor/plate/rust
@@ -69,27 +124,46 @@
 	sleeved = 'icons/roguetown/clothing/special/onmob/rust_armor.dmi'
 	icon_state = "rustplate"
 	item_state = "rustplate"
-	smeltresult = /obj/item/ingot/iron
+	melting_material = /datum/material/iron
 	sellprice = VALUE_IRON_ARMOR/2
-	armor = ARMOR_PLATE_BAD
-	max_integrity = INTEGRITY_STANDARD
+	armor_type = /datum/armor/plate/bad
+	max_integrity = ARMOR_INT_CHEST_PLATE_DECREPIT
 	item_weight = 8.75 KILOGRAMS
 
+/obj/item/clothing/armor/plate/silver
+	name = "templar's half-plate"
+	desc = "Noc's holy silver, one fifth. Steel, three fifths. Chosen Material, one fifth. The armor of the Templar, protector and warrior of the Ten's Faithful."
+	icon_state = "silverhalfplate"
+	body_parts_covered = COVERAGE_TORSO
+	armor_type = /datum/armor/plate
+	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL
+	allowed_sex = list(MALE, FEMALE)
+	melting_material = /datum/material/silver
+	melt_amount = 275
+	armor_class = AC_MEDIUM
 
 /obj/item/clothing/armor/plate/blkknight
 	name = "blacksteel plate"
 	desc = "A chestplate forged from blacksteel with shoulder guards, combining strength and agility."
 	body_parts_covered = COVERAGE_ALL_BUT_LEGS
-	armor_class = AC_MEDIUM
+	armor_class = AC_HEAVY // weighs less then regular plate so its no longer medium AC
 	icon_state = "bkarmor"
 	icon = 'icons/roguetown/clothing/special/blkknight.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
 	sleeved = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
+	armor_type = /datum/armor/plate/blacksteel
+	max_integrity = ARMOR_INT_CHEST_PLATE_BLACKSTEEL
 	anvilrepair = /datum/attribute/skill/craft/blacksmithing
-	smeltresult = /obj/item/ingot/blacksteel
-	item_weight = 20.45 KILOGRAMS
+	melting_material = /datum/material/blacksteel
+	item_weight = 8 KILOGRAMS
 	sellprice = VALUE_SILVER_ITEM * 6
 	stand_speed_reduction = 1.05
+
+/obj/item/clothing/armor/plate/blkknight/lordly
+	name = "lordly plate"
+	desc ="A full, master-crafted ensemble of fine blacksteel, complete with arm, leg and groin protection, and worn with a heavy, indubitably stylish, fur-lined collar of genuine saigahair to boot. The latest battle-fashion amongst the high nobility of Psydonia."
+	icon_state = "lordly"
+	body_parts_covered = COVERAGE_FULL
 
 //................ Deccorated Half-plate ............... //
 
@@ -107,38 +181,100 @@
 	desc = "A halfplate decorated with a gold ornament on the chestplate and a fine silk corset. More for decoration then actual use."
 	icon_state = "halfplate_decorated_corset"
 
-//................ Zizo Armor ...............//
+/datum/attribute_modifier/full_bronze
+	id = "Bronze Plate"
+	attribute_list = list(
+		STAT_CONSTITUTION = 1,
+		STAT_SPEED = -1,
+	)
 
-/obj/item/clothing/armor/plate/full/zizo
+/obj/item/clothing/armor/plate/full/bronze
+	name = "bronze panoplic armor"
+	desc = "What can only be described as an 'armored robe'; thick bronze plates, layered atop one-another and interlinked with strappings \
+	to form an assembly of segmented plate armor. While overwhelmingly heavy and cumbersome, it is certain to weather any storm poised its way. \
+	</br>Scholars oft-describe this suit as a 'panoply', purpose-made for the physiques of Psydonia's earliest Aasimari."
+	icon_state = "bronzeplate"
+	item_state = "bronzeplate"
+	armor_type = /datum/armor/plate/bad
+	max_integrity = ARMOR_INT_CHEST_MEDIUM_IRON + 100
+	armor_class = AC_HEAVY
+	melt_amount = 275
+	melting_material = /datum/material/bronze
+	var/bronzeplatecumbersome = FALSE
+
+/obj/item/clothing/armor/plate/full/bronze/equipped(mob/living/carbon/human/user, slot)
+	. = ..()
+	if(slot == SLOT_ARMOR)
+		to_chat(user, span_suicide("The panoply clatters into place, and I feel my shoulders slouch beneath its weight - yet even now, I feel sturdier than ever before.."))
+		user.attributes?.add_attribute_modifier(/datum/attribute_modifier/full_bronze)
+		bronzeplatecumbersome = TRUE
+	return
+
+/obj/item/clothing/armor/plate/full/bronze/dropped(mob/living/carbon/human/user)
+	. = ..()
+	if(bronzeplatecumbersome == TRUE)
+		to_chat(user, span_hypnophrase("..and with a sigh of relief, the panoply's weight no longer burdens my shoulders."))
+		user.attributes?.remove_attribute_modifier(/datum/attribute_modifier/full_bronze)
+		bronzeplatecumbersome = FALSE
+	return
+
+/obj/item/clothing/armor/plate/full/bronze/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Even with the necessary training, this suit of armor is difficult to maneuver in. Wearing the armor will slightly fortify your Constitution, at the cost of further reducing your Speed.")
+
+/obj/item/clothing/armor/plate/full/bronze/alt
+	name = "bronze panoplic assembly"
+	icon_state = "bronzeplatealt"
+	item_state = "bronzeplatealt"
+	body_parts_covered = CHEST | VITALS | LEGS
+	max_integrity = ARMOR_INT_CHEST_MEDIUM_IRON //Halfplate analogue. Still heavy as hell.
+
+
+//................ Zizo Armor ...............//
+/obj/item/clothing/armor/plate/full/inhumen
+	name = "BASE INHUMEN ARMOR"
+	abstract_type = /obj/item/clothing/armor/plate/full/inhumen
+	misc_flags = CRAFTING_TEST_EXCLUDE
+	icon = 'icons/roguetown/clothing/special/evilarmor.dmi'
+	icon_state = "zizoplate"
+	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
+	sleeved = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
+	sellprice = 0 // Incredibly evil armor, this should be burnt, nobody wants this
+
+/obj/item/clothing/armor/plate/full/inhumen/zizo
 	name = "darksteel fullplate"
 	desc = "Full plate. Called forth from the edge of what should be known. In Her name."
 	icon_state = "zizoplate"
-	icon = 'icons/roguetown/clothing/special/evilarmor.dmi'
-	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sleeved = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sellprice = 0 // Incredibly evil Zizoid armor, this should be burnt, nobody wants this
+	melting_material = /datum/material/avantyne
+	max_integrity = INTEGRITY_OLD_STRONGEST * INTEGRITY_MOD_DARKSTEEL
+
+/obj/item/clothing/armor/plate/full/inhumen/zizo/alt
+	name = "ribbed darksteel fullplate"
+	icon_state = "zizoplatechest_med"
 
 //................ Matthios Armor ...............//
 
-/obj/item/clothing/armor/plate/full/matthios
+/obj/item/clothing/armor/plate/full/inhumen/matthios
 	name = "gilded fullplate"
 	desc = "Full plate. Tales told of men in armor such as this stealing many riches, or lives."
 	icon_state = "matthiosarmor"
-	icon = 'icons/roguetown/clothing/special/evilarmor.dmi'
-	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sleeved = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sellprice = 0 // See above comment
+	examine_highlight_type = /datum/examine_highlight/heresy_alarming/matthios
 
 //.............. Graggar Armor .................//
 
-/obj/item/clothing/armor/plate/full/graggar
+/obj/item/clothing/armor/plate/full/inhumen/graggar
 	name = "vicious full-plate"
 	desc = "A sinister set full plate. Untold violence stirs from within."
 	icon_state = "graggarplate"
-	icon = 'icons/roguetown/clothing/special/evilarmor.dmi'
-	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sleeved = 'icons/roguetown/clothing/special/onmob/evilarmor.dmi'
-	sellprice = 0 // See above comment
+	examine_highlight_type = /datum/examine_highlight/heresy_alarming/graggar
+
+//.............. Baotha Armor .................//
+
+/obj/item/clothing/armor/plate/full/inhumen/baotha
+	name = "saccharine full-plate"
+	desc = "A tantalizing set full plate, you almost feel like you can't take them off.."
+	icon_state = "baothaplate"
+	examine_highlight_type = /datum/examine_highlight/heresy_alarming/baotha
 
 //.............. Silver Armor .................//
 
@@ -147,9 +283,9 @@
 	desc = "A finely forged set of full silver plate, with long tassets protecting the legs."
 	icon_state = "silverarmor"
 	allowed_ages = ALL_AGES_LIST //placeholder until younglings have onmob sprites for this item
-	armor = ARMOR_PLATE_SILVER
-	smeltresult = /obj/item/ingot/silver
-	item_weight = 22 KILOGRAMS
+	armor_type = /datum/armor/plate/silver
+	melting_material = /datum/material/silver
+	item_weight = 15 KILOGRAMS
 	sellprice = VALUE_SILVER_ITEM * 3
 
 /obj/item/clothing/armor/plate/full/silver/Initialize(mapload)
@@ -176,7 +312,7 @@
 	max_integrity = 400
 	melt_amount = 150
 	melting_material = /datum/material/silver
-	armor = ARMOR_PLATE // overall worse because of the endurance buff //Changed to Plate armor
+	armor_type = /datum/armor/plate // overall worse because of the endurance buff //Changed to Plate armor
 
 
 /obj/item/clothing/armor/plate/fluted/ornate/ordinator
@@ -193,11 +329,11 @@
 /datum/status_effect/buff/psydonic_endurance/on_apply()
 	. = ..()
 	if(HAS_TRAIT(owner, TRAIT_MEDIUMARMOR) && !HAS_TRAIT(owner, TRAIT_HEAVYARMOR))
-		ADD_TRAIT(owner, TRAIT_HEAVYARMOR, src)
+		ADD_TRAIT(owner, TRAIT_HEAVYARMOR, REF(src))
 
 /datum/status_effect/buff/psydonic_endurance/on_remove()
 	. = ..()
-	REMOVE_TRAIT(owner, TRAIT_HEAVYARMOR, src)
+	REMOVE_TRAIT(owner, TRAIT_HEAVYARMOR, REF(src))
 
 /atom/movable/screen/alert/status_effect/buff/psydonic_endurance
 	name = "Psydonic Endurance"
@@ -217,4 +353,3 @@
 	boobed = FALSE
 	body_parts_covered = COVERAGE_ALL_BUT_LEGS
 	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL
-	smeltresult = /obj/item/ingot/iron

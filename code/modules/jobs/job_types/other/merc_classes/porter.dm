@@ -10,8 +10,8 @@
 		/datum/attribute/skill/misc/athletics = 30,
 		/datum/attribute/skill/misc/climbing = 30,
 		/datum/attribute/skill/misc/swimming = 20,
-		/datum/attribute/skill/misc/reading = 20,
-		/datum/attribute/skill/labor/mathematics = 20,
+		/datum/attribute/skill/educated/reading = 20,
+		/datum/attribute/skill/educated/mathematics = 20,
 		//Can't expect those kobolds to not be thieves or assist with such things.
 		/datum/attribute/skill/misc/stealing = 20,
 		/datum/attribute/skill/misc/lockpicking = 20,
@@ -34,8 +34,8 @@
 /datum/job/advclass/mercenary/porter
 	title = "Porter"
 	tutorial = "You are a jack-of-all-trades from the dank depth of subterra, You've survived by being useful. Whether it's carrying someone's burdens, mending their gears, stitching wounds, or even cooking a surprisingly edible meal, For a price, of course."
-	allowed_races = list(SPEC_ID_KOBOLD, SPEC_ID_HALFLING)
-	blacklisted_species = null
+	allowed_races = list(SPEC_ID_KOBOLD, SPEC_ID_KOBOLD_FORMIKRAG, SPEC_ID_HALFLING)
+	blacklisted_species = list(SPEC_ID_DWARF_SUBTERRAN)
 	outfit = /datum/outfit/mercenary/porter
 	category_tags = list(CTAG_MERCENARY)
 	total_positions = 2
@@ -50,6 +50,7 @@
 		TRAIT_SEEDKNOW,
 		TRAIT_SEEPRICES,
 		TRAIT_DODGEEXPERT,
+		TRAIT_INGREDIENT_INSIGHT,
 	)
 
 /datum/job/advclass/mercenary/porter/after_spawn(mob/living/carbon/human/spawned, client/player_client)
@@ -63,10 +64,19 @@
 	pants = /obj/item/clothing/pants/trou
 	shirt = /obj/item/clothing/shirt/undershirt/colored/black
 	shoes = /obj/item/clothing/shoes/boots/leather
-	belt = /obj/item/storage/belt/leather
+	belt = /obj/item/storage/belt/leather/mercenary
 	beltr = /obj/item/storage/messkit
 	beltl = /obj/item/weapon/knife/cleaver
 	mask = /obj/item/clothing/face/goggles
 	backr = /obj/item/fishingrod/fisher
 	backl = /obj/item/storage/backpack/backpack/artibackpack/porter //+1 to Row/Columns compared to a regular backpack alongside preserving foods.
-	backpack_contents = list(/obj/item/kitchen/rollingpin = 1, /obj/item/storage/belt/pouch/coins/poor, /obj/item/weapon/knife/hunting, /obj/item/weapon/hammer/iron = 1, /obj/item/weapon/shovel/small = 1, /obj/item/recipe_book/survival = 1, /obj/item/recipe_book/cooking = 1, /obj/item/storage/keyring/mercenary, /obj/item/reagent_containers/glass/bucket/pot = 1)
+	backpack_contents = list(
+		/obj/item/kitchen/rollingpin = 1,
+		/obj/item/storage/belt/pouch/coins/poor = 1,
+		/obj/item/weapon/knife/hunting = 1,
+		/obj/item/weapon/hammer/iron = 1,
+		/obj/item/weapon/shovel/small = 1,
+		/obj/item/recipe_book/survival = 1,
+		/obj/item/recipe_book/cooking = 1,
+		/obj/item/reagent_containers/glass/bucket/pot = 1,
+	)

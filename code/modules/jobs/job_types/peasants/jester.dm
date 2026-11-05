@@ -12,7 +12,7 @@
 		/datum/attribute/skill/misc/riding = list(-20, 50),
 		/datum/attribute/skill/labor/fishing = list(-20, 50),
 		/datum/attribute/skill/combat/wrestling = list(-20, 20),
-		/datum/attribute/skill/misc/reading = list(-20, 50),
+		/datum/attribute/skill/educated/reading = list(-20, 50),
 		/datum/attribute/skill/misc/sneaking = list(-20, 50),
 		/datum/attribute/skill/misc/stealing = list(-20, 50),
 		/datum/attribute/skill/misc/lockpicking = list(-20, 50),
@@ -32,6 +32,7 @@
 
 /datum/job/jester
 	title = JOB_JESTER
+	alt_titles = list("Fool", "Mime")
 	tutorial = "The Grenzelhofts were known for their Jesters, wisemen with a tongue just as sharp as their wit. \
 	You command a position of a fool, envious of the position your superiors have upon you. \
 	Your cheap tricks and illusions of intelligence will only work for so long, \
@@ -39,10 +40,9 @@
 	department_flag = PEASANTS
 	display_order = JDO_JESTER
 	job_flags = (JOB_ANNOUNCE_ARRIVAL | JOB_SHOW_IN_CREDITS | JOB_EQUIP_RANK | JOB_NEW_PLAYER_JOINABLE)
-	faction = FACTION_TOWN
+	factions = list(FACTION_TOWN, SUB_FACTION_KEEP)
 	total_positions = 1
 	spawn_positions = 1
-	bypass_lastclass = TRUE
 
 	allowed_races = RACES_PLAYER_ALL
 
@@ -51,9 +51,11 @@
 		/datum/action/cooldown/spell/undirected/joke,
 		/datum/action/cooldown/spell/undirected/tragedy,
 		/datum/action/cooldown/spell/undirected/fart,
-		/datum/action/cooldown/spell/vicious_mockery
+		/datum/action/cooldown/spell/projectile/vicious_mockery
 	)
 	give_bank_account = TRUE
+	knows_the_town = TRUE
+	known_by_the_town = TRUE
 
 	attribute_sheet = /datum/attribute_holder/sheet/job/jester
 

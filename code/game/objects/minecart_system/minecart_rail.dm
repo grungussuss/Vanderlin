@@ -1,4 +1,3 @@
-
 /obj/structure/minecart_rail
 	name = "cart rail"
 	desc = "Carries carts along the track."
@@ -15,6 +14,9 @@
 
 	var/secondary_direction
 
+	var/has_lock_module = FALSE
+	var/locked = FALSE
+
 	var/static/list/directions = list(
 		"Downwards Left Turn" = SOUTHWEST,
 		"Downwards Right Turn" = SOUTHEAST,
@@ -28,8 +30,8 @@
 
 /obj/structure/minecart_rail/Initialize(mapload)
 	. = ..()
-	//AddElement(/datum/element/give_turf_traits, string_list(list(TRAIT_TURF_IGNORE_SLOWDOWN)))
-	//AddElement(/datum/element/footstep_override, footstep = FOOTSTEP_CATWALK)
+	AddElement(/datum/element/give_turf_traits, string_list(list(TRAIT_TURF_IGNORE_SLOWDOWN)))
+	AddElement(/datum/element/footstep_override, footstep = FOOTSTEP_CATWALK)
 	set_minecart_dirs(initial = TRUE)
 
 /obj/structure/minecart_rail/LateInitialize()
@@ -93,31 +95,36 @@
 
 /obj/structure/minecart_rail/redstone_triggered(mob/user)
 	. = ..()
+	if(has_lock_module)
+		locked = !locked
+		update_animation_effect()
+		if(!locked)
+			launch_stationary_cart()
 	if(!secondary_direction)
 		return
 	var/last_direction = secondary_direction
 	secondary_direction = dir
 	setDir(last_direction)
 
-/obj/structure/minecart_rail/attackby_secondary(obj/item/I, mob/user, list/modifiers)
+/obj/structure/minecart_rail/proc/launch_stationary_cart()
+	if(!rotations_per_minute)
+		return
+	for(var/obj/structure/closet/crate/miningcar/cart in loc)
+		cart.launch_from_rail(src)
+
+/obj/structure/minecart_rail/multitool_act_secondary(mob/living/user, obj/item/tool)
+	rotate_direction(user)
+	return ITEM_INTERACT_SUCCESS
+
+/obj/structure/minecart_rail/attack_hand_secondary(mob/user, list/modifiers)
 	. = ..()
-	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
-		return
-
-	. = SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
-
-	if(I?.tool_behaviour == TOOL_MULTITOOL)
-		rotate_direction(user)
-		return
-
-	var/choice = browser_input_list(user, "Choose a direction to cycle to when activated by a trigger.", src, list("Downwards Left Turn", "Downwards Right Turn", "Upwards Left Turn", "Upwards Right Turn", "Up and Down", "Left and Right"))
+	var/choice = browser_input_list(user, "Choose a direction to cycle to when activated by a trigger.", "Directions", directions)
 	if(!choice || QDELETED(user) || QDELETED(src))
 		return
-
 	secondary_direction = directions[choice]
 
 /obj/structure/minecart_rail/proc/rotate_direction(mob/user)
-	var/choice = browser_input_list(user, "Rotate the rail towards a direction.", src, list("Downwards Left Turn", "Downwards Right Turn", "Upwards Left Turn", "Upwards Right Turn", "Up and Down", "Left and Right"))
+	var/choice = browser_input_list(user, "Rotate the rail towards a direction.", "Directions", directions)
 	if(!choice)
 		return
 
@@ -130,6 +137,10 @@
 		icon_state = "track_shaft"
 	else
 		icon_state = "track"
+	if(locked)
+		color = COLOR_BLOOD
+	else
+		color = null
 
 /obj/structure/minecart_rail/find_rotation_network()
 	if(ISDIAGONALDIR(dir))
@@ -149,7 +160,8 @@
 				if(!structure.try_network_merge(src))
 					rotation_break()
 			else
-				if(!structure.try_connect(src))
+				var/result = structure.try_connect(src)
+				if(result == FALSE)
 					rotation_break()
 
 	if(!rotation_network)
@@ -163,13 +175,10 @@
 		return list()
 	. = ..()
 
-/obj/structure/minecart_rail/find_and_propagate(list/checked, first = FALSE)
-	if(!length(checked))
-		checked = list()
-	checked |= src
+/obj/structure/minecart_rail/propagate_rotation_to_network(new_direction, new_rpm)
 	if(ISDIAGONALDIR(dir))
-		return checked
-	. = ..()
+		return
+	..()
 
 /obj/structure/minecart_rail/set_rotations_per_minute(speed)
 	. = ..()
@@ -184,7 +193,9 @@
 		. += span_smallnotice("When activated, this rail will switch to [dir2text(secondary_direction)].")
 
 /obj/structure/minecart_rail/proc/rail_examine()
-	return span_notice("Connect this rail to shafts to give momentum to carts that pass over.")
+	. = span_notice("Connect this rail to shafts to give momentum to carts that pass over.")
+	if(has_lock_module)
+		. += span_notice("A pneumatic lock module is attached. Currently [locked ? "locked" : "unlocked"].")
 
 /obj/structure/minecart_rail/set_connection_dir()
 	if(ISDIAGONALDIR(dir))

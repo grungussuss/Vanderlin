@@ -4,8 +4,8 @@
 	button_icon_state = "call_to_slaughter"
 	sound = 'sound/magic/timestop.ogg'
 
-	spell_type = SPELL_MIRACLE
-	antimagic_flags = MAGIC_RESISTANCE_HOLY
+	spell_type = SPELL_UNHOLY_MIRACLE
+	antimagic_flags = MAGIC_RESISTANCE_UNHOLY
 	associated_skill = /datum/attribute/skill/magic/holy
 	invocation = "LAMBS TO THE SLAUGHTER!"
 	invocation_type = INVOCATION_SHOUT
@@ -23,7 +23,7 @@
 		if(istype(target.patron, /datum/patron/psydon))
 			to_chat(target, span_danger("You feel a surge of cold wash over you; leaving your body as quick as it hit.."))	//No effect on Psydonians, Endure.
 			continue
-		if(!owner.faction_check_mob(target))
+		if(!owner.faction_check_atom(target))
 			continue
 		if(target.mob_biotypes & MOB_UNDEAD)
 			continue

@@ -28,8 +28,8 @@
 	var/skilltoteach
 	var/skill_name = "nobody"
 	var/static/list/teachable_skills = list(
-		"Reading" = /datum/attribute/skill/misc/reading,
-		"Mathematics" = /datum/attribute/skill/labor/mathematics,
+		"Reading" = /datum/attribute/skill/educated/reading,
+		"Mathematics" = /datum/attribute/skill/educated/mathematics,
 		"Engineering" = /datum/attribute/skill/craft/engineering,
 		"Alchemy" = /datum/attribute/skill/craft/alchemy,
 		"Medicine" = /datum/attribute/skill/misc/medicine,
@@ -44,9 +44,9 @@
 	. = ..()
 	var/title = "nothing"
 	switch(skilltoteach)
-		if(/datum/attribute/skill/misc/reading)
+		if(/datum/attribute/skill/educated/reading)
 			title = "literature"
-		if(/datum/attribute/skill/labor/mathematics)
+		if(/datum/attribute/skill/educated/mathematics)
 			title = "mathematics"
 		if(/datum/attribute/skill/craft/engineering)
 			title = "engineering"
@@ -59,9 +59,9 @@
 /obj/item/textbook/update_desc()
 	. = ..()
 	switch(skilltoteach)
-		if(/datum/attribute/skill/misc/reading)
+		if(/datum/attribute/skill/educated/reading)
 			desc = "A textbook that teaches the alphabet, sentences of varying complexity, and common symbols, allowing readers to train their reading skills."
-		if(/datum/attribute/skill/labor/mathematics)
+		if(/datum/attribute/skill/educated/mathematics)
 			desc = "A textbook focused on teaching mathematic notation and the applications for arithmetic, calculus, and other areas of math."
 		if(/datum/attribute/skill/craft/engineering)
 			desc = "A textbook focused on teaching about engineering, the physical laws that govern our mortal world, and their application."
@@ -80,7 +80,7 @@
 			return
 		var/userskill = GET_MOB_SKILL_VALUE_OLD(user, teachable_skills[skill])
 		if(userskill <= 1)
-			to_chat(user, span_warning("You aren't skilled enough to write a textbook about [lowertext(skill)]!"))
+			to_chat(user, span_warning("You aren't skilled enough to write a textbook about [LOWER_TEXT(skill)]!"))
 			return
 		var/list/possible_skill_levels = list()
 		var/list/skill_names = list("Novice", "Apprentice", "Journeyman", "Expert", "Master", "Legend")
@@ -97,11 +97,11 @@
 			return
 		if(!user.CanReach(src))
 			return
-		to_chat(user, span_notice("You begin writing in [src] concepts about [lowertext(skill)] of [lowertext(level_name)] difficulty."))
+		to_chat(user, span_notice("You begin writing in [src] concepts about [LOWER_TEXT(skill)] of [LOWER_TEXT(level_name)] difficulty."))
 		playsound(src, 'sound/items/write.ogg', 50, FALSE, ignore_walls = FALSE)
 		skilltoteach = teachable_skills[skill]
 		if(do_after(user, 10 SECONDS, src))
-			skill_name = lowertext(level_name)
+			skill_name = LOWER_TEXT(level_name)
 			maxskill = possible_skill_levels[level_name]
 			minskill = maxskill - 1
 			update_appearance(UPDATE_DESC | UPDATE_NAME)
@@ -149,7 +149,7 @@
 	minskill = SKILL_RANK_NONE
 	maxskill = SKILL_RANK_NOVICE
 	exppercycle = 5
-	skilltoteach = /datum/attribute/skill/misc/reading
+	skilltoteach = /datum/attribute/skill/educated/reading
 	skill_name = "novice"
 	INTneeded = 2
 
@@ -158,7 +158,7 @@
 	minskill = SKILL_RANK_NOVICE
 	maxskill = SKILL_RANK_APPRENTICE
 	exppercycle = 10
-	skilltoteach = /datum/attribute/skill/misc/reading
+	skilltoteach = /datum/attribute/skill/educated/reading
 	skill_name = "apprentice"
 	INTneeded = 5
 
@@ -167,7 +167,7 @@
 	minskill = SKILL_RANK_APPRENTICE
 	maxskill = SKILL_RANK_JOURNEYMAN
 	exppercycle = 25
-	skilltoteach = /datum/attribute/skill/misc/reading
+	skilltoteach = /datum/attribute/skill/educated/reading
 	skill_name = "journeyman"
 	INTneeded = 10
 
@@ -176,7 +176,7 @@
 	minskill = SKILL_RANK_JOURNEYMAN
 	maxskill = SKILL_RANK_EXPERT
 	exppercycle = 40
-	skilltoteach = /datum/attribute/skill/misc/reading
+	skilltoteach = /datum/attribute/skill/educated/reading
 	skill_name = "expert"
 	INTneeded = 13
 
@@ -185,7 +185,7 @@
 	minskill = SKILL_RANK_EXPERT
 	maxskill = SKILL_RANK_MASTER
 	exppercycle = 55
-	skilltoteach = /datum/attribute/skill/misc/reading
+	skilltoteach = /datum/attribute/skill/educated/reading
 	skill_name = "master"
 	INTneeded = 15
 
@@ -194,29 +194,29 @@
 	minskill = SKILL_RANK_MASTER
 	maxskill = SKILL_RANK_LEGENDARY
 	exppercycle = 70
-	skilltoteach = /datum/attribute/skill/misc/reading
+	skilltoteach = /datum/attribute/skill/educated/reading
 	skill_name = "legend"
 	INTneeded = 18
 
 /*.............. MATHEMATICS ..............*/
 
 /obj/item/textbook/novice/mathematics
-	skilltoteach = /datum/attribute/skill/labor/mathematics
+	skilltoteach = /datum/attribute/skill/educated/mathematics
 
 /obj/item/textbook/apprentice/mathematics
-	skilltoteach = /datum/attribute/skill/labor/mathematics
+	skilltoteach = /datum/attribute/skill/educated/mathematics
 
 /obj/item/textbook/journeyman/mathematics
-	skilltoteach = /datum/attribute/skill/labor/mathematics
+	skilltoteach = /datum/attribute/skill/educated/mathematics
 
 /obj/item/textbook/expert/mathematics
-	skilltoteach = /datum/attribute/skill/labor/mathematics
+	skilltoteach = /datum/attribute/skill/educated/mathematics
 
 /obj/item/textbook/master/mathematics
-	skilltoteach = /datum/attribute/skill/labor/mathematics
+	skilltoteach = /datum/attribute/skill/educated/mathematics
 
 /obj/item/textbook/legendary/mathematics
-	skilltoteach = /datum/attribute/skill/labor/mathematics
+	skilltoteach = /datum/attribute/skill/educated/mathematics
 
 /*.............. ENGINEERING ..............*/
 

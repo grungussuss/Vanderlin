@@ -14,17 +14,17 @@
 		/datum/attribute/skill/craft/blacksmithing = 20,
 		/datum/attribute/skill/craft/armorsmithing = 20,
 		/datum/attribute/skill/craft/weaponsmithing = 20,
-		/datum/attribute/skill/misc/reading = 20,
+		/datum/attribute/skill/educated/reading = 20,
 	)
 
 /datum/job/advclass/combat/longbeard
 	title = "Longbeard"
 	tutorial = "You've earned your place as one of the old grumblers, a pinnacle of tradition, justice, and willpower. You've come to establish order in these lands, and with your hammer of grudges you'll see it through."
 	allowed_ages = list(AGE_MIDDLEAGED, AGE_OLD)
-	allowed_races = list(SPEC_ID_DWARF)
+	allowed_races = list(SPEC_ID_DWARF, SPEC_ID_DWARF_ORC)
 	outfit = /datum/outfit/longbeard
 	total_positions = 1
-	category_tags = list(CTAG_ADVENTURER)
+	category_tags = list(CTAG_ADVENTURER, CTAG_VAMP_ADVENTURE)
 	roll_chance = 6
 	cmode_music = 'sound/music/cmode/adventurer/CombatOutlander2.ogg'
 
@@ -32,6 +32,7 @@
 
 	traits = list(
 		TRAIT_HEAVYARMOR,
+		TRAIT_MEDIUMARMOR,
 		TRAIT_STEELHEARTED, // Nothing fazes a longbeard
 	)
 
@@ -40,11 +41,11 @@
 	pants = /obj/item/clothing/pants/tights/colored/black
 	backr = /obj/item/weapon/mace/goden/steel/warhammer
 	beltl = /obj/item/storage/belt/pouch/coins/mid
-	shoes = /obj/item/clothing/shoes/boots/rare/dwarfplate
-	gloves = /obj/item/clothing/gloves/rare/dwarfplate
+	shoes = /obj/item/clothing/shoes/boots/armor/dwarven
+	gloves = /obj/item/clothing/gloves/plate/dwarven
 	belt = /obj/item/storage/belt/leather
 	shirt = /obj/item/clothing/shirt/undershirt/colored/black
-	armor = /obj/item/clothing/armor/rare/dwarfplate
+	armor = /obj/item/clothing/armor/plate/full/dwarven
 	backl = /obj/item/storage/backpack/satchel
-	head = /obj/item/clothing/head/rare/dwarfplate
+	head = /obj/item/clothing/head/helmet/heavy/dwarven
 	neck = /obj/item/clothing/neck/chaincoif

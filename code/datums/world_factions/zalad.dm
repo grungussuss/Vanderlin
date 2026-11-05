@@ -58,6 +58,7 @@
 		/datum/supply_pack/tools/parchment,
 		/datum/supply_pack/tools/sleepingbag,
 		/datum/supply_pack/tools/keyrings,
+		/datum/supply_pack/tools/warpstone,
 		// Materials
 		/datum/supply_pack/rawmats/cloth,
 		// Seeds for cultivation
@@ -98,6 +99,7 @@
 		/datum/supply_pack/weapons/ranged/whip,
 		/datum/supply_pack/weapons/steel/irumi,
 		/datum/supply_pack/weapons/iron/ikhopesh,
+		/datum/supply_pack/weapons/ranged/javeliniron,
 		// Food & Drink
 		/datum/supply_pack/food/drinks/beer,
 		/datum/supply_pack/food/drinks/onin,
@@ -123,6 +125,7 @@
 		// Narcotics/Trade goods
 		/datum/supply_pack/narcotics/sigs,
 		/datum/supply_pack/narcotics/zigbox,
+		/datum/supply_pack/narcotics/spider,
 		/datum/supply_pack/narcotics/soap
 	)
 	rare_pool = list(
@@ -149,7 +152,7 @@
 		/datum/supply_pack/weapons/iron/iassegai,
 		/datum/supply_pack/weapons/ranged/shortbow,
 		/datum/supply_pack/weapons/ranged/bow,
-		/datum/supply_pack/weapons/steel/atgervi,
+		/datum/supply_pack/weapons/steel/bearded,
 		/datum/supply_pack/weapons/ranged/crossbow,
 		/datum/supply_pack/weapons/ammo/quivers,
 		/datum/supply_pack/weapons/ammo/arrowquiver,
@@ -157,6 +160,7 @@
 		/datum/supply_pack/weapons/ammo/Blowpouch,
 		/datum/supply_pack/weapons/steel/khopesh,
 		/datum/supply_pack/weapons/steel/steppesabre,
+		/datum/supply_pack/weapons/ranged/javelinsteel,
 		// Food
 		/datum/supply_pack/food/drinks/spottedhen,
 		/datum/supply_pack/food/roastedcoffee,

@@ -1,13 +1,11 @@
 /datum/action/cooldown/spell/undirected/list_target/encode_thoughts
 	name = "Encode Thoughts"
 	desc = "Latch onto the mind of one who is nearby, weaving a particular thought into their mind."
-	button_icon_state = null
+	button_icon_state = "encode_thought"
 	sound = 'sound/magic/PSY.ogg'
 
-	point_cost = 1
-	attunements = list(
-		/datum/attunement/dark = 0.5,
-	)
+	required_form = FORM_DEATH
+	associated_skill = /datum/attribute/skill/magic/arcane/death
 
 	cooldown_time = 25 SECONDS
 	spell_cost = 25
@@ -21,7 +19,7 @@
 	. = ..()
 	if(. & SPELL_CANCEL_CAST)
 		return
-	message = browser_input_text(owner, "What thought do you wish to weave to [cast_on]?", "[src]")
+	message = tgui_input_text(owner, "What thought do you wish to weave to [cast_on]?", "[src]", timeout=20 SECONDS)
 	if(QDELETED(src) || QDELETED(owner) || QDELETED(cast_on) || !can_cast_spell())
 		return . | SPELL_CANCEL_CAST
 
@@ -34,11 +32,14 @@
 	log_directed_talk(owner, cast_on, message, LOG_SAY, name)
 
 	to_chat(owner, "I pluck the strings of [cast_on]'s mind!")
+	handle_message(cast_on)
+
+/datum/action/cooldown/spell/undirected/list_target/encode_thoughts/proc/handle_message(mob/living/cast_on)
 	cast_on.playsound_local(cast_on, sound, 100, TRUE)
 	to_chat(cast_on, "Your mind thinks to itself: </span><font color=#7246ff>\"[message]...\"</font>")
 
 /datum/action/cooldown/spell/undirected/list_target/encode_thoughts/vampire
 	name = "Vampiric Manipulation"
-	point_cost = 0
 	spell_type = SPELL_BLOOD
 	spell_flags = NONE
+	required_form = null

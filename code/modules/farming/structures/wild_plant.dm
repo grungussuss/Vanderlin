@@ -3,7 +3,6 @@
 	desc = "A wild "
 	icon_state = "tea2"
 	icon = 'icons/roguetown/misc/crops.dmi'
-	abstract_type = /obj/structure/wild_plant
 	var/datum/plant_def/plant_type
 	var/spread_chance = 75
 
@@ -64,7 +63,7 @@
 
 /obj/structure/wild_plant/proc/user_harvests(mob/living/user)
 	apply_farming_fatigue(user, 4)
-	add_sleep_experience(user, /datum/attribute/skill/labor/farming, GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE) * 2)
+	user.add_sleep_experience(/datum/attribute/skill/labor/farming, GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE) * 2)
 
 	var/farming_skill = GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/labor/farming)
 	var/feedback = "I harvest the produce."
@@ -238,6 +237,10 @@
 /obj/structure/wild_plant/nospread/tamto
 	icon_state = "mato2"
 	plant_type = /datum/plant_def/tamto
+
+/obj/structure/wild_plant/nospread/ollie
+	icon_state = "ollietree2"
+	plant_type = /datum/plant_def/ollie
 
 /obj/structure/wild_plant/nospread/cocaudo
 	icon_state = "cocaudo2"

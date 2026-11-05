@@ -50,7 +50,9 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define isplatingturf(A) (istype(A, /turf/open/floor/plating))
 
-#define istransparentturf(A) (HAS_TRAIT(A, TRAIT_Z_TRANSPARENT))
+#define istransparentturf(A) (HAS_TRAIT(A, TURF_Z_TRANSPARENT_TRAIT))
+
+#define iswaterturf(A) (istype(A, /turf/open/water))
 
 //Mobs
 #define isliving(A) (istype(A, /mob/living))
@@ -73,6 +75,7 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 #define ishumannorthern(A) (is_species(A, /datum/species/human/northern))
 #define isdwarfmountain(A) (is_species(A, /datum/species/dwarf/mountain))
 #define isdwarfjarosite(A) (is_species(A, /datum/species/dwarf/jarosite))
+#define isdwarforc(A) (is_species(A, /datum/species/dwarf/dworc))
 #define isdarkelf(A) (is_species(A, /datum/species/elf/dark))
 #define issnowelf(A) (is_species(A, /datum/species/elf/snow))
 #define ishalfelf(A) (is_species(A, /datum/species/human/halfelf))
@@ -90,8 +93,6 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define isgoblin(A) (is_species(A, /datum/species/goblin))
 #define isorc(A) (is_species(A, /datum/species/orc))
-//more carbon mobs
-#define ismonkey(A) (istype(A, /mob/living/carbon/monkey))
 
 //Simple animals
 #define isanimal(A) (istype(A, /mob/living/simple_animal))
@@ -113,6 +114,8 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 #define isobserver(A) (istype(A, /mob/dead/observer))
 
 #define isrogueobserver(A) (istype(A, /mob/dead/observer/rogue))
+
+#define isscryeye(A) (istype(A, /mob/scry_eye))
 
 #define isdead(A) (istype(A, /mob/dead))
 
@@ -151,6 +154,8 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define isclothing_path(A) (ispath(A, /obj/item/clothing))
 
+#define isbundle(A) (istype(A, /obj/item/natural/bundle))
+
 GLOBAL_LIST_INIT(pointed_types, typecacheof(list(
 	/obj/item/kitchen/fork)))
 
@@ -188,6 +193,7 @@ GLOBAL_LIST_INIT(RATS_DONT_EAT, typecacheof(list(
 // Garrison
 // Church
 	#define is_priest_job(job_type) (istype(job_type, /datum/job/priest))
+	#define is_oracle_job(job_type) (istype(job_type, /datum/job/admin/oracle))
 	#define is_monk_job(job_type) (istype(job_type, /datum/job/monk))
 	#define is_inquisitor_job(job_type) (istype(job_type, /datum/job/inquisitor))
 	#define is_adept_job(job_type) (istype(job_type, /datum/job/adept))

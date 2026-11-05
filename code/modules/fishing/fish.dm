@@ -259,6 +259,7 @@ GLOBAL_LIST_INIT(fish_compatible_fluid_types, list(
 	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_FISH_STASIS), PROC_REF(enter_stasis))
 	RegisterSignal(src, SIGNAL_REMOVETRAIT(TRAIT_FISH_STASIS), PROC_REF(exit_stasis))
 
+	set_rarity_stats()
 
 	//stops new fish from being able to reproduce right away.
 	breeding_wait = world.time + (breeding_timeout * NEW_FISH_BREEDING_TIMEOUT_MULT)
@@ -272,9 +273,40 @@ GLOBAL_LIST_INIT(fish_compatible_fluid_types, list(
 	STOP_PROCESSING(SSobj, src)
 	. = ..()
 
+/obj/item/reagent_containers/food/snacks/fish/interact_with_atom_secondary(atom/interacting_with, mob/living/user, list/modifiers)
+	if(!HAS_TRAIT(interacting_with, TRAIT_CATCH_AND_RELEASE))
+		return NONE
+
+	if(HAS_TRAIT(src, TRAIT_NODROP))
+		balloon_alert(user, "[p_theyre()] stuck to your hand!")
+		return ITEM_INTERACT_BLOCKING
+
+	balloon_alert(user, "releasing fish...")
+	if(!do_after(user, 3 SECONDS, interacting_with))
+		return ITEM_INTERACT_BLOCKING
+
+	balloon_alert(user, "fish released")
+	var/goodbye_text = ""
+	if(status == FISH_DEAD)
+		goodbye_text = "[src] sinks motionlessly into [interacting_with]..."
+	else
+		goodbye_text = "[src] dives into [interacting_with]!"
+
+	user.visible_message(
+		span_notice("[user] releases [src] into [interacting_with]. [goodbye_text]"), \
+		span_notice("You release [src] into [interacting_with]. [goodbye_text]"), \
+		span_notice("You hear a splash.")
+	)
+
+	released(interacting_with, user)
+	return ITEM_INTERACT_SUCCESS
+
 /obj/item/reagent_containers/food/snacks/fish/proc/released(atom/location, mob/living/user)
+	if(!location)
+		return
 	playsound(location, 'sound/effects/splash.ogg', 50)
 	SEND_SIGNAL(location, COMSIG_FISH_RELEASED_INTO, src, user)
+	SEND_GLOBAL_SIGNAL(COMSIG_GLOBAL_FISH_RELEASED, src)
 	qdel(src)
 
 ///Main proc that makes the fish edible.
@@ -323,7 +355,6 @@ GLOBAL_LIST_INIT(fish_compatible_fluid_types, list(
 /obj/item/reagent_containers/food/snacks/fish/proc/get_base_edible_reagents_to_add()
 	var/return_list = list(
 		/datum/reagent/consumable/nutriment = 2,
-		/datum/reagent/blood = 1,
 	)
 	if(required_fluid_type == FISH_FLUID_SALTWATER)
 		return_list[/datum/reagent/flour] = 0.4
@@ -341,21 +372,6 @@ GLOBAL_LIST_INIT(fish_compatible_fluid_types, list(
 	else
 		icon_state = base_icon_state
 	return ..()
-
-/*
-/obj/item/reagent_containers/food/snacks/fish/attackby(obj/item/item, mob/living/user, list/modifiers, list/attack_modifiers)
-	if(!istype(item, /obj/item/reagent_containers/cup/fish_feed))
-		return ..()
-	if(!item.reagents.total_volume)
-		balloon_alert(user, "[item.name] is empty!")
-		return TRUE
-	if(status == FISH_DEAD)
-		balloon_alert(user, "[name] is dead!")
-		return TRUE
-	feed(item.reagents)
-	balloon_alert(user, "fed [name]")
-	return TRUE
-*/
 
 /obj/item/reagent_containers/food/snacks/fish/examine(mob/user)
 	. = ..()
@@ -550,24 +566,6 @@ GLOBAL_LIST_INIT(fish_compatible_fluid_types, list(
 	var/weight_rank = GET_FISH_WEIGHT_RANK(weight)
 
 	throw_range -= weight_rank
-	get_force_rank()
-
-	var/bonus_malus = weight_rank - w_class
-	if(bonus_malus)
-		calculate_fish_force_bonus(bonus_malus)
-
-	SEND_SIGNAL(src, COMSIG_FISH_FORCE_UPDATED, weight_rank, bonus_malus)
-
-	throwforce = force
-
-	if(force >=15 && hitsound == SFX_DEFAULT_FISH_SLAP) // don't override special attack sounds
-		hitsound = SFX_ALT_FISH_SLAP // do more damage - do heavier slap sound
-
-///A proc that makes the fish slightly stronger or weaker if there's a noticeable discrepancy between size and weight.
-/obj/item/reagent_containers/food/snacks/fish/proc/calculate_fish_force_bonus(bonus_malus)
-	force = round(force * (1 + bonus_malus * 0.1), 0.1)
-
-/obj/item/reagent_containers/food/snacks/fish/proc/get_force_rank()
 	switch(w_class)
 		if(WEIGHT_CLASS_TINY)
 			force -= 3
@@ -580,64 +578,16 @@ GLOBAL_LIST_INIT(fish_compatible_fluid_types, list(
 		if(WEIGHT_CLASS_GIGANTIC)
 			force += 13
 
+	var/bonus_malus = weight_rank - w_class
+	if(bonus_malus)
+		force = round(force * (1 + bonus_malus * 0.1), 0.1)
 
-/**
- * This proc has fish_traits list populated with fish_traits paths from three different lists:
- * traits from x_traits and y_traits are compared, and inserted if conditions are met;
- * traits from fixed_traits are inserted unconditionally.
- * traits from removed_traits will be removed from the for loop.
- *
- * This proc should only be called if the fish was spawned with the apply_qualities arg set to FALSE
- * and hasn't had inherited traits already.
- */
-/obj/item/reagent_containers/food/snacks/fish/proc/inherit_traits(list/x_traits, list/y_traits, list/fixed_traits, list/removed_traits)
+	SEND_SIGNAL(src, COMSIG_FISH_FORCE_UPDATED, weight_rank, bonus_malus)
 
-	fish_traits = fixed_traits?.Copy() || list()
+	throwforce = force
 
-	var/list/same_traits = x_traits & y_traits
-	var/list/all_traits = (y_traits ? (x_traits|y_traits) : x_traits) - removed_traits
-
-	/// a list of incompatible traits that'll be filled as it goes on. Don't let any such trait pass onto the fish.
-	var/list/incompatible_traits = list()
-
-	///some traits can spontaneously manifest for some fishes. These have higher priorities than other traits
-	var/list/potential_spontaneous_traits = GLOB.spontaneous_fish_traits[type]
-	for(var/trait_type in potential_spontaneous_traits)
-		if(!prob(potential_spontaneous_traits[trait_type]))
-			continue
-		var/datum/fish_trait/trait = GLOB.fish_traits[trait_type]
-		if(length(fish_traits & trait.incompatible_traits))
-			continue
-		fish_traits |= trait_type
-		incompatible_traits |= trait.incompatible_traits
-
-	for(var/trait_type in fish_traits)
-		var/datum/fish_trait/trait = GLOB.fish_traits[trait_type]
-		incompatible_traits |= trait.incompatible_traits
-	/**
-	 * shuffle the traits, so, in the case of incompatible traits, we don't have to choose which to discard.
-	 * Instead we let the random numbers do it for us in a first come, first served basis.
-	 */
-	for(var/trait_type in shuffle(all_traits))
-		if(trait_type in fish_traits)
-			continue //likely a fixed trait
-		if(trait_type in incompatible_traits)
-			continue
-		var/datum/fish_trait/trait = GLOB.fish_traits[trait_type]
-		if(isnull(trait))
-			stack_trace("Couldn't find trait [trait_type || "null"] in the global fish traits list")
-			continue
-		if(!isnull(trait.fish_whitelist) && !(type in trait.fish_whitelist))
-			continue
-		if(length(fish_traits & trait.incompatible_traits))
-			continue
-		// If there's no partner, we've been reated through parthenogenesis or growth, therefore, traits are copied
-		// Otherwise, we check if both have the trait or perform a probability check.
-		if(!y_traits || (trait_type in same_traits) || prob(trait.inheritability))
-			fish_traits |= trait_type
-			incompatible_traits |= trait.incompatible_traits
-
-	apply_traits()
+	if(force >=15 && hitsound == SFX_DEFAULT_FISH_SLAP) // don't override special attack sounds
+		hitsound = SFX_ALT_FISH_SLAP // do more damage - do heavier slap sound
 
 /obj/item/reagent_containers/food/snacks/fish/proc/apply_traits()
 	var/list/potential_spontaneous_traits = GLOB.spontaneous_fish_traits[type]
@@ -761,7 +711,7 @@ GLOBAL_LIST_INIT(fish_compatible_fluid_types, list(
 	if(HAS_TRAIT(src, TRAIT_FISH_STASIS) || status != FISH_ALIVE)
 		return
 	do_fish_process(seconds_per_tick)
-	if(status != FISH_ALIVE || !is_type_in_typecache(loc, SSfishing.fish_safe_turfs_by_type[type]))
+	if(!loc || !isturf(loc) || !HAS_TRAIT(loc, TRAIT_CATCH_AND_RELEASE))
 		time_passed_on_safe_turf = 0 SECONDS
 		return
 	time_passed_on_safe_turf += seconds_per_tick SECONDS
@@ -1056,7 +1006,7 @@ GLOBAL_LIST_INIT(fish_compatible_fluid_types, list(
 				vision_distance = DEFAULT_MESSAGE_RANGE - 3,
 			)
 		var/body_zone = pick(BODY_ZONE_R_ARM, BODY_ZONE_L_ARM)
-		user.apply_damage((force * 0.2) + w_class * 2, BRUTE, body_zone, user.run_armor_check(body_zone))
+		user.apply_damage((force * 0.2) + w_class * 2, BRUTE, body_zone, user.run_armor_check(body_zone), damage_type = BCLASS_BITE)
 		playsound(src,'sound/items/weapons/bite.ogg', 45, TRUE, -1)
 	else
 		if(in_aquarium)
@@ -1077,6 +1027,37 @@ GLOBAL_LIST_INIT(fish_compatible_fluid_types, list(
 ///Proc called in trophy_fishes.dm, when a persistent fishing trophy mount is spawned and the fish instantiated
 /obj/item/reagent_containers/food/snacks/fish/proc/persistence_load(list/data)
 	return
+
+/obj/item/reagent_containers/food/snacks/fish/proc/set_rarity_stats()
+	var/list/rarity_weights = list(
+		"common" = 75,
+		"rare" = 15,
+		"ultra" = 7,
+		"legendary" = 3
+	)
+
+	var/new_rarity = pickweightAllowZero(rarity_weights)
+	var/rarity_state = "com"
+	var/rarity_mod = 1
+
+	switch(new_rarity)
+		if("rare")
+			rarity_state = "rare"
+			rarity_mod = 1.1
+			rare = TRUE
+		if("ultra")
+			rarity_state = "ultra"
+			rarity_mod = 1.2
+			rare = TRUE
+		if("legendary")
+			rarity_state = "gold"
+			rarity_mod = 1.3
+			rare = TRUE
+
+	average_size *= rarity_mod
+	average_weight *= rarity_mod
+	sellprice *= rarity_mod
+	icon_state = "[initial(icon_state)][rarity_state]"
 
 #undef FISH_SAD
 #undef FISH_VERY_HAPPY
@@ -1230,21 +1211,26 @@ GLOBAL_LIST_INIT(fish_compatible_fluid_types, list(
 	eat_effect = list(/datum/status_effect/buff/foodbuff, /datum/status_effect/buff/blessed)
 
 /*	.................   Chocolate Fish   ................... */
+/obj/item/reagent_containers/food/snacks/fryfish/carp/item_interaction(mob/living/user, obj/item/tool, list/modifiers)
+	if(!istype(tool, /obj/item/reagent_containers/food/snacks/chocolate))
+		return ..()
 
-/obj/item/reagent_containers/food/snacks/fryfish/carp/attackby(obj/item/I, mob/living/user, list/modifiers)
-	..()
-	if(user.mind)
-		short_cooktime = (50 - ((GET_MOB_SKILL_VALUE(user, /datum/attribute/skill/craft/cooking))*0.8))
-	var/found_table = locate(/obj/structure/table) in (loc)
-	if(isturf(loc)&& (found_table))
-		if(istype(I, /obj/item/reagent_containers/food/snacks/chocolate))
-			playsound(user, 'sound/foley/dropsound/food_drop.ogg', 40, TRUE, -1)
-			to_chat(user, span_notice("Creating an insult against cooking..."))
-			if(do_after(user, short_cooktime, src))
-				new /obj/item/reagent_containers/food/snacks/chocolate_carp(loc)
-				qdel(I)
-				qdel(src)
-				user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking/confectionery, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE)*0.5))
+	if(!isturf(loc) || !locate(/obj/structure/table) in loc)
+		return ITEM_INTERACT_BLOCKING
+
+	short_cooktime = (50 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking)) * 8))
+
+	playsound(user, 'sound/foley/dropsound/food_drop.ogg', 40, TRUE, -1)
+	to_chat(user, span_notice("Creating an insult against cooking..."))
+	if(!do_after(user, short_cooktime, src))
+		return ITEM_INTERACT_BLOCKING
+
+	new /obj/item/reagent_containers/food/snacks/chocolate_carp(loc)
+
+	qdel(tool)
+	qdel(src)
+	user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking/confectionery, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE) * 0.5))
+	return ITEM_INTERACT_SUCCESS
 
 /obj/item/reagent_containers/food/snacks/chocolate_carp
 	name = "le carp au chocolat"

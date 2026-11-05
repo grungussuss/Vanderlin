@@ -10,6 +10,10 @@
 
 	for(var/obj/item/W in M)
 		if(!M.dropItemToGround(W))
+			// I hate that this is necessary, but the code is literally just dropping or deleting everything otherwise
+			// people should be allowed to keep their fucking organs
+			if(istype(W, /obj/item/organ) || istype(W, /obj/item/bodypart))
+				continue
 			qdel(W)
 			M.regenerate_icons()
 
@@ -34,7 +38,7 @@
 	var/option = tgui_alert(user, "What type of SubtlePM do you want?", "Type", list("Voice", "Specific God"))
 	switch(option)
 		if("Voice")
-			message = input("Message:", text("Subtle PM to [target.key]")) as text|null
+			message = input("Message:", "Subtle PM to [target.key]") as text|null
 			if(!message)
 				message_admins("[key_name_admin(user)] decided not to talk into [ADMIN_LOOKUPFLW(target)]'s head")
 				return FALSE
@@ -46,9 +50,9 @@
 			var/volume = "Normal"
 			var/first_time_message
 			for(var/patron in COLORFUL_PATRONS)
-				if(patron in god_options)
-					continue
-				god_options += patron
+				god_options |= patron
+			for(var/devil in ARCHDEVIL_PATRON_NAMES)
+				god_options |= devil
 			chosen_god = browser_input_list(user, "Which god?", "God", god_options, "CANCEL", 20 SECONDS)
 			if(!chosen_god || (chosen_god == "CANCEL"))
 				message_admins("[key_name_admin(user)] decided not to talk into [ADMIN_LOOKUPFLW(target)]'s head")
@@ -66,6 +70,8 @@
 			if(first_time && first_time_message)
 				to_chat(target, SPAN_GOD_FIRST_FEEL(first_time_message))
 				message_admins("<span class='adminnotice'><b> SubtleMessage: [key_name_admin(user)] -> [key_name_admin(target)] :</b> [first_time_message]</span>")
+			if(chosen_god in ARCHDEVIL_PATRON_NAMES)
+				chosen_god = "archdevil"
 			message = "<span class='god_[ckey(chosen_god)]'>[message]</span>"
 			switch(volume)
 				if("Loud")
@@ -173,7 +179,7 @@
 	if(!check_rights(R_ADMIN))
 		return
 
-	var/msg = input("Message:", text("Enter the text you wish to appear to everyone:")) as text|null
+	var/msg = input("Message:", "Enter the text you wish to appear to everyone:") as text|null
 
 	if (!msg)
 		return
@@ -216,7 +222,7 @@
 	if(!M)
 		return
 
-	var/msg = input("Message:", text("Enter the text you wish to appear to your target:")) as text|null
+	var/msg = input("Message:", "Enter the text you wish to appear to your target:") as text|null
 
 	if( !msg )
 		return
@@ -239,7 +245,7 @@
 	var/range = input("Range:", "Narrate to mobs within how many tiles:", 7) as num|null
 	if(!range)
 		return
-	var/msg = input("Message:", text("Enter the text you wish to appear to everyone within view:")) as text|null
+	var/msg = input("Message:", "Enter the text you wish to appear to everyone within view:") as text|null
 	if (!msg)
 		return
 	for(var/mob/M in view(range,A))
@@ -255,14 +261,18 @@
 	if(!check_rights(R_ADMIN))
 		return
 
-	M.status_flags ^= GODMODE
-	to_chat(usr, "<span class='adminnotice'>Toggled [(M.status_flags & GODMODE) ? "ON" : "OFF"]</span>")
+	if(HAS_TRAIT_FROM(M, TRAIT_GODMODE, ADMIN_TRAIT))
+		REMOVE_TRAIT(M, TRAIT_GODMODE, ADMIN_TRAIT)
+	else
+		ADD_TRAIT(M, TRAIT_GODMODE, ADMIN_TRAIT)
+	var/new_godmode_state = HAS_TRAIT_FROM(M, TRAIT_GODMODE, ADMIN_TRAIT)
+	to_chat(usr, "<span class='adminnotice'>Toggled [new_godmode_state ? "ON" : "OFF"]</span>")
 
-	log_admin("[key_name(usr)] has toggled [key_name(M)]'s nodamage to [(M.status_flags & GODMODE) ? "On" : "Off"]")
-	var/msg = "[key_name_admin(usr)] has toggled [ADMIN_LOOKUPFLW(M)]'s nodamage to [(M.status_flags & GODMODE) ? "On" : "Off"]"
+	log_admin("[key_name(usr)] has toggled [key_name(M)]'s nodamage to [new_godmode_state ? "On" : "Off"]")
+	var/msg = "[key_name_admin(usr)] has toggled [ADMIN_LOOKUPFLW(M)]'s nodamage to [new_godmode_state ? "On" : "Off"]"
 	message_admins(msg)
 	admin_ticket_log(M, msg)
-	SSblackbox.record_feedback("nested tally", "admin_toggle", 1, list("Godmode", "[M.status_flags & GODMODE ? "Enabled" : "Disabled"]")) //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+	SSblackbox.record_feedback("nested tally", "admin_toggle", 1, list("Godmode", "[new_godmode_state ? "Enabled" : "Disabled"]")) //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
 
 /proc/cmd_admin_mute(whom, mute_type, automute = 0)
@@ -372,22 +382,6 @@ Traitors and the like can also be revived with the previous role mostly intact.
 		to_chat(usr, "<font color='red'>There is no active key like that in the game or the person is not currently a ghost.</font>")
 		return
 
-	if(G_found.mind && !G_found.mind.active)	//mind isn't currently in use by someone/something
-
-		//check if they were a monkey
-		if(findtext(G_found.real_name,"monkey"))
-			if(tgui_alert(usr, "This character appears to have been a monkey. Would you like to respawn them as such?", "Confirm", list("Yes","No")) == "Yes")
-				var/mob/living/carbon/monkey/new_monkey = new
-				SSjob.SendToBackupPoint(new_monkey)
-				G_found.mind.transfer_to(new_monkey)	//be careful when doing stuff like this! I've already checked the mind isn't in use
-				new_monkey.key = G_found.key
-				to_chat(new_monkey, "You have been fully respawned. Enjoy the game.")
-				var/msg = "<span class='adminnotice'>[key_name_admin(usr)] has respawned [new_monkey.key] as a filthy xeno.</span>"
-				message_admins(msg)
-				admin_ticket_log(new_monkey, msg)
-				return	//all done. The ghost is auto-deleted
-
-
 	//Ok, it's not a xeno or a monkey. So, spawn a human.
 	var/mob/living/carbon/human/new_character = new//The mob being spawned.
 	SSjob.SendToBackupPoint(new_character)
@@ -408,7 +402,7 @@ Traitors and the like can also be revived with the previous role mostly intact.
 	else
 		var/datum/preferences/A = new()
 		A.safe_transfer_prefs_to(new_character)
-		A.real_name = G_found.real_name
+		//A.real_name = G_found.real_name
 		new_character.dna.update_dna_identity()
 
 	new_character.name = new_character.real_name
@@ -490,7 +484,7 @@ Traitors and the like can also be revived with the previous role mostly intact.
 
 	var/list/job_list = list()
 	for(var/datum/job/job as anything in SSjob.joinable_occupations)
-		if(IS_ABSTRACT(job) || (job.title == "NOPE")) // Safety first.
+		if(IS_ABSTRACT(job) || (job.title == "NOPE") || (job.title == "ADMIN SPECIAL JOB")) // Safety first.
 			continue
 		job_list += job.title
 
@@ -525,22 +519,22 @@ Traitors and the like can also be revived with the previous role mostly intact.
 	if(!check_rights(R_ADMIN))
 		return
 
-	var/devastation = input("Range of total devastation. -1 to none", text("Input"))  as num|null
+	var/devastation = input("Range of total devastation. -1 to none", "Input") as num|null
 	if(devastation == null)
 		return
-	var/heavy = input("Range of heavy impact. -1 to none", text("Input"))  as num|null
+	var/heavy = input("Range of heavy impact. -1 to none", "Input") as num|null
 	if(heavy == null)
 		return
-	var/light = input("Range of light impact. -1 to none", text("Input"))  as num|null
+	var/light = input("Range of light impact. -1 to none", "Input") as num|null
 	if(light == null)
 		return
-	var/flash = input("Range of flash. -1 to none", text("Input"))  as num|null
+	var/flash = input("Range of flash. -1 to none", "Input") as num|null
 	if(flash == null)
 		return
-	var/flames = input("Range of flames. -1 to none", text("Input"))  as num|null
+	var/flames = input("Range of flames. -1 to none", "Input") as num|null
 	if(flames == null)
 		return
-	var/hotspots = input("Range of flames. -1 to none", text("Input"))  as num|null
+	var/hotspots = input("Range of flames. -1 to none", "Input") as num|null
 	if(hotspots == null)
 		return
 
@@ -557,7 +551,7 @@ Traitors and the like can also be revived with the previous role mostly intact.
 	else
 		return
 
-/client/proc/cmd_admin_gib(mob/M in GLOB.mob_list)
+/client/proc/cmd_admin_gib(mob/living/M in GLOB.mob_list)
 	set category = "GameMaster.Fun"
 	set name = "Gib"
 
@@ -587,12 +581,15 @@ Traitors and the like can also be revived with the previous role mostly intact.
 	set name = "Gibself"
 	set category = "GameMaster.Fun"
 
+	if(!isliving(mob))
+		return
 	var/confirm = tgui_alert(src, "You sure?", "Confirm", list("Yes", "No"))
 	if(confirm == "Yes")
 		log_admin("[key_name(usr)] used gibself.")
 		message_admins("<span class='adminnotice'>[key_name_admin(usr)] used gibself.</span>")
 		SSblackbox.record_feedback("tally", "admin_verb", 1, "Gib Self") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
-		mob.gib(1, 1, 1)
+		var/mob/living/living_mob = mob
+		living_mob.gib(1, 1, 1)
 
 /client/proc/cmd_admin_check_contents(mob/living/M in GLOB.mob_list)
 	set category = "GameMaster.Equipping"
@@ -682,10 +679,11 @@ Traitors and the like can also be revived with the previous role mostly intact.
 
 	var/adding_hud = !has_antag_hud()
 
-	for(var/datum/atom_hud/antag/H in GLOB.huds) // add antag huds
-		(adding_hud) ? H.add_hud_to(usr) : H.remove_hud_from(usr)
+	for(var/key in GLOB.huds) // add antag huds
+		var/datum/atom_hud/antag/hud = GLOB.huds[key]
+		adding_hud ? hud.show_to(usr) : hud.hide_from(usr)
 
-	if(prefs.toggles & COMBOHUD_LIGHTING)
+	if(prefs.read_preference(/datum/preference/bitwise/toggles) & COMBOHUD_LIGHTING)
 		if(adding_hud)
 			mob.lighting_alpha = LIGHTING_PLANE_ALPHA_INVISIBLE
 		else
@@ -701,7 +699,7 @@ Traitors and the like can also be revived with the previous role mostly intact.
 
 /client/proc/has_antag_hud()
 	var/datum/atom_hud/A = GLOB.huds[ANTAG_HUD_HIDDEN]
-	return A.hudusers[mob]
+	return A.hud_users_all_z_levels[mob]
 
 /client/proc/show_tip()
 	set category = "Admin.Admin"
@@ -742,6 +740,24 @@ Traitors and the like can also be revived with the previous role mostly intact.
 		message_admins("WARNING: The server will not show up on the hub because byond is detecting that a filewall is blocking incoming connections.")
 
 	SSblackbox.record_feedback("nested tally", "admin_toggle", 1, list("Toggled Hub Visibility", "[GLOB.hub_visibility ? "Enabled" : "Disabled"]")) //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+
+/client/proc/scan_health(mob/living/carbon/target as mob)
+	set name = "Scan Health"
+	set category = "GameMaster.Gods"
+	if(!check_rights())
+		to_chat(usr, span_warning("You should not have this button. Shoo."))
+		return FALSE
+
+	if(!ishuman(target))
+		to_chat(usr, span_warning("You can only use this on human targets."))
+		return FALSE
+	var/mob/living/carbon/human/human_target = target
+	if(QDELETED(human_target))
+		return FALSE
+	human_target.check_for_injuries(mob, TRUE, FALSE, TRUE, TRUE)
+	log_admin("[key_name(usr)] admin-scanned the health of [key_name(target)]")
+	message_admins("[key_name_admin(usr)] admin-scanned the health of [key_name_admin(target)]")
+	return TRUE
 
 /client/proc/smite(mob/living/target as mob)
 	set name = "Smite"
@@ -829,7 +845,7 @@ Traitors and the like can also be revived with the previous role mostly intact.
 			for (var/mob/living/carbon in GLOB.carbon_list) // Admin smite, just tell all assassins whether they have their knife or not
 				if (HAS_TRAIT(carbon, TRAIT_ASSASSIN) && !(carbon.stat == DEAD)) //Check if they are an assassin and alive
 					// for(var/obj/item/I in carbon) // Checks to see if the assassin has their dagger on them. If so, the dagger will let them know of a new target.
-					// 	if(istype(I, /obj/item/weapon/knife/dagger/steel/profane)) // Checks to see if the assassin has their dagger on them.
+					// 	if(istype(I, /obj/item/weapon/knife/dagger/steel/inhumen/profane)) // Checks to see if the assassin has their dagger on them.
 					to_chat(carbon, "<span class='danger'>\"The Dark Sun Graggar himself has ordered us to punish [target.real_name] for their transgressions!\"</span>")
 			to_chat(target.mind, "<span class='danger'>My hair stands on end. Has someone just said my name? I should watch my back.</span>")
 		if(ADMIN_PUNISHMENT_MEATPIE)
@@ -878,7 +894,9 @@ Traitors and the like can also be revived with the previous role mostly intact.
 				to_chat(usr, span_warning("Invalid target!"))
 				return
 			wound.infection = BBC_TIME_MAX
+			wound.infection_percent = 1
 			target.death()
+
 
 	punish_log(target, punishment)
 
@@ -938,7 +956,7 @@ Traitors and the like can also be revived with the previous role mostly intact.
 	var/list/msg = list()
 	msg += "<html><head><title>Playtime Report</title></head><body>Playtime:<BR><UL>"
 	for(var/client/C in GLOB.clients)
-		msg += "<LI> - [key_name_admin(C)]: <A href='?_src_=holder;[HrefToken()];getplaytimewindow=[REF(C.mob)]'>" + C.get_exp_living() + "</a></LI>"
+		msg += "<LI> - [key_name_admin(C)]: <A href='byond://?_src_=holder;[HrefToken()];getplaytimewindow=[REF(C.mob)]'>" + C.get_exp_living() + "</a></LI>"
 	msg += "</UL></BODY></HTML>"
 	src << browse(msg.Join(), "window=Player_playtime_check")
 
@@ -955,7 +973,7 @@ Traitors and the like can also be revived with the previous role mostly intact.
 	var/list/body = list()
 	body += "<html><head><title>Playtime for [C.key]</title></head><BODY><BR>Playtime:"
 	body += C.get_exp_report()
-	body += "<A href='?_src_=holder;[HrefToken()];toggleexempt=[REF(C)]'>Toggle Exempt status</a>"
+	body += "<A href='byond://?_src_=holder;[HrefToken()];toggleexempt=[REF(C)]'>Toggle Exempt status</a>"
 	body += "</BODY></HTML>"
 	usr << browse(body.Join(), "window=playerplaytime[C.ckey];size=550x615")
 
@@ -999,11 +1017,11 @@ Traitors and the like can also be revived with the previous role mostly intact.
 		if("Remove")
 			if(!GLOB.trait_name_map)
 				GLOB.trait_name_map = generate_trait_name_map()
-			for(var/trait in D.status_traits)
+			for(var/trait in D._status_traits)
 				var/name = GLOB.trait_name_map[trait] || trait
 				availible_traits[name] = trait
 
-	var/chosen_trait = input("Select trait to modify", "Trait") as null|anything in sortList(availible_traits)
+	var/chosen_trait = tgui_input_list(usr, "Select trait to modify", "Trait", sortList(availible_traits))
 	if(!chosen_trait)
 		return
 	chosen_trait = availible_traits[chosen_trait]
@@ -1015,16 +1033,18 @@ Traitors and the like can also be revived with the previous role mostly intact.
 				D.AddElement(/datum/element/movetype_handler)
 			ADD_TRAIT(D, chosen_trait, source)
 		if("Remove")
-			var/specific = input("All or specific source ?", "Trait Remove/Add") as null|anything in list("All","Specific")
+			var/specific = tgui_alert(usr, "All or specific source ?", "Trait Remove/Add", list("All","Specific"))
 			if(!specific)
 				return
 			switch(specific)
 				if("All")
 					source = null
 				if("Specific")
-					source = input("Source to be removed","Trait Remove/Add") as null|anything in sortList(D.status_traits[chosen_trait])
+					source = tgui_input_list(usr, "Source to be removed","Trait Remove/Add", sortList(D._status_traits[chosen_trait]))
 					if(!source)
 						return
+				else
+					return
 			REMOVE_TRAIT(D,chosen_trait,source)
 
 /client/proc/send_bird_letter(mob/M in GLOB.player_list)
@@ -1038,7 +1058,7 @@ Traitors and the like can also be revived with the previous role mostly intact.
 
 	message_admins("[key_name_admin(src)] has started answering [ADMIN_LOOKUPFLW(M)]'s letter.")
 
-	var/msg = input("Message:", text("Letter to [M.key]")) as message|null
+	var/msg = input("Message:", "Letter to [M.key]") as message|null
 	if(!msg)
 		message_admins("[key_name_admin(src)] decided not to answer [ADMIN_LOOKUPFLW(M)]'s letter.")
 		return
@@ -1061,3 +1081,23 @@ Traitors and the like can also be revived with the previous role mostly intact.
 	message_admins(span_adminnotice("Messenger Bird Letter: [key_name_admin(usr)] -> [key_name_admin(M)] : [msg]"))
 	log_game("LETTER RECEIVED: [key_name(usr)] -> [key_name(M)]: \n[msg]")
 	SSblackbox.record_feedback("tally", "admin_verb_send_messenger_bird", 1, "Messenger Bird Letter") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+
+///This isn't showing in verbs for some reason??
+/client/proc/grant_ticket_to(mob/M in GLOB.player_list)
+	set name = "Grant Ticket To"
+	set category = "GameMaster.Interactions"
+
+	if(!ismob(M))
+		return
+	if(!check_rights(R_ADMIN))
+		return
+
+	var/target_ckey = M.ckey
+	if(!target_ckey && M.client)
+		target_ckey = M.client.ckey
+	if(!target_ckey)
+		to_chat(usr, span_warning("TICKETS: Could not determine a ckey for that mob."))
+		return
+
+	var/datum/admin_ticket_granter/granter = new(src, target_ckey)
+	granter.ui_interact(mob)

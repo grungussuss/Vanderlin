@@ -24,6 +24,7 @@
 		CTAG_CONSORT,
 		CTAG_TOWN_ELDER,
 		CTAG_ROYALKNIGHT,
+		CTAG_COURTAGENT,
 	)
 
 /datum/job/advclass/pick_everything/on_roundstart(mob/living/carbon/human/spawned, client/player_client)
@@ -35,7 +36,7 @@
 			continue
 		if(length(invalid_ctags & CHECKS.category_tags) && !length(parent_job?.advclass_cat_rolls & CHECKS.category_tags))
 			continue
-		if(!CHECKS.check_requirements(spawned))
+		if(!CHECKS.check_requirements(spawned, TRUE))
 			continue
 		possible_classes += CHECKS
 

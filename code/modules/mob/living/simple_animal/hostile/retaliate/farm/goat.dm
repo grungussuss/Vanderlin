@@ -1,14 +1,14 @@
 /mob/living/simple_animal/hostile/retaliate/goat
-	icon = 'icons/roguetown/mob/monster/gote.dmi'
 	name = "gote"
 	desc = ""
+	icon = 'icons/roguetown/mob/monster/gote.dmi'
 	icon_state = "goat"
 	icon_living = "goat"
 	icon_dead = "goat_dead"
 	icon_gib = "goat_gib"
 
 	animal_species = /mob/living/simple_animal/hostile/retaliate/goatmale
-	faction = list("goats")
+	faction = list(FACTION_NEUTRAL)
 	gender = FEMALE
 	footstep_type = FOOTSTEP_MOB_SHOE
 	emote_see = list("shakes her head.", "chews her cud.")
@@ -64,6 +64,8 @@
 	happy_funtime_mob = TRUE
 	indexed = TRUE
 
+	living_flags = MOVES_ON_ITS_OWN|CAN_BE_FIREMANNED
+
 	var/can_breed = TRUE
 
 /mob/living/simple_animal/hostile/retaliate/goat/Initialize()
@@ -103,10 +105,12 @@
 			. += mounted
 
 /mob/living/simple_animal/hostile/retaliate/goat/tamed(mob/user)
-	..()
+	. = ..()
 	deaggroprob = 50
+	if(.) // was already tamed
+		return
 	if(can_buckle)
-		AddComponent(/datum/component/riding/gote)
+		AddElement(/datum/element/ridable, /datum/component/riding/creature/gote)
 
 /// Called when we attack something in order to piece together the intent of the AI/user and provide desired behavior. The element might be okay here but I'd rather the fluff.
 /// Goats are really good at beating up plants by taking bites out of them, but we use the default attack for everything else
@@ -133,14 +137,14 @@
 	return ..()
 
 /mob/living/simple_animal/hostile/retaliate/goatmale
-	icon = 'icons/roguetown/mob/monster/gote.dmi'
 	name = "male gote"
+	icon = 'icons/roguetown/mob/monster/gote.dmi'
 	icon_state = "goatmale"
 	icon_living = "goatmale"
 	icon_dead = "goatmale_dead"
 	icon_gib = "goatmale_gib"
 
-	faction = list("goats")
+	faction = list(FACTION_NEUTRAL)
 	footstep_type = FOOTSTEP_MOB_SHOE
 	emote_see = list("shakes his head.", "chews his cud.")
 
@@ -200,6 +204,8 @@
 	generate_genetics = TRUE
 	indexed = TRUE
 
+	living_flags = MOVES_ON_ITS_OWN|CAN_BE_FIREMANNED
+
 /mob/living/simple_animal/hostile/retaliate/goatmale/Initialize()
 	. = ..()
 	AddElement(/datum/element/ai_retaliate)
@@ -237,10 +243,12 @@
 			. += mounted
 
 /mob/living/simple_animal/hostile/retaliate/goatmale/tamed(mob/user)
-	..()
+	. = ..()
 	deaggroprob = 20
+	if(.) // was already tamed
+		return
 	if(can_buckle)
-		AddComponent(/datum/component/riding/gote)
+		AddElement(/datum/element/ridable, /datum/component/riding/creature/gote)
 
 /mob/living/simple_animal/hostile/retaliate/goatmale/get_sound(input)
 	switch(input)

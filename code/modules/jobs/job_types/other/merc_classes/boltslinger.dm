@@ -9,7 +9,7 @@
 		/datum/attribute/skill/combat/knives = 20,
 		/datum/attribute/skill/combat/swords = 30,
 		/datum/attribute/skill/combat/polearms = 10,
-		/datum/attribute/skill/combat/crossbows = 30,
+		/datum/attribute/skill/combat/crossbows = 35,
 		/datum/attribute/skill/craft/tanning = 10,
 		/datum/attribute/skill/combat/wrestling = 10,
 		/datum/attribute/skill/combat/unarmed = 10,
@@ -20,7 +20,7 @@
 		/datum/attribute/skill/misc/sewing = 30,
 		/datum/attribute/skill/misc/medicine = 20,
 		/datum/attribute/skill/craft/cooking = 10,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/athletics = 30
 	)
 

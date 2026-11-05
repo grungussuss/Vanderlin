@@ -6,6 +6,10 @@
 	spell_cost = 25
 	cast_range = 4
 	charge_required = FALSE
+	heretical_spell = TRUE
+
+	required_form = FORM_DEATH
+	associated_skill = /datum/attribute/skill/magic/arcane/death
 
 /datum/action/cooldown/spell/gravemark/is_valid_target(atom/cast_on)
 	. = ..()
@@ -20,16 +24,16 @@
 		to_chat(owner, span_warning("It would be unwise to make an enemy of your own skeletons."))
 		return FALSE
 	if(cast_on.mind && cast_on.mind.current)
-		if(faction_tag in cast_on.mind.current.faction)
-			cast_on.mind.current.faction -= faction_tag
+		if(cast_on.mind.current.has_faction(faction_tag))
+			cast_on.mind.current.remove_faction(faction_tag)
 			owner.say("Hostis declaratus es.")
 		else
-			cast_on.mind.current.faction += faction_tag
+			cast_on.mind.current.add_faction(faction_tag)
 			owner.say("Amicus declaratus es.")
 	else if(istype(cast_on, /mob/living/simple_animal))
-		if(faction_tag in cast_on.faction)
-			cast_on.faction -= faction_tag
+		if(cast_on.has_faction(faction_tag))
+			cast_on.remove_faction(faction_tag)
 			owner.say("Hostis declaratus es.")
 		else
-			cast_on.faction |= faction_tag
+			cast_on.add_faction(faction_tag)
 			owner.say("Amicus declaratus es.")

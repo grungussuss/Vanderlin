@@ -2,12 +2,12 @@
 	name = "skeleton"
 	icon = 'icons/roguetown/mob/monster/skeletons.dmi'
 	icon_state = MAP_SWITCH("", "skeleton")
+	faction = list(FACTION_HOSTILE, FACTION_UNDEAD)
 	race = /datum/species/human/northern
 	gender = MALE
 	bodyparts = list(/obj/item/bodypart/chest, /obj/item/bodypart/head, /obj/item/bodypart/l_arm,
 					/obj/item/bodypart/r_arm, /obj/item/bodypart/r_leg, /obj/item/bodypart/l_leg, /obj/item/bodypart/mouth)
-	faction = list(FACTION_UNDEAD)
-	var/skel_outfit = /datum/outfit/npc/skeleton
+	mob_biotypes = MOB_UNDEAD
 	ambushable = FALSE
 	rot_type = null
 	base_intents = list(INTENT_HELP, INTENT_DISARM, INTENT_GRAB, /datum/intent/unarmed/claw)
@@ -15,11 +15,11 @@
 	possible_mmb_intents = list(INTENT_STEAL, INTENT_JUMP, INTENT_KICK, INTENT_BITE)
 	stand_attempts = 4
 	cmode_music = 'sound/music/cmode/antag/combatskeleton.ogg'
-	var/should_have_aggro = TRUE
 	headprice = 7
+	mob_biotypes = MOB_HUMANOID|MOB_ORGANIC|MOB_UNDEAD
 
-/mob/living/carbon/human/species/skeleton/npc/no_equipment
-	skel_outfit = null
+	var/skel_outfit = /datum/outfit/npc/skeleton
+	var/should_have_aggro = TRUE
 
 /mob/living/carbon/human/species/skeleton/no_equipment
 	skel_outfit = null
@@ -31,6 +31,9 @@
 	wander = TRUE
 	attack_speed = -10
 
+/mob/living/carbon/human/species/skeleton/npc/no_equipment
+	skel_outfit = null
+
 /mob/living/carbon/human/species/skeleton/Initialize()
 	. = ..()
 	if(ai_controller && should_have_aggro)
@@ -41,36 +44,35 @@
 	..()
 	name = "skeleton"
 	real_name = "skeleton"
-	underwear = "Nude"
 	mob_biotypes = MOB_UNDEAD
-	faction = list(FACTION_UNDEAD)
-	var/turf/turf = get_turf(src)
-	if(SSterrain_generation.get_island_at_location(turf))
-		faction |= "islander"
+	add_faction(FACTION_UNDEAD)
 	if(length(quirks))
 		clear_quirks()
 	if(dna?.species)
-		dna.species.species_traits |= NOBLOOD
+		dna.species.inherent_traits |= TRAIT_NOBLOOD
 		dna.species.soundpack_m = new /datum/voicepack/skeleton()
 		dna.species.soundpack_f = new /datum/voicepack/skeleton()
 		var/obj/item/bodypart/head/headdy = get_bodypart("head")
 		if(headdy)
 			headdy.icon = 'icons/roguetown/mob/monster/skeletons.dmi'
 			headdy.icon_state = "skull"
-	for(var/obj/item/bodypart/B as anything in bodyparts)
-		B.skeletonize(FALSE)
-	grant_undead_eyes()
+	underwear = "Nude"
 	update_body()
-	ADD_TRAIT(src, TRAIT_NOMOOD, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_NOHUNGER, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_NOBREATH, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_NOHYGIENE, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_NOPAIN, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_NOSLEEP, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_EASYDISMEMBER, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_TOXIMMUNE, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_LIMBATTACHMENT, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_CRITICAL_WEAKNESS, TRAIT_GENERIC)
+	grant_undead_eyes()
+	add_traits(list(TRAIT_NOMOOD, \
+		TRAIT_NOHUNGER, \
+		TRAIT_NOBREATH, \
+		TRAIT_NOHYGIENE, \
+		TRAIT_NOPAIN, \
+		TRAIT_SLEEPIMMUNE, \
+		TRAIT_EASYDISMEMBER, \
+		TRAIT_TOXIMMUNE, \
+		TRAIT_LIMBATTACHMENT, \
+		TRAIT_CRITICAL_WEAKNESS, \
+		TRAIT_NO_ORGAN_PROCESS, \
+		TRAIT_NOBLOOD)
+		, SPECIES_TRAIT)
+	skeletonize(FALSE)
 	if(skel_outfit)
 		var/datum/outfit/OU = new skel_outfit
 		if(OU)
@@ -118,10 +120,10 @@
 	shirt = /obj/item/clothing/shirt/undershirt/colored/vagrant
 	pants = /obj/item/clothing/pants/chainlegs/iron
 	head = /obj/item/clothing/head/helmet/leather
-	shoes = /obj/item/clothing/shoes/boots
+	shoes = /obj/item/clothing/shoes/boots/darkboots
 	H.attributes.add_sheet(/datum/attribute_holder/sheet/job/skeleton_npc/greater)
 	H.set_patron(/datum/patron/inhumen/zizo)
-	ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
+	ADD_TRAIT(H, TRAIT_HEAVYARMOR, JOB_TRAIT)
 	H.possible_rmb_intents = list(/datum/rmb_intent/feint,\
 	/datum/rmb_intent/aimed,\
 	/datum/rmb_intent/strong,\
@@ -136,13 +138,8 @@
 
 /mob/living/carbon/human/species/skeleton/npc/peasant/after_creation()
 	..()
-	ADD_TRAIT(src, TRAIT_NOMOOD, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_NOHUNGER, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_EASYDISMEMBER, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_CRITICAL_WEAKNESS, TRAIT_GENERIC)
 	equipOutfit(new /datum/outfit/species/skeleton/npc/peasant)
 	dodgetime = 15
-	canparry = TRUE
 	flee_in_pain = FALSE
 	wander = TRUE
 
@@ -187,14 +184,9 @@
 
 /mob/living/carbon/human/species/skeleton/npc/ambush/after_creation()
 	..()
-	ADD_TRAIT(src, TRAIT_NOMOOD, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_NOHUNGER, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_EASYDISMEMBER, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_CRITICAL_WEAKNESS, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_HEAVYARMOR, INNATE_TRAIT)
 	equipOutfit(new /datum/outfit/species/skeleton/npc/random)
 	dodgetime = 15
-	canparry = TRUE
 	flee_in_pain = FALSE
 	wander = TRUE
 
@@ -229,14 +221,9 @@
 
 /mob/living/carbon/human/species/skeleton/npc/warrior/after_creation()
 	..()
-	ADD_TRAIT(src, TRAIT_NOMOOD, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_NOHUNGER, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_EASYDISMEMBER, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_CRITICAL_WEAKNESS, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_HEAVYARMOR, INNATE_TRAIT)
 	equipOutfit(new /datum/outfit/species/skeleton/npc/warrior)
 	dodgetime = 15
-	canparry = TRUE
 	flee_in_pain = FALSE
 	wander = TRUE
 
@@ -288,12 +275,8 @@
 
 /mob/living/carbon/human/species/skeleton/npc/warrior/skilled/after_creation()
 	..()
-	ADD_TRAIT(src, TRAIT_NOMOOD, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_NOHUNGER, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
 	equipOutfit(new /datum/outfit/species/skeleton/npc/warrior)
 	d_intent = INTENT_PARRY
-	canparry = TRUE
 	flee_in_pain = FALSE
 	wander = TRUE
 	configure_mind()
@@ -329,8 +312,7 @@
 /mob/living/carbon/human/species/skeleton/death_arena/after_creation()
 	..()
 	equipOutfit(new /datum/outfit/arena_skeleton)
-	ADD_TRAIT(src, TRAIT_CRITICAL_WEAKNESS, TRAIT_GENERIC)
-	ADD_TRAIT(src, TRAIT_NOLIMBDISABLE, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_NOLIMBDISABLE, INNATE_TRAIT)
 	attributes.add_sheet(/datum/attribute_holder/sheet/job/skeleton_npc/arena)
 
 /mob/living/carbon/human/species/skeleton/death_arena/roll_mob_stats()

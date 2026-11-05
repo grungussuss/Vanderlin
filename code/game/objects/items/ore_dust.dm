@@ -11,10 +11,6 @@
 	if(melting_material)
 		color = initial(melting_material.color)
 
-/obj/item/ore/dust/set_quality(quality)
-	..()
-	mill_yield_bonus = (recipe_quality - 1) * 0.3
-
 /obj/item/ore/dust/gold
 	name = "gold dust"
 	desc = "Fine particles of gold ore."
@@ -48,3 +44,14 @@
 	desc = "Fine particles of tin ore."
 	melting_material = /datum/material/tin
 	item_weight = 300 GRAMS
+
+/obj/item/ore/dust/bloodstone
+	name = "bloodstone dust"
+	desc = "Fine particles of bloodstone."
+	melting_material = /datum/material/bloodsteel
+	item_weight = 350 GRAMS
+	examine_highlight_type = /datum/examine_highlight/heresy_suspicious/bloodmagic
+
+/obj/item/ore/dust/bloodstone/Initialize(mapload)
+	. = ..()
+	enchant(/datum/enchantment/bloodcurse)

@@ -76,31 +76,37 @@
 	set_light(1, 1, 1, l_color = lighting_color)
 	. += mutable_appearance(icon, filled_overlay)
 
-/obj/structure/fake_machine/vendor/attackby(obj/item/I, mob/user, list/modifiers)
-	if(istype(I, /obj/item/coin))
-		if(!lock_check())
-			to_chat(user, span_notice("There is no lock on \the [src]! It is not ready to sell!"))
-			return
-		var/money = I.get_real_price()
-		budget += money
-		qdel(I)
-		to_chat(user, span_info("I put [money] mammon in \the [src]."))
-		playsound(src, 'sound/misc/machinevomit.ogg', 100, TRUE, -1)
-		attack_hand(user)
-		return
-	return ..()
-
-/obj/structure/fake_machine/vendor/attackby_secondary(obj/item/weapon, mob/user, list/modifiers)
-	. = ..()
-	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
-		return
+/obj/structure/fake_machine/vendor/item_interaction(mob/living/user, obj/item/tool, list/modifiers)
 	if(user.cmode)
-		return
+		return NONE
+
+	if(!istype(tool, /obj/item/coin))
+		return NONE
+
+	if(!lock_check())
+		to_chat(user, span_notice("There is no lock on \the [src]! It is not ready to sell!"))
+		return ITEM_INTERACT_BLOCKING
+
+	var/money = tool.get_real_price()
+	budget += money
+	qdel(tool)
+	to_chat(user, span_info("I put [money] mammon in \the [src]."))
+	playsound(src, 'sound/misc/machinevomit.ogg', 100, TRUE, -1)
+	attack_hand(user)
+
+	return ITEM_INTERACT_SUCCESS
+
+/obj/structure/fake_machine/vendor/item_interaction_secondary(mob/living/user, obj/item/tool, list/modifiers)
+	if(user.cmode)
+		return NONE
+
 	if(!lock_check())
 		to_chat(user, span_notice("There is no lock on \the [src]! I won't be able to sell this!"))
-		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
-	add_merchandise(weapon, user)
-	return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
+		return ITEM_INTERACT_BLOCKING
+
+	add_merchandise(tool, user)
+
+	return ITEM_INTERACT_SUCCESS
 
 /obj/structure/fake_machine/vendor/proc/add_merchandise(obj/item/I, mob/user)
 	if(QDELETED(I) || !isitem(I))
@@ -264,10 +270,21 @@
 
 /obj/structure/fake_machine/vendor/inn/Initialize()
 	. = ..()
-	var/obj/I = new /obj/item/key/medroomi(src)
-	held_items[I] = list()
-	held_items[I]["NAME"] = I.name
-	held_items[I]["PRICE"] = 20
+	for(var/X in list(/obj/item/key/medroomi, /obj/item/key/medroomii, /obj/item/key/medroomiii, /obj/item/key/medroomiv))
+		var/obj/I = new X(src)
+		held_items[I] = list()
+		held_items[I]["NAME"] = I.name
+		held_items[I]["PRICE"] = 20
+	for(var/X in list(/obj/item/key/luxroomi, /obj/item/key/luxroomii, /obj/item/key/luxroomiii, /obj/item/key/luxroomiv))
+		var/obj/I = new X(src)
+		held_items[I] = list()
+		held_items[I]["NAME"] = I.name
+		held_items[I]["PRICE"] = 40
+	for(var/X in list(/obj/item/key/roomhunt))
+		var/obj/I = new X(src)
+		held_items[I] = list()
+		held_items[I]["NAME"] = I.name
+		held_items[I]["PRICE"] = 120
 
 /obj/structure/fake_machine/vendor/voyage
 	lockids = list(ACCESS_INN)

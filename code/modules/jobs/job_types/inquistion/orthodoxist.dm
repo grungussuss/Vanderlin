@@ -1,11 +1,10 @@
 /datum/job/orthodoxist
 	title = JOB_SACRESTANTS
 	department_flag = INQUISITION
-	faction = "Station"
+	factions = list(FACTION_INQUISITION, FACTION_TOWN)
 	total_positions = 2 // TWO GOONS!!
 	spawn_positions = 2
 	allowed_races = list(SPEC_ID_HUMEN, SPEC_ID_DWARF)
-	bypass_lastclass = TRUE
 	cmode_music = 'sound/music/cmode/church/CombatInquisitor2.ogg'
 	allowed_patrons = list(
 		/datum/patron/psydon
@@ -49,8 +48,9 @@
 	spawned.hud_used?.initialize_bloodpool()
 	spawned.hud_used?.bloodpool.set_fill_color("#dcdddb")
 	spawned.hud_used?.bloodpool?.name = "Psydon's Grace: [spawned.bloodpool]"
-	spawned.hud_used?.bloodpool?.desc = "Devotion: [spawned.bloodpool]/[spawned.maxbloodpool]"
+	spawned.hud_used?.bloodpool?.desc = "Grace: [spawned.bloodpool]/[spawned.maxbloodpool]"
 	spawned.maxbloodpool = 1000
+	spawned.AddComponent(/datum/component/bloodpool_regen, 0.5)
 
 	var/datum/species/species = spawned.dna?.species
 	if(species)
@@ -62,6 +62,8 @@
 	if(.)
 		spawned.hud_used?.shutdown_bloodpool()
 		spawned.maxbloodpool = initial(spawned.maxbloodpool)
+		qdel(spawned.GetComponent(/datum/component/bloodpool_regen))
 
 /datum/job/advclass/sacrestant
 	exp_types_granted = list(EXP_TYPE_INQUISITION, EXP_TYPE_COMBAT)
+	factions = list(FACTION_INQUISITION, FACTION_TOWN)

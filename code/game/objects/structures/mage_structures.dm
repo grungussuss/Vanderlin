@@ -52,7 +52,7 @@ GLOBAL_LIST_EMPTY(mana_fountains)
 
 		var/datum/beam/mana = Beam(
 			movable,
-			icon_state = "drain_life",
+			icon_state = "drain_mana",
 			max_distance = max_distance,
 			time = INFINITY,
 			beam_layer = LOWER_LEYLINE_LAYER,
@@ -60,7 +60,7 @@ GLOBAL_LIST_EMPTY(mana_fountains)
 			invisibility = INVISIBILITY_LEYLINES,
 		)
 
-		RegisterSignal(mana, COMSIG_PARENT_QDELETING, PROC_REF(beam_ended), movable)
+		RegisterSignal(mana, COMSIG_QDELETING, PROC_REF(beam_ended), movable)
 
 		LAZYADD(mana_beams, movable)
 
@@ -79,7 +79,7 @@ GLOBAL_LIST_EMPTY(mana_fountains)
 
 		var/datum/beam/mana = Beam(
 			movable,
-			icon_state = "drain_life",
+			icon_state = "drain_mana",
 			max_distance = max_distance,
 			time = INFINITY,
 			beam_layer = LOWER_LEYLINE_LAYER,
@@ -87,7 +87,7 @@ GLOBAL_LIST_EMPTY(mana_fountains)
 			invisibility = INVISIBILITY_LEYLINES,
 		)
 
-		RegisterSignal(mana, COMSIG_PARENT_QDELETING, PROC_REF(beam_ended), movable)
+		RegisterSignal(mana, COMSIG_QDELETING, PROC_REF(beam_ended), movable)
 
 		LAZYADD(mana_beams, movable)
 
@@ -203,7 +203,7 @@ GLOBAL_LIST_EMPTY(mana_fountains)
 	if(last_process + time_between_uses > world.time)
 		to_chat(user, span_notice("The leyline appears to be drained of energy."))
 		return
-	if(!isarcyne(user))
+	if(GET_MOB_SKILL_VALUE(user, /datum/attribute/skill/magic/arcane) <= SKILL_LEVEL_NONE)
 		if(!active)
 			to_chat(user, span_notice("I wave a hand through the circle of rocks. Nothing happens."))
 			return

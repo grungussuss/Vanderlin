@@ -11,6 +11,18 @@
 	salvage_result = /obj/item/natural/hide/cured
 	dyeable = TRUE
 
+/obj/item/clothing/armor/leather/advanced/forrester/masterwork
+	name = "masterwork forrester's armor"
+	desc = "Armour worn by few, those that live to hunt, to battle. \nThe soft, cloth linings with masterfully tanned leather make it easy to repair with a needle."
+	max_integrity = INTEGRITY_OLD_STRONG + 200
+	prevent_crits = ALL_EXCEPT_STAB
+	armor_type = /datum/armor/leather/master
+
+/obj/item/clothing/armor/leather/advanced/forrester/masterwork/Initialize()
+	. = ..()
+	filters += filter(type="drop_shadow", x=0, y=0, size=0.5, offset=1, color=rgb(218, 165, 32))
+
+
 /obj/item/clothing/cloak/forrestercloak
 	name = "forrester's cloak"
 	desc = "A cloak worn by the forest guards."
@@ -31,10 +43,6 @@
 /obj/item/clothing/cloak/forrestercloak/snow
 	icon_state = "snowcloak"
 
-/obj/item/clothing/cloak/forrestercloak/Initialize(mapload, ...)
-	. = ..()
-	AddComponent(/datum/component/storage/concrete/grid/cloak)
-
 /obj/item/clothing/cloak/wardencloak
 	name = "warden's cloak"
 	desc = "A cloak worn by the veteran warden of the Forest Guard."
@@ -46,10 +54,6 @@
 	sleeved = 'icons/roguetown/clothing/special/onmob/forest_guard.dmi'
 	sleevetype = "shirt"
 	nodismemsleeves = TRUE
-
-/obj/item/clothing/cloak/wardencloak/Initialize(mapload, ...)
-	. = ..()
-	AddComponent(/datum/component/storage/concrete/grid/cloak)
 
 /obj/item/clothing/head/helmet/visored/warden
 	name = "wardens's helmet"
@@ -77,6 +81,7 @@
 
 	prevent_crits = ALL_EXCEPT_STAB
 	abstract_type = /obj/item/clothing/head/helmet/medium/decorated
+	melting_material = /datum/material/steel
 
 /obj/item/clothing/head/helmet/medium/decorated/skullmet
 	name = "skullmet"
@@ -92,14 +97,15 @@
 		return
 	if(!picked)
 		var/list/icons = SKULLMET_ICONS
-		var/choice = input(user, "Choose a helmet design.", "Helmet designs") as anything in icons
+		var/choice = tgui_input_list(user, "Choose a helmet design.", "Helmet designs", icons)
 		var/playerchoice = icons[choice]
-		picked = TRUE
-		icon_state = playerchoice
-		item_state = playerchoice
-		if(loc == user && ishuman(user))
-			var/mob/living/carbon/H = user
-			H.update_inv_head()
+		if(playerchoice)
+			picked = TRUE
+			icon_state = playerchoice
+			item_state = playerchoice
+			if(loc == user && ishuman(user))
+				var/mob/living/carbon/H = user
+				H.update_inv_head()
 		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
 /obj/item/clothing/head/helmet/medium/decorated/rousskullmet

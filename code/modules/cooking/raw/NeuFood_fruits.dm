@@ -54,6 +54,10 @@
 	foodtype = FRUIT | PINEAPPLE
 	item_weight = 200 GRAMS
 
+/obj/item/reagent_containers/food/snacks/fruit/pineapple_slice/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/food_topping, "pineapple_slice", null, 10, topping_name = "a slice of anana")
+
 /*	..................   Tamto   ................... */
 /obj/item/reagent_containers/food/snacks/fruit/tamto_slice
 	name = "sliced tamto"
@@ -63,6 +67,23 @@
 	nutrition = FRUIT_NUTRITION
 	foodtype = FRUIT
 	item_weight = 40 GRAMS
+
+/obj/item/reagent_containers/food/snacks/fruit/tamto_slice/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/food_topping, "mato_split", null, 10, topping_name = "a slice of tamto")
+
+/*	..................   Ollie   ................... */
+/obj/item/reagent_containers/food/snacks/fruit/cured_ollie
+	name = "cured ollie"
+	desc = "A small green fruit that's been cured, making it infinitely more palatable."
+	icon_state = "ollie"
+	bitesize = 1
+	dropshrink = 0.6
+	nutrition = FRUIT_NUTRITION
+	foodtype = FRUIT
+	tastes = list("sour, savory brine" = 1)
+	rotprocess = SHELFLIFE_EXTREME
+	item_weight = 15 GRAMS
 
 /*	..................   Pompkaun   ................... */
 /obj/item/reagent_containers/food/snacks/fruit/pompkaun_goo

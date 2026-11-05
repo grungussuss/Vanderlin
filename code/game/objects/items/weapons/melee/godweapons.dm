@@ -13,7 +13,7 @@
 #define GOREFEAST_WORTHY list(\
 	span_danger("A worthy one!"),\
 	span_danger("Bathe me in their blood."),\
-	span_danger("You can smell their fear can't you?"),\
+	span_danger("You can smell their fear, can't you?"),\
 	span_danger("Unleash your fury, soak the soil in their blood."),\
 	span_danger("Feast on their organs."),\
 	span_danger("Cull the world of the weak!"),\
@@ -34,11 +34,15 @@
 	possible_item_intents = list(AXE_CUT, AXE_CHOP)
 	gripped_intents = list(AXE_CUT, AXE_GRTCHOP, SWORD_STRIKE)
 	max_blade_int = 200
-	max_integrity = INTEGRITY_STRONGEST + 220
+	max_integrity = INTEGRITY_GOD_WEAPON
 	minstr = 12
 	resistance_flags = FIRE_PROOF
 	sellprice = 550
 	item_weight = 3.5 KILOGRAMS
+	smeltresult = null
+	melting_material = null
+	melt_amount = 0
+	examine_highlight_type = /datum/examine_highlight/heresy_alarming/graggar
 
 /obj/item/weapon/polearm/halberd/bardiche/woodcutter/gorefeast/Initialize(mapload, ...)
 	. = ..()
@@ -64,6 +68,9 @@
 	if(!HAS_TRAIT(user, TRAIT_ORGAN_EATER))
 		force = 13
 		force_wielded = 23
+	else
+		force = initial(force)
+		force_wielded = initial(force_wielded)
 	return ..()
 
 /obj/item/weapon/polearm/halberd/bardiche/woodcutter/gorefeast/afterattack(atom/target, mob/living/user, proximity_flag, list/modifiers)
@@ -72,9 +79,9 @@
 	if(check_zone(user.zone_selected) != BODY_ZONE_CHEST)
 		return
 	var/mob/living/carbon/human/H = target
-	var/heart_crit = H.has_wound(/datum/wound/artery/chest)
+	var/heart_crit = H.has_wound(/datum/wound/artery/heart)
 	var/dead = H.stat == DEAD
-	if((H.health < H.crit_threshold) || heart_crit || dead)
+	if(HAS_TRAIT(H, TRAIT_CRITICAL_CONDITION) || heart_crit || dead)
 		var/fast = heart_crit || dead
 		var/obj/item/organ/heart/heart = H.getorganslot(ORGAN_SLOT_HEART)
 		if(!heart)
@@ -86,7 +93,8 @@
 			heart.forceMove(H.drop_location())
 
 			H.add_splatter_floor()
-			H.adjustBruteLoss(20)
+			var/obj/item/bodypart/chest = H.get_bodypart(BODY_ZONE_CHEST)
+			chest.bodypart_attacked_by(BCLASS_PIERCE, 50, incoming_germ = germ_level)
 			to_chat(user, span_notice("I finish pulling the heart from [H]!"))
 	. = ..()
 
@@ -106,14 +114,17 @@
 	possible_item_intents = list(SPEAR_CUT)
 	gripped_intents = list(POLEARM_CHOP, WHIP_STRIKE, NEANT_SHOOT)
 	max_blade_int = 200
-	max_integrity = INTEGRITY_STRONGEST + 220
-	minstr = 10
+	max_integrity = INTEGRITY_GOD_WEAPON
 	slot_flags = ITEM_SLOT_BACK
 	resistance_flags = FIRE_PROOF
-	dropshrink = 0.75
+
 	thrown_bclass = BCLASS_CUT
 	sellprice = 550
 	item_weight = 3 KILOGRAMS
+	smeltresult = null
+	melting_material = null
+	melt_amount = 0
+	examine_highlight_type = /datum/examine_highlight/heresy_alarming/zizo
 
 	COOLDOWN_DECLARE(fire_projectile)
 
@@ -141,7 +152,7 @@
 	if(H.get_lux_status() != LUX_HAS_LUX)
 		return
 	var/dead = H.stat == DEAD
-	if((H.health < H.crit_threshold) || dead)
+	if(HAS_TRAIT(H, TRAIT_CRITICAL_CONDITION) || dead)
 		var/speed = dead ? 3 SECONDS : 7 SECONDS
 		visible_message(user, span_notice("Neant lights up and begins to tear at [target]..."))
 		if(!do_after(user, speed, H))
@@ -151,7 +162,7 @@
 			return
 		playsound(user, 'sound/surgery/scalpel2.ogg', 70)
 		if(do_after(user, 0.5 SECONDS, target))
-			C.add_wound(/datum/wound/slash/incision)
+			C.create_injury(WOUND_SLASH, BLEED_DAMAGE_RATIO/6, surgical = TRUE)
 
 		playsound(user, 'sound/surgery/organ2.ogg', 70)
 		if(do_after(user, 0.5 SECONDS, target))
@@ -165,7 +176,8 @@
 		record_round_statistic(STATS_LUX_HARVESTED)
 
 		H.add_splatter_floor()
-		H.adjustBruteLoss(20)
+		var/obj/item/bodypart/chest = H.get_bodypart(BODY_ZONE_CHEST)
+		chest.bodypart_attacked_by(BCLASS_PIERCE, 50, incoming_germ = germ_level)
 		visible_message(user, span_notice("Neant's blade draws the lux from [target]!"))
 
 /obj/item/weapon/polearm/neant/proc/handle_magick(mob/living/user, atom/target)
@@ -227,7 +239,6 @@
 	slot_flags = ITEM_SLOT_BACK
 	SET_BASE_PIXEL(-16, -16)
 	bigboy = TRUE
-	dropshrink = 0.75
 	fire_sound = 'sound/combat/Ranged/turbulentafire.ogg'
 	possible_item_intents = list(/datum/intent/shoot/bow/turbulenta, /datum/intent/arc/bow/turbulenta)
 	force = 12
@@ -235,6 +246,7 @@
 	projectile_damage_multiplier = 1.1
 
 	item_weight = 2 KILOGRAMS
+	examine_highlight_type = /datum/examine_highlight/heresy_alarming/baotha
 
 	var/obj/item/instrument/harp/turbulenta/FUCK
 
@@ -341,9 +353,13 @@
 	desc = "A sword of legend. If they are true, then this is the blade of Matthios himself. Rumor has it, it steals space and time."
 	possible_item_intents = list(SWORD_STRIKE, SWORD_CUT)
 	gripped_intents = list(SWORD_STRIKE, SWORD_CHOP, SWORD_THRUST, PLEX_BLINK)
-	max_integrity = INTEGRITY_STRONGEST + 220
+	max_integrity = INTEGRITY_GOD_WEAPON
 	sellprice = 550
 	item_weight = 1.5 KILOGRAMS
+	smeltresult = null
+	melting_material = null
+	melt_amount = 0
+	examine_highlight_type = /datum/examine_highlight/heresy_alarming/matthios
 
 	COOLDOWN_DECLARE(pleonexia_blink)
 
@@ -407,6 +423,11 @@
 	icon = 'icons/roguetown/weapons/64/godweapons.dmi'
 	icon_state = "martyrsword"
 	item_weight = 1.5 KILOGRAMS
+	max_integrity = INTEGRITY_GOD_WEAPON
+	smeltresult = null
+	melting_material = null
+	melt_amount = 0
+	examine_highlight_type = /datum/examine_highlight/divine_weapon/altierre
 
 /datum/intent/sword/cut/martyr
 	item_damage_type = "fire"
@@ -432,13 +453,19 @@
 	var/safe_damage_wielded = 30
 	AddComponent(/datum/component/martyr_weapon, active_intents, active_intents_wielded, safe_damage, safe_damage_wielded)
 	enchant(/datum/enchantment/silver)
+	enchant(/datum/enchantment/anti_theft)
 
 /obj/item/weapon/greataxe/steel/grandmaster
 	name = "divine greataxe"
-	desc = "The Axe of Saint Altierre. A holy great axe forged of silver, said to represent the brutal attack she struck Graggar with, mortally wounding him and nearly killing him."
+	desc = "The Axe of Saint Altierre. A holy greataxe forged of silver, said to represent the brutal attack she struck Graggar with, mortally wounding him almost to the point of death."
 	icon = 'icons/roguetown/weapons/64/godweapons.dmi'
 	icon_state = "martyraxe"
 	item_weight = 4.5 KILOGRAMS
+	max_integrity = INTEGRITY_GOD_WEAPON
+	smeltresult = null
+	melting_material = null
+	melt_amount = 0
+	examine_highlight_type = /datum/examine_highlight/divine_weapon/altierre
 
 /datum/intent/axe/cut/battle/greataxe/martyr
 	item_damage_type = "fire"
@@ -470,6 +497,7 @@
 	var/safe_damage_wielded = 35
 	AddComponent(/datum/component/martyr_weapon, active_intents, active_intents_wielded, safe_damage, safe_damage_wielded)
 	enchant(/datum/enchantment/silver)
+	enchant(/datum/enchantment/anti_theft)
 
 /datum/intent/polearm/cut/martyr
 	item_damage_type = "fire"
@@ -489,6 +517,11 @@
 	icon = 'icons/roguetown/weapons/64/godweapons.dmi'
 	icon_state = "martyrtrident"
 	item_weight = 2.5 KILOGRAMS
+	max_integrity = INTEGRITY_GOD_WEAPON
+	smeltresult = null
+	melting_material = null
+	melt_amount = 0
+	examine_highlight_type = /datum/examine_highlight/divine_weapon/altierre
 
 /obj/item/weapon/polearm/spear/grandmaster/Initialize()
 	. = ..()
@@ -498,6 +531,7 @@
 	var/safe_damage_wielded = 35
 	AddComponent(/datum/component/martyr_weapon, active_intents, active_intents_wielded, safe_damage, safe_damage_wielded)
 	enchant(/datum/enchantment/silver)
+	enchant(/datum/enchantment/anti_theft)
 
 /datum/intent/mace/strike/martyr
 	item_damage_type = "fire"
@@ -513,6 +547,11 @@
 	icon = 'icons/roguetown/weapons/64/godweapons.dmi'
 	icon_state = "martyrmace"
 	item_weight = 3.5 KILOGRAMS
+	max_integrity = INTEGRITY_GOD_WEAPON
+	smeltresult = null
+	melting_material = null
+	melt_amount = 0
+	examine_highlight_type = /datum/examine_highlight/divine_weapon/altierre
 
 /obj/item/weapon/mace/goden/steel/grandmaster/Initialize()
 	. = ..()
@@ -522,3 +561,4 @@
 	var/safe_damage_wielded = 35
 	AddComponent(/datum/component/martyr_weapon, active_intents, active_intents_wielded, safe_damage, safe_damage_wielded)
 	enchant(/datum/enchantment/silver)
+	enchant(/datum/enchantment/anti_theft)

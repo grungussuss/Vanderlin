@@ -5,13 +5,16 @@
 	)
 	raw_attribute_list = list(
 		STAT_CONSTITUTION = 2,
+		STAT_FORTUNE = 1,
 		/datum/attribute/skill/combat/knives = 20,
 		/datum/attribute/skill/misc/swimming = 30,
 		/datum/attribute/skill/craft/cooking = 20,
 		/datum/attribute/skill/craft/crafting = 20,
 		/datum/attribute/skill/labor/fishing = 40,
 		/datum/attribute/skill/misc/medicine = 10,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/combat/unarmed = 10,
+		/datum/attribute/skill/combat/wrestling = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/climbing = 10,
 	)
 
@@ -23,13 +26,16 @@
 	raw_attribute_list = list(
 		STAT_CONSTITUTION = 1,
 		STAT_PERCEPTION = 1,
+		STAT_FORTUNE = 1,
 		/datum/attribute/skill/combat/knives = 20,
 		/datum/attribute/skill/misc/swimming = 30,
 		/datum/attribute/skill/craft/cooking = 20,
 		/datum/attribute/skill/craft/crafting = 20,
 		/datum/attribute/skill/labor/fishing = 50,
 		/datum/attribute/skill/misc/medicine = 10,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/combat/unarmed = 10,
+		/datum/attribute/skill/combat/wrestling = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/climbing = 10,
 	)
 
@@ -39,7 +45,7 @@
 				they are decent cooks and swimmers, living off the gifts of Abyssor."
 	allowed_sexes = list(MALE, FEMALE)
 	outfit = /datum/outfit/pilgrim/fisher
-	category_tags = list(CTAG_PILGRIM)
+	category_tags = list(CTAG_PILGRIM, CTAG_VAMP_PILGRIM)
 	apprentice_name = "Fisher Apprentice"
 	cmode_music = 'sound/music/cmode/towner/CombatBeggar.ogg'
 
@@ -50,6 +56,7 @@
 	name = "Fisher (Pilgrim)"
 	neck = /obj/item/storage/belt/pouch/coins/poor
 	head = /obj/item/clothing/head/fisherhat
+	armor = /obj/item/clothing/armor/gambeson/light/striped
 	backl = /obj/item/storage/backpack/satchel
 	backr = /obj/item/fishingrod/fisher
 	belt = /obj/item/storage/belt/leather
@@ -62,7 +69,6 @@
 		pants = /obj/item/clothing/pants/tights/colored/random
 		shirt = pick(/obj/item/clothing/shirt/undershirt/colored/random, /obj/item/clothing/shirt/shortshirt/colored/random)
 		shoes = pick(/obj/item/clothing/shoes/simpleshoes, /obj/item/clothing/shoes/boots/leather)
-		armor = /obj/item/clothing/armor/gambeson/light/striped
 		backpack_contents = list(
 			/obj/item/weapon/knife/villager = 1,
 			/obj/item/natural/worms = 1,
@@ -71,7 +77,6 @@
 		)
 	else
 		shirt = /obj/item/clothing/shirt/dress/gen/colored/random
-		armor = /obj/item/clothing/armor/gambeson/light/striped
 		shoes = /obj/item/clothing/shoes/boots/leather
 		backpack_contents = list(
 			/obj/item/weapon/knife/hunting = 1,

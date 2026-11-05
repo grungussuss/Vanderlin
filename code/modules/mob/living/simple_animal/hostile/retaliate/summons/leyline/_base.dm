@@ -6,14 +6,14 @@
 	ADD_TRAIT(src, TRAIT_TOXIMMUNE, TRAIT_GENERIC)
 
 /mob/living/simple_animal/hostile/retaliate/leylinelycan
-	icon = 'icons/mob/summonable/32x32.dmi'
-	name = "Leyline Lycan"
+	name = "leyline lycan"
 	desc = "A creature made of leyline energy. It is highly territorial and guards its home leyline jealously."
+	icon = 'icons/mob/summonable/32x32.dmi'
 	icon_state = "leycreature"
 	icon_living = "leycreature"
 	icon_dead = "leycreature"
 
-	faction = list("leyline")
+	faction = list(FACTION_LEYLINE)
 	emote_hear = null
 	emote_see = null
 	see_in_dark = 9
@@ -47,7 +47,6 @@
 	retreat_health = 0.4
 
 	dodgetime = 30
-	aggressive = 1
 	body_eater = FALSE
 
 	ai_controller = /datum/ai_controller/lycan

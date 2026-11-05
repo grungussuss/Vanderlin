@@ -29,7 +29,7 @@
 	tier = 5
 	speak_emote = list("roars")
 	base_intents = list(/datum/intent/unarmed/dragonclaw)
-	faction = list("aberrant")
+	faction = list(FACTION_ABERRANT)
 	melee_damage_lower = 40
 	melee_damage_upper = 40
 	retreat_distance = 0
@@ -38,7 +38,6 @@
 	move_to_delay = 5
 	ranged = TRUE
 	SET_BASE_PIXEL(-32, 0)
-	aggressive = 1
 	deathmessage = "collapses to the floor with a final roar, the impact rocking the ground."
 	footstep_type = FOOTSTEP_MOB_HEAVY
 	var/void_corruption = TRUE
@@ -263,7 +262,7 @@
 			visible_message(span_warning("[src] slams down on [L], crushing [L.p_them()]!"))
 			L.gib()
 		else
-			L.adjustBruteLoss(75)
+			L.adjustBruteLoss(75, damage_type = BCLASS_BLUNT)
 			if(L && !QDELETED(L)) // Some mobs are deleted on death
 				var/throw_dir = get_dir(src, L)
 				if(L.loc == loc)
@@ -495,7 +494,7 @@
 	visible_message(span_colossus("[src] phases out of reality!"))
 
 	incorporeal_move = INCORPOREAL_MOVE_JAUNT
-	status_flags |= GODMODE
+	ADD_TRAIT(src, TRAIT_GODMODE, MAGIC_TRAIT)
 	playsound(src, 'sound/magic/ethereal_enter.ogg', 100, TRUE)
 	alpha = 128
 
@@ -531,7 +530,7 @@
 
 /mob/living/simple_animal/hostile/retaliate/voiddragon/proc/phase_shift_end()
 	incorporeal_move = initial(incorporeal_move)
-	status_flags &= ~GODMODE
+	REMOVE_TRAIT(src, TRAIT_GODMODE, MAGIC_TRAIT)
 	alpha = initial(alpha)
 
 	playsound(src, 'sound/magic/ethereal_exit.ogg', 100, TRUE)

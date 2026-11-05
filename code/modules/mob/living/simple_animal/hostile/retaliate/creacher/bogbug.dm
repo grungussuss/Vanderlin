@@ -6,7 +6,7 @@
 	icon_living = "bogbug"
 	icon_dead = "bogbugdead"
 
-	faction = list("bugs")
+	faction = NONE
 	emote_hear = null
 	emote_see = null
 	see_in_dark = 9
@@ -47,7 +47,6 @@
 
 
 	dodgetime = 20
-	aggressive = 1
 //	stat_attack = UNCONSCIOUS
 	remains_type = /obj/effect/decal/remains/bogbug
 	body_eater = TRUE

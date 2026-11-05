@@ -1,18 +1,22 @@
 /datum/job/squire
 	title = JOB_SQUIRE
+	alt_titles = list("Page", "Cadet", "Rookie")
 	tutorial = "You've always had greater aspirations than the simple life of a peasant. \n\
 	You and your friends practiced the basics, swordfighting with sticks and loosing arrows into hay bale targets. \n\
-	The Captain took notice of your potential, and recruited you as a personal ward. \
+	Someone of the garrison took notice of your potential, and you were taken into the castle as a ward. \
 	\n\n\
 	Learn from the garrison and train hard... maybe one dae you will be honored with knighthood."
 	department_flag = APPRENTICES
 	job_flags = (JOB_ANNOUNCE_ARRIVAL | JOB_SHOW_IN_CREDITS | JOB_EQUIP_RANK | JOB_NEW_PLAYER_JOINABLE)
-	faction = FACTION_TOWN
+	factions = list(FACTION_TOWN, SUB_FACTION_KEEP)
 	total_positions = 2
 	spawn_positions = 2
 	display_order = JDO_SQUIRE
 	give_bank_account = TRUE
-	bypass_lastclass = TRUE
+	knows_the_town = TRUE
+	known_by_the_town = TRUE
+	jobs_i_always_know = KNOW_COURT_LIST
+	jobs_always_know_me = KNOW_COURT_AGENT_LIST
 	selection_color = "#304529"
 	advclass_cat_rolls = list(CTAG_SQUIRE = 20)
 	can_have_apprentices = FALSE
@@ -20,7 +24,8 @@
 	cmode_music = 'sound/music/cmode/garrison/CombatManAtArms.ogg'
 	exp_types_granted = list(EXP_TYPE_GARRISON)
 
-	allowed_races = RACES_PLAYER_NONDISCRIMINATED
+	allowed_races = RACES_PLAYER_NO_KOBOLD
+	blacklisted_species = list(SPEC_ID_HALFLING, SPEC_ID_HALF_SNOW_ELF, SPEC_ID_SNOW_ELF)
 	allowed_ages = list(AGE_CHILD, AGE_ADULT)
 
 	outfit = /datum/outfit/squire
@@ -31,21 +36,23 @@
 /datum/outfit/squire
 	name = JOB_SQUIRE
 	shirt = /obj/item/clothing/shirt/undershirt/colored/guard
+	armor = /obj/item/clothing/armor/chainmail
+	gloves = /obj/item/clothing/gloves/leather
+	wrists = /obj/item/clothing/wrists/bracers/leather
 	pants = /obj/item/clothing/pants/chainlegs/iron
-	shoes = /obj/item/clothing/shoes/boots
+	shoes = /obj/item/clothing/shoes/boots/darkboots
 	belt = /obj/item/storage/belt/leather
 	beltl = /obj/item/storage/keyring/manorguard
 
 /datum/job/advclass/squire
 	allowed_ages = list(AGE_CHILD, AGE_ADULT)
-	allowed_races = RACES_PLAYER_NONDISCRIMINATED
+	allowed_races = RACES_PLAYER_NO_KOBOLD
 	exp_type = list(EXP_TYPE_GARRISON)
 	exp_types_granted = list(EXP_TYPE_GARRISON)
+	factions = list(FACTION_TOWN, SUB_FACTION_KEEP)
 
 /datum/attribute_holder/sheet/job/squire/lancer
 	raw_attribute_list = list(
-		STAT_SPEED = -1,
-
 		/datum/attribute/skill/combat/axesmaces = 10,
 		/datum/attribute/skill/combat/crossbows = 10,
 		/datum/attribute/skill/combat/wrestling = 20,
@@ -55,7 +62,7 @@
 		/datum/attribute/skill/misc/swimming = 20,
 		/datum/attribute/skill/misc/climbing = 20,
 		/datum/attribute/skill/misc/athletics = 20,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/riding = 20,
 		/datum/attribute/skill/craft/weaponsmithing = 10,
 		/datum/attribute/skill/craft/armorsmithing = 10
@@ -63,10 +70,7 @@
 
 /datum/attribute_holder/sheet/job/squire/lancer/adult
 	raw_attribute_list = list(
-		STAT_SPEED = -1,
-		STAT_STRENGTH = -1,
-		STAT_CONSTITUTION = -1,
-
+		STAT_ENDURANCE = 1,
 		/datum/attribute/skill/combat/axesmaces = 10,
 		/datum/attribute/skill/combat/crossbows = 10,
 		/datum/attribute/skill/combat/wrestling = 20,
@@ -76,7 +80,7 @@
 		/datum/attribute/skill/misc/swimming = 20,
 		/datum/attribute/skill/misc/climbing = 20,
 		/datum/attribute/skill/misc/athletics = 20,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/riding = 20,
 		/datum/attribute/skill/craft/weaponsmithing = 10,
 		/datum/attribute/skill/craft/armorsmithing = 10
@@ -104,11 +108,8 @@
 /datum/outfit/squire/lancer
 	name = "Pikeman Squire"
 	r_hand = /obj/item/weapon/polearm/spear
-	armor = /obj/item/clothing/armor/chainmail
-	gloves = /obj/item/clothing/gloves/leather
-	wrists = /obj/item/clothing/wrists/bracers/leather
-	backr = /obj/item/storage/backpack/satchel
 	cloak = /obj/item/clothing/cloak/stabard/guard
+	backr = /obj/item/storage/backpack/satchel
 	backpack_contents = list(
 		/obj/item/storage/belt/pouch/coins/poor = 1,
 		/obj/item/clothing/neck/chaincoif = 1,
@@ -117,8 +118,6 @@
 
 /datum/attribute_holder/sheet/job/squire/footman
 	raw_attribute_list = list(
-		STAT_SPEED = -1,
-
 		/datum/attribute/skill/combat/axesmaces = 20,
 		/datum/attribute/skill/combat/crossbows = 20,
 		/datum/attribute/skill/combat/wrestling = 20,
@@ -128,17 +127,14 @@
 		/datum/attribute/skill/misc/swimming = 20,
 		/datum/attribute/skill/misc/climbing = 20,
 		/datum/attribute/skill/misc/athletics = 20,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/craft/weaponsmithing = 10,
 		/datum/attribute/skill/craft/armorsmithing = 10
 	)
 
 /datum/attribute_holder/sheet/job/squire/footman/adult
 	raw_attribute_list = list(
-		STAT_SPEED = -1,
-		STAT_STRENGTH = -1,
-		STAT_CONSTITUTION = -1,
-
+		STAT_CONSTITUTION = 1,
 		/datum/attribute/skill/combat/axesmaces = 20,
 		/datum/attribute/skill/combat/crossbows = 20,
 		/datum/attribute/skill/combat/wrestling = 20,
@@ -148,7 +144,7 @@
 		/datum/attribute/skill/misc/swimming = 20,
 		/datum/attribute/skill/misc/climbing = 20,
 		/datum/attribute/skill/misc/athletics = 20,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/craft/weaponsmithing = 10,
 		/datum/attribute/skill/craft/armorsmithing = 10
 	)
@@ -173,12 +169,9 @@
 
 /datum/outfit/squire/footman
 	name = "Footman Squire"
-	armor = /obj/item/clothing/armor/chainmail
-	gloves = /obj/item/clothing/gloves/leather
-	wrists = /obj/item/clothing/wrists/bracers/leather
-	backr = /obj/item/storage/backpack/satchel
 	beltr = /obj/item/weapon/sword
 	cloak = /obj/item/clothing/cloak/tabard/knight/guard
+	backr = /obj/item/storage/backpack/satchel
 	backpack_contents = list(
 		/obj/item/storage/belt/pouch/coins/poor = 1,
 		/obj/item/clothing/neck/chaincoif = 1,
@@ -187,9 +180,6 @@
 
 /datum/attribute_holder/sheet/job/squire/skirmisher
 	raw_attribute_list = list(
-		STAT_STRENGTH = -1,
-		STAT_CONSTITUTION = -1,
-
 		/datum/attribute/skill/combat/bows = 20,
 		/datum/attribute/skill/combat/crossbows = 10,
 		/datum/attribute/skill/combat/wrestling = 10,
@@ -199,7 +189,7 @@
 		/datum/attribute/skill/misc/swimming = 20,
 		/datum/attribute/skill/misc/climbing = 30,
 		/datum/attribute/skill/misc/athletics = 20,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/riding = 10,
 		/datum/attribute/skill/craft/weaponsmithing = 10,
 		/datum/attribute/skill/craft/armorsmithing = 10
@@ -207,10 +197,7 @@
 
 /datum/attribute_holder/sheet/job/squire/skirmisher/adult
 	raw_attribute_list = list(
-		STAT_STRENGTH = -1,
-		STAT_CONSTITUTION = -1,
-		STAT_SPEED = -1,
-
+		STAT_PERCEPTION = 1,
 		/datum/attribute/skill/combat/bows = 20,
 		/datum/attribute/skill/combat/crossbows = 10,
 		/datum/attribute/skill/combat/wrestling = 10,
@@ -220,7 +207,7 @@
 		/datum/attribute/skill/misc/swimming = 20,
 		/datum/attribute/skill/misc/climbing = 30,
 		/datum/attribute/skill/misc/athletics = 20,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/riding = 10,
 		/datum/attribute/skill/craft/weaponsmithing = 10,
 		/datum/attribute/skill/craft/armorsmithing = 10
@@ -247,15 +234,15 @@
 /datum/outfit/squire/skirmisher
 	name = "Bowman Squire"
 	beltr = /obj/item/ammo_holder/quiver/arrows
-	armor = /obj/item/clothing/armor/chainmail
-	backl = /obj/item/gun/ballistic/bow/short
-	gloves = /obj/item/clothing/gloves/leather
-	wrists = /obj/item/clothing/wrists/bracers/leather
-	backr = /obj/item/storage/backpack/satchel
 	cloak = /obj/item/clothing/cloak/stabard/jupon/guard
+	backl = /obj/item/gun/ballistic/bow/short
+	backr = /obj/item/storage/backpack/satchel
 	backpack_contents = list(
-		/obj/item/weapon/knife/dagger/steel = 1,
 		/obj/item/storage/belt/pouch/coins/poor = 1,
 		/obj/item/clothing/neck/chaincoif = 1,
 		/obj/item/weapon/hammer/iron = 1
 	)
+
+/datum/outfit/squire/skirmisher/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
+	. = ..()
+	backpack_contents += /obj/item/weapon/knife/dagger/steel

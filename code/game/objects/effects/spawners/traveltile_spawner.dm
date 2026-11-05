@@ -106,7 +106,6 @@
 	aportalgoesto = "banditin"
 	required_trait = TRAIT_BANDITCAMP
 	can_gain_with_sight = TRUE
-	can_gain_by_walking = TRUE
 	check_other_side = TRUE
 
 /obj/structure/fluff/traveltile/exit_vampire	// must NOT be a traveltile/vampire child, because that one has a check for banditcamp trait. People should always be able to leave the camp.
@@ -118,7 +117,6 @@
 	aportalgoesto = "vampin"
 	required_trait = TRAIT_VAMPMANSION
 	can_gain_with_sight = TRUE
-	can_gain_by_walking = TRUE
 	check_other_side = TRUE
 
 /obj/structure/fluff/traveltile/exit_inhumen
@@ -130,8 +128,6 @@
 	aportalid = "inhumenexit"
 	aportalgoesto = "inhumenin"
 	required_trait = TRAIT_INHUMENCAMP
-	can_gain_with_sight = FALSE
-	can_gain_by_walking = FALSE
 	check_other_side = TRUE
 
 /obj/structure/fluff/traveltile/to_acid_caves
@@ -157,6 +153,86 @@
 	aportalid = "inq_enter"
 	aportalgoesto = "inq_exit"
 	required_trait = TRAIT_INQUISITION
+	check_other_side = TRUE
+
+/obj/structure/fluff/traveltile/gallowband_bog
+	name = "To the Bog Witch"
+	aportalid = "gallow_bog"
+	aportalgoesto = "bog_gallow"
+	required_trait = TRAIT_GALLOWBAND
+	check_other_side = TRUE
+
+/obj/structure/fluff/traveltile/bog_gallowband
+	name = "To the Gallowband"
+	aportalid = "bog_gallow"
+	aportalgoesto = "gallow_bog"
+	required_trait = TRAIT_GALLOWBAND
 	can_gain_with_sight = FALSE
 	can_gain_by_walking = FALSE
 	check_other_side = TRUE
+
+/obj/structure/fluff/traveltile/courtagent_sewers
+	name = "To the Sewers"
+	aportalid = "agent_sewers"
+	aportalgoesto = "sewers_agent"
+	required_trait = TRAIT_COURTAGENT
+	can_gain_with_sight = FALSE
+	can_gain_by_walking = FALSE
+	check_other_side = TRUE
+
+/obj/structure/fluff/traveltile/sewers_courtagent
+	name = "To the Hideout"
+	aportalid = "sewers_agent"
+	aportalgoesto = "agent_sewers"
+	required_trait = TRAIT_COURTAGENT
+	can_gain_with_sight = FALSE
+	can_gain_by_walking = FALSE
+	check_other_side = TRUE
+
+/obj/structure/fluff/traveltile/exit_oracle_cave
+	name = "To the Town"
+	aportalid = "oracle_city"
+	aportalgoesto = "city_oracle"
+
+/obj/structure/fluff/traveltile/oracle_cave
+	name = "To the Dream Cave"
+	aportalid = "city_oracle"
+	aportalgoesto = "oracle_city"
+	required_trait = TRAIT_DREAM_CAVE
+	can_gain_with_sight = FALSE
+	check_other_side = TRUE
+
+// MAIN MAP THINGS
+
+/obj/structure/fluff/traveltile/fast/vanderlin/basin_forest
+	aportalid = "vanderlin-basin_forest"
+	aportalgoesto = "vanderlin-forest_basin"
+
+/obj/structure/fluff/traveltile/fast/vanderlin/forest_basin
+	aportalid = "vanderlin-forest_basin"
+	aportalgoesto = "vanderlin-basin_forest"
+
+/obj/structure/fluff/traveltile/fast/vanderlin/forest_bog
+	aportalid = "vanderlin-forest_bog"
+	aportalgoesto = "vanderlin-bog_forest"
+
+/obj/structure/fluff/traveltile/fast/vanderlin/bog_forest
+	aportalid = "vanderlin-bog_forest"
+	aportalgoesto = "vanderlin-forest_bog"
+
+/obj/structure/fluff/traveltile/fast/vanderlin/bog_mountain
+	aportalid = "vanderlin-bog_mountain"
+	aportalgoesto = "vanderlin-mountain_bog"
+
+/obj/structure/fluff/traveltile/fast/vanderlin/mountain_bog
+	aportalid = "vanderlin-mountain_bog"
+	aportalgoesto = "vanderlin-bog_mountain"
+
+/obj/structure/fluff/traveltile/fast/vanderlin/forest_mountain
+	aportalid = "vanderlin-forest_mountain"
+	aportalgoesto = "vanderlin-mountain_forest"
+
+/obj/structure/fluff/traveltile/fast/vanderlin/mountain_forest
+	aportalid = "vanderlin-mountain_forest"
+	aportalgoesto = "vanderlin-forest_mountain"
+

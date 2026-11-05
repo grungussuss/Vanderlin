@@ -13,7 +13,7 @@
 		/datum/attribute/skill/combat/unarmed = 20,
 		/datum/attribute/skill/misc/swimming = 20,
 		/datum/attribute/skill/misc/climbing = 50,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/misc/sneaking = 40,
 		/datum/attribute/skill/misc/stealing = 40,
 		/datum/attribute/skill/misc/lockpicking = 40,
@@ -52,11 +52,9 @@
 	belt = /obj/item/storage/belt/leather
 	armor = /obj/item/clothing/armor/leather/splint
 	head = /obj/item/clothing/head/roguehood/leather
-	neck = /obj/item/clothing/neck/gorget/explosive
 	backr = /obj/item/gun/ballistic/bow
 	backl = /obj/item/ammo_holder/quiver/arrows
 	beltl = /obj/item/weapon/mace/cudgel
-	pants = /obj/item/clothing/pants/trou/leather
 	cloak = /obj/item/clothing/cloak/shredded
 	backpack_contents = list(
 		/obj/item/lockpick = 1,

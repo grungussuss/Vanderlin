@@ -50,18 +50,18 @@
 	if(!new_overlay)
 		icon_state = "channel"
 
-	var/datum/reagent/molten_metal/metal = group_reagents?.get_reagent(/datum/reagent/molten_metal)
-	var/datum/material/largest = metal?.largest_metal
+	var/datum/reagent/molten_metal/metal = group_reagents?.has_reagent(/datum/reagent/molten_metal)
 	if(!metal)
 		return
 
+	var/datum/material/largest = metal.largest_metal
 	. += mutable_appearance(
 		icon,
 		"[icon_state]-c",
 		color = initial(largest.color),
 		appearance_flags = (RESET_COLOR | KEEP_APART),
 	)
-	if(initial(largest?.red_hot) && group_reagents.chem_temp > initial(largest.melting_point))
+	if(initial(largest?.show_as_filling) && group_reagents.chem_temp > initial(largest.melting_point))
 		. += emissive_appearance(icon, "[icon_state]-c", alpha = src.alpha)
 
 /obj/structure/metal_channel/proc/set_connection(dir)
@@ -242,7 +242,7 @@
 	. = ..()
 	if(!istype(I, /obj/item/reagent_containers) && !istype(I, /obj/item/storage/crucible))
 		return
-	var/datum/reagent/molten_metal/metal = I.reagents.get_reagent(/datum/reagent/molten_metal)
+	var/datum/reagent/molten_metal/metal = I.reagents.has_reagent(/datum/reagent/molten_metal)
 	if(!metal)
 		return
 

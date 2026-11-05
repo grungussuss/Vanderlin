@@ -1,5 +1,3 @@
-#define CHEMICAL_QUANTISATION_LEVEL 0.0001 //stops floating point errors causing issues with checking reagent amounts
-
 
 /proc/build_chemical_reagent_list()
 	//Chemical Reagents - Initialises all /datum/reagent into a list indexed by reagent id
@@ -132,16 +130,49 @@
 	handle_reactions()
 	return total_transfered
 
-/datum/reagents/proc/remove_all(amount = 1)
-	var/list/cached_reagents = reagent_list
-	if(total_volume > 0)
-		var/part = amount / total_volume
-		for(var/datum/reagent/R as anything in cached_reagents)
-			remove_reagent(R.type, R.volume * part)
+/**
+ * Removes all reagents either proportionally(amount is the direct volume to remove)
+ * when proportional the total volume of all reagents removed will equal to amount
+ * or relatively(amount is a percentile between 0->1) when relative amount is the %
+ * of each reagent to be removed
+ *
+ * Arguments
+ *
+ * * amount - the amount to remove
+ * * relative - if TRUE amount is treated as an percentage between 0->1. If FALSE amount is the direct volume to remove
+ */
+/datum/reagents/proc/remove_all(amount = 1, relative = FALSE)
+	if(!total_volume)
+		return FALSE
 
-		update_total()
-		handle_reactions()
-		return amount
+	if(!IS_FINITE(amount))
+		stack_trace("non finite amount passed to remove all reagents [amount]")
+		return FALSE
+	if(relative && (amount < 0 || amount > 1))
+		stack_trace("illegal percentage value passed to remove all reagents [amount]")
+		return FALSE
+
+	if(!relative)
+		amount = min(amount, total_volume)
+	amount = round(amount, CHEMICAL_QUANTISATION_LEVEL)
+	if(amount <= 0)
+		return FALSE
+
+	var/list/cached_reagents = reagent_list
+	var/remove_amount
+	var/total_removed_amount = 0
+	var/part = amount
+	if(!relative)
+		part /= total_volume
+	for(var/datum/reagent/cached_reagent as anything in cached_reagents)
+		//reduce the volume
+		remove_amount = cached_reagent.volume * part
+		cached_reagent.volume -= remove_amount
+
+		total_removed_amount += remove_amount
+	update_total()
+
+	return round(total_removed_amount, CHEMICAL_QUANTISATION_LEVEL)
 
 /datum/reagents/proc/get_master_reagent_name()
 	var/list/cached_reagents = reagent_list
@@ -165,18 +196,19 @@
 
 	return max_type
 
+/// Get a reference to the reagent there is the most of in this holder
 /datum/reagents/proc/get_master_reagent()
 	var/list/cached_reagents = reagent_list
 	var/datum/reagent/master
 	var/max_volume = 0
-	for(var/datum/reagent/R as anything in cached_reagents)
-		if(R.volume > max_volume)
-			max_volume = R.volume
-			master = R
+	for(var/datum/reagent/reagent as anything in cached_reagents)
+		if(reagent.volume > max_volume)
+			max_volume = reagent.volume
+			master = reagent
 
 	return master
 
-/datum/reagents/proc/trans_to(obj/target, amount = 1, multiplier = 1, preserve_data = TRUE, no_react = FALSE, mob/transfered_by, remove_blacklisted = FALSE, method = null, show_message = TRUE, round_robin = FALSE, ignore_stomach = FALSE, list/ignored_reagents)
+/datum/reagents/proc/trans_to(obj/target, amount = 1, multiplier = 1, preserve_data = TRUE, no_react = FALSE, mob/transfered_by, remove_blacklisted = FALSE, method = NONE, show_message = TRUE, round_robin = FALSE, ignore_stomach = FALSE, list/ignored_reagents)
 	//if preserve_data=0, the reagents data will be lost. Usefull if you use data for some strange stuff and don't want it to be transferred.
 	//if round_robin=TRUE, so transfer 5 from 15 water, 15 sugar and 15 plasma becomes 10, 15, 15 instead of 13.3333, 13.3333 13.3333. Good if you hate floating point errors
 	if(isliving(target) && transfered_by != target)
@@ -301,16 +333,29 @@
 	src.handle_reactions()
 	return amount
 
-/datum/reagents/proc/trans_id_to(obj/target, reagent, amount=1, preserve_data=1)//Not sure why this proc didn't exist before. It does now! /N
+/datum/reagents/proc/trans_id_to(atom/target, reagent, amount = 1, preserve_data = TRUE)//Not sure why this proc didn't exist before. It does now! /N
+	if(QDELETED(target) || !total_volume)
+		return FALSE
+
+	if(!IS_FINITE(amount))
+		stack_trace("non finite amount passed to trans_to [amount] amount of reagents")
+		return FALSE
+
+	if(!isnull(reagent) && !ispath(reagent))
+		stack_trace("invalid target reagent id [reagent] passed to trans_to")
+		return FALSE
+
 	var/list/cached_reagents = reagent_list
-	if (!target)
-		return
-	if (!target.reagents || src.total_volume<=0 || !src.get_reagent_amount(reagent))
-		return
+	var/datum/reagents/R
+	if(!istype(target, /datum/reagents))
+		if (!target.reagents || src.total_volume<=0 || !src.get_reagent_amount(reagent))
+			return
+		R = target.reagents
+	else
+		R = target
 	if(amount < 0)
 		return
 
-	var/datum/reagents/R = target.reagents
 	if(src.get_reagent_amount(reagent)<amount)
 		amount = src.get_reagent_amount(reagent)
 	amount = min(amount, R.maximum_volume-R.total_volume)
@@ -329,7 +374,7 @@
 	R.handle_reactions()
 	return amount
 
-/datum/reagents/proc/metabolize(mob/living/carbon/C, can_overdose = FALSE, liverless = FALSE)
+/datum/reagents/proc/metabolize(mob/living/carbon/C, can_overdose = FALSE, liverless = FALSE, efficiency = 100, health_update = TRUE)
 	var/list/cached_reagents = reagent_list
 	var/list/cached_addictions = addiction_list
 	if(C)
@@ -337,6 +382,24 @@
 		if(HAS_TRAIT(C, TRAIT_CRACKHEAD))
 			can_overdose = FALSE
 	var/need_mob_update = 0
+
+	if(C && C.stat == DEAD)
+		for(var/datum/reagent/R as anything in cached_reagents)
+			if(QDELETED(R.holder))
+				continue
+			if(R.dead_life)
+				need_mob_update += R.on_mob_life(C, efficiency * 0.01)
+			else
+				R.on_mob_dead(C, efficiency ? efficiency : 100)
+		if(need_mob_update)
+			if(health_update)
+				C.updatehealth()
+				C.update_stamina()
+			else
+				. |= ORGAN_PROCESS_UPDATE_HEALTH
+		update_total()
+		return .
+
 	for(var/datum/reagent/R as anything in cached_reagents)
 		if(QDELETED(R.holder))
 			continue
@@ -368,7 +431,9 @@
 						for(var/datum/reagent/A as anything in cached_addictions)
 							if(istype(R, A))
 								A.addiction_stage = -15 // you're satisfied for a good while.
-				need_mob_update += R.on_mob_life(C)
+				if(!R.liver_chemical)
+					efficiency = 100
+				need_mob_update += R.on_mob_life(C, efficiency * 0.01)
 
 	if(can_overdose)
 		if(addiction_tick == 6)
@@ -389,8 +454,11 @@
 							remove_addiction(R)
 		addiction_tick++
 	if(C && need_mob_update) //some of the metabolized reagents had effects on the mob that requires some updates.
-		C.updatehealth()
-		C.update_stamina()
+		if(health_update)
+			C.updatehealth()
+			C.update_stamina()
+		else
+			. |= ORGAN_PROCESS_UPDATE_HEALTH
 	update_total()
 
 /datum/reagents/proc/remove_addiction(datum/reagent/R)
@@ -432,10 +500,11 @@
 	var/list/cached_reactions = GLOB.chemical_reactions_list
 	var/datum/cached_my_atom = my_atom
 
-	var/reaction_occurred = 0
+	. = 0
+	var/reaction_occurred = FALSE
 	do
 		var/list/possible_reactions = list()
-		reaction_occurred = 0
+		reaction_occurred = FALSE
 		for(var/datum/reagent/R as anything in cached_reagents)
 			for(var/reaction in cached_reactions[R.type]) // Was a big list but now it should be smaller since we filtered it with our reagent id
 				if(!reaction)
@@ -521,13 +590,14 @@
 						for(var/mob/M in seen)
 							to_chat(M, "<span class='notice'>[iconhtml] [selected_reaction.mix_message]</span>")
 
-			my_atom?.on_reagent_change(REACT_REAGENTS)
 			selected_reaction.on_reaction(src, multiplier)
-			reaction_occurred = 1
+			reaction_occurred = TRUE
+			.++
 
 	while(reaction_occurred)
 	update_total()
-	return 0
+	if(.)
+		SEND_SIGNAL(src, COMSIG_REAGENTS_REACTED, .)
 
 /datum/reagents/proc/isolate_reagent(reagent)
 	var/list/cached_reagents = reagent_list
@@ -549,29 +619,65 @@
 			qdel(R)
 			reagent_list -= R
 			update_total()
-			if(my_atom)
-				my_atom.on_reagent_change(DEL_REAGENT)
 			SEND_SIGNAL(src, COMSIG_REAGENTS_DEL_REAGENT, reagent)
-	return 1
+	return TRUE
 
+/// Updates [/datum/reagents/var/total_volume]
 /datum/reagents/proc/update_total()
 	var/list/cached_reagents = reagent_list
-	total_volume = 0
-	for(var/datum/reagent/R as anything in cached_reagents)
-		if(R.volume < 0.05)
-			del_reagent(R.type)
-		else
-			total_volume += R.volume
+	var/list/deleted_reagents = list()
+	var/chem_index = 1
+	var/num_reagents = length(cached_reagents)
+	var/reagent_volume = 0
+	. = 0
 
-	return 0
+	//responsible for removing reagents and computing total ph & volume
+	//all its code was taken out of del_reagent() initially for efficiency purposes
+	while(chem_index <= num_reagents)
+		var/datum/reagent/reagent = cached_reagents[chem_index]
+		chem_index += 1
+		reagent_volume = round(reagent.volume, CHEMICAL_QUANTISATION_LEVEL) //round to this many decimal places
+
+		//remove very small amounts of reagents
+		// if(reagent_volume <= 0 || (!is_reacting && reagent_volume < CHEMICAL_VOLUME_ROUNDING))
+		if(reagent_volume <= 0 || (reagent_volume < CHEMICAL_VOLUME_ROUNDING))
+			//end metabolization
+			if(isliving(my_atom))
+				if(reagent.metabolizing)
+					reagent.metabolizing = FALSE
+					reagent.on_mob_end_metabolize(my_atom)
+				reagent.on_mob_delete(my_atom)
+
+			//removing it and store in a seperate list for processing later
+			cached_reagents -= reagent
+			// LAZYREMOVE(previous_reagent_list, reagent.type)
+			deleted_reagents += reagent
+
+			//move pointer back so we don't overflow & decrease length
+			chem_index -= 1
+			num_reagents -= 1
+			continue
+
+		//compute volume like we would normally
+		. += reagent_volume
+
+		//reasign rounded value
+		reagent.volume = reagent_volume
+
+	//assign the final values, rounding up can sometimes cause overflow so bring it down
+	total_volume = min(round(., CHEMICAL_VOLUME_ROUNDING), maximum_volume)
+
+	//clear out deleted reagents
+	QDEL_LIST(deleted_reagents)
+
+	//inform hooks about reagent changes
+	SEND_SIGNAL(src, COMSIG_REAGENTS_HOLDER_UPDATED)
 
 /datum/reagents/proc/clear_reagents()
 	var/list/cached_reagents = reagent_list
 	for(var/datum/reagent/R as anything in cached_reagents)
 		del_reagent(R.type)
-	if(my_atom)
-		my_atom.on_reagent_change(CLEAR_REAGENTS)
-	return 0
+	SEND_SIGNAL(src, COMSIG_REAGENTS_CLEAR_REAGENTS)
 
 /datum/reagents/proc/reaction(atom/A, method = TOUCH, volume_modifier = 1, show_message = 1)
 	var/react_type
@@ -594,7 +700,7 @@
 				if(method & VAPOR)
 					var/mob/living/L = A
 					touch_protection = L.get_permeability_protection()
-				R.reaction_mob(A, method, R.volume * volume_modifier, show_message, touch_protection)
+				R.expose_mob(A, method, R.volume * volume_modifier, show_message, touch_protection)
 			if("TURF")
 				R.reaction_turf(A, R.volume * volume_modifier, show_message)
 			if("OBJ")
@@ -619,7 +725,7 @@
 			if(method & VAPOR)
 				var/mob/living/L = A
 				touch_protection = L.get_permeability_protection()
-			R.reaction_mob(A, method, R.volume * volume_modifier, show_message, touch_protection)
+			R.expose_mob(A, method, R.volume * volume_modifier, show_message, touch_protection)
 		if("TURF")
 			R.reaction_turf(A, R.volume * volume_modifier, show_message)
 		if("OBJ")
@@ -630,82 +736,98 @@
 		return TRUE
 	return FALSE
 
-//Returns the average specific heat for all reagents currently in this holder.
-/datum/reagents/proc/specific_heat()
+/// Returns the total heat capacity for all of the reagents currently in this holder.
+/datum/reagents/proc/heat_capacity()
 	. = 0
-	var/cached_amount = total_volume		//cache amount
-	var/list/cached_reagents = reagent_list		//cache reagents
-	for(var/datum/reagent/R as anything in cached_reagents)
-		. += R.specific_heat * (R.volume / cached_amount)
+	var/list/cached_reagents = reagent_list //cache reagents
+	for(var/datum/reagent/reagent in cached_reagents)
+		. += reagent.specific_heat * reagent.volume
 
-/datum/reagents/proc/adjust_thermal_energy(J, min_temp = 2.7, max_temp = 1000)
-	var/S = specific_heat()
-	chem_temp = CLAMP(chem_temp + (J / (S * total_volume)), 2.7, 1000)
+/** Adjusts the thermal energy of the reagents in this holder by an amount.
+ *
+ * Arguments:
+ * - delta_energy: The amount to change the thermal energy by.
+ * - min_temp: The minimum temperature that can be reached.
+ * - max_temp: The maximum temperature that can be reached.
+ */
+/datum/reagents/proc/adjust_thermal_energy(delta_energy, min_temp = 2.7, max_temp = 1000)
+	var/heat_capacity = heat_capacity()
+	if(!heat_capacity)
+		return // no div/0 please
+	set_temperature(clamp(chem_temp + (delta_energy / heat_capacity), min_temp, max_temp))
 
-/datum/reagents/proc/add_reagent(reagent, amount, list/data=null, reagtemp = 300, no_react = 0)
-	if(!isnum(amount) || !amount)
+/datum/reagents/proc/add_reagent(datum/reagent/reagent_type, amount, list/data = null, reagtemp = DEFAULT_REAGENT_TEMPERATURE, no_react = FALSE)
+	if(!ispath(reagent_type))
+		stack_trace("invalid reagent passed to add reagent [reagent_type]")
 		return FALSE
 
-	if(amount <= 0)
+	if(!IS_FINITE(amount))
+		stack_trace("non finite amount passed to add reagent [amount] [reagent_type]")
 		return FALSE
 
-	var/datum/reagent/D = GLOB.chemical_reagents_list[reagent]
-	if(!D)
-		WARNING("[my_atom] attempted to add a reagent called '[reagent]' which doesn't exist. ([usr])")
+	var/datum/reagent/glob_reagent = GLOB.chemical_reagents_list[reagent_type]
+	if(!glob_reagent)
+		stack_trace("[my_atom] attempted to add a reagent called '[reagent_type]' which doesn't exist. ([usr])")
 		return FALSE
 
 	update_total()
 	var/cached_total = total_volume
 	if(cached_total + amount > maximum_volume)
-		amount = (maximum_volume - cached_total) //Doesnt fit in. Make it disappear. Shouldnt happen. Will happen.
-		if(amount <= 0)
-			return FALSE
-	var/new_total = cached_total + amount
+		amount = maximum_volume - cached_total //Doesnt fit in. Make it disappear. shouldn't happen. Will happen.
+	amount = round(amount, CHEMICAL_QUANTISATION_LEVEL)
+	if(amount <= 0)
+		return FALSE
+
 	var/cached_temp = chem_temp
 	var/list/cached_reagents = reagent_list
 
 	//Equalize temperature - Not using specific_heat() because the new chemical isn't in yet.
-	var/specific_heat = 0
-	var/thermal_energy = 0
-	for(var/datum/reagent/R as anything in cached_reagents)
-		specific_heat += R.specific_heat * (R.volume / new_total)
-		thermal_energy += R.specific_heat * R.volume * cached_temp
-	specific_heat += D.specific_heat * (amount / new_total)
-	thermal_energy += D.specific_heat * amount * reagtemp
-	chem_temp = thermal_energy / (specific_heat * new_total)
-	////
+	var/old_heat_capacity = 0
+	if(reagtemp != cached_temp)
+		for(var/datum/reagent/iter_reagent as anything in cached_reagents)
+			old_heat_capacity += iter_reagent.specific_heat * iter_reagent.volume
 
 	//add the reagent to the existing if it exists
-	for(var/datum/reagent/R as anything in cached_reagents)
-		if (R.type == reagent)
-			R.volume += amount
+	for(var/datum/reagent/iter_reagent as anything in cached_reagents)
+		if(iter_reagent.type == reagent_type)
+			iter_reagent.volume += amount
 			update_total()
-			if(my_atom)
-				my_atom.on_reagent_change(ADD_REAGENT)
-			R.on_merge(data, amount)
+			iter_reagent.on_merge(data, amount)
+
+			if(reagtemp != cached_temp)
+				var/new_heat_capacity = heat_capacity()
+				if(new_heat_capacity)
+					set_temperature(((old_heat_capacity * cached_temp) + (iter_reagent.specific_heat * amount * reagtemp)) / new_heat_capacity)
+				else
+					set_temperature(reagtemp)
+
+			SEND_SIGNAL(src, COMSIG_REAGENTS_ADD_REAGENT, iter_reagent, amount, reagtemp, data, no_react)
 			if(!no_react)
 				handle_reactions()
 			return TRUE
 
 	//otherwise make a new one
-	var/datum/reagent/R = new D.type(data)
-	cached_reagents += R
-	R.holder = src
-	R.volume = amount
-
+	var/datum/reagent/new_reagent = new reagent_type(data)
+	cached_reagents += new_reagent
+	new_reagent.holder = src
+	new_reagent.volume = amount
 	// New reagent color check
-	if (R.random_reagent_color == TRUE)
-		R.color = GLOB.chemical_reagents_color_list[R.name]
-
-	if(data)
-		R.data = data
-		R.on_new(data)
+	if (new_reagent.random_reagent_color == TRUE)
+		new_reagent.color = GLOB.chemical_reagents_color_list[new_reagent.name]
+	new_reagent.on_new(data)
 
 	if(isliving(my_atom))
-		R.on_mob_add(my_atom) //Must occur befor it could posibly run on_mob_delete
+		new_reagent.on_mob_add(my_atom) //Must occur befor it could posibly run on_mob_delete
+
 	update_total()
-	if(my_atom)
-		my_atom.on_reagent_change(ADD_REAGENT)
+	if(reagtemp != cached_temp)
+		var/new_heat_capacity = heat_capacity()
+		if(new_heat_capacity)
+			set_temperature(((old_heat_capacity * cached_temp) + (new_reagent.specific_heat * amount * reagtemp)) / new_heat_capacity)
+		else
+			set_temperature(reagtemp)
+
+	SEND_SIGNAL(src, COMSIG_REAGENTS_NEW_REAGENT, new_reagent, amount, reagtemp, data, no_react)
 	if(!no_react)
 		handle_reactions()
 	return TRUE
@@ -715,61 +837,104 @@
 		var/amt = list_reagents[r_id]
 		add_reagent(r_id, amt, data)
 
-/datum/reagents/proc/remove_reagent(reagent, amount, safety)//Added a safety check for the trans_id_to
-	if(isnull(amount))
-		amount = 0
-		. = FALSE
-		CRASH("null amount passed to reagent code")
-
-	if(!isnum(amount))
+/**
+ * Removes a specific reagent. can supress reactions if needed
+ * Arguments
+ *
+ * * [reagent_type][datum/reagent] - the type of reagent
+ * * amount - the volume to remove
+ * * include_subtypes - if TRUE will remove the specified amount from all subtypes of reagent_type as well
+ */
+/datum/reagents/proc/remove_reagent(datum/reagent/reagent_type, amount, safety, include_subtypes = FALSE)//Added a safety check for the trans_id_to
+	if(!ispath(reagent_type))
+		stack_trace("invalid reagent passed to remove reagent [reagent_type]")
 		return FALSE
 
-	if(amount < 0)
+	if(!IS_FINITE(amount))
+		stack_trace("non finite amount passed to remove reagent [amount] [reagent_type]")
 		return FALSE
 
+	amount = round(amount, CHEMICAL_QUANTISATION_LEVEL)
+	if(amount <= 0)
+		return FALSE
+
+	var/total_removed_amount = 0
+	var/remove_amount = 0
 	var/list/cached_reagents = reagent_list
+	for(var/datum/reagent/cached_reagent as anything in cached_reagents)
+		//check for specific type or subtypes
+		if(!include_subtypes)
+			if(cached_reagent.type != reagent_type)
+				continue
+		else if(!istype(cached_reagent, reagent_type))
+			continue
 
-	for(var/datum/reagent/R as anything in cached_reagents)
-		if (R.type == reagent)
-			//clamp the removal amount to be between current reagent amount
-			//and zero, to prevent removing more than the holder has stored
-			amount = CLAMP(amount, 0, R.volume)
-			R.volume -= amount
-			update_total()
-			if(!safety)//So it does not handle reactions when it need not to
-				handle_reactions()
-			if(my_atom)
-				my_atom.on_reagent_change(REM_REAGENT)
-			return TRUE
+		//reduce the volume
+		remove_amount = min(cached_reagent.volume, amount)
+		cached_reagent.volume -= remove_amount
 
-	return FALSE
+		total_removed_amount += remove_amount
+
+		SEND_SIGNAL(src, COMSIG_REAGENTS_REM_REAGENT, QDELING(cached_reagent) ? reagent_type : cached_reagent, amount)
+
+		//if we reached here means we have found our specific reagent type so break
+		if(!include_subtypes)
+			break
+
+	//update the holder & handle reactions
+	update_total()
+	if(!safety)//So it does not handle reactions when it need not to
+		handle_reactions()
+
+	return total_removed_amount
 
 /**
- * Check if this holder contains this reagent.
- * Reagent takes a PATH to a reagent.
- * Amount checks for having a specific amount of that chemical.
- * Needs matabolizing takes into consideration if the chemical is matabolizing when it's checked.
- * Check subtypes controls whether it should it should also include subtypes: ispath(type, reagent) versus type == reagent.
+ * Returns a reagent from this holder if it matches all the specified arguments
+ * Arguments
+ *
+ * * [target_reagent][datum/reagent] - the reagent typepath to check for. can be null to return any reagent
+ * * amount - checks for having a specific amount of that chemical
+ * * needs_metabolizing - takes into consideration if the chemical is matabolizing when it's checked.
+ * * check_subtypes - controls whether it should it should also include subtypes: ispath(type, reagent) versus type == reagent.
+ * * chemical_flags - checks for reagent flags.
  */
-/datum/reagents/proc/has_reagent(reagent, amount = -1, needs_metabolizing = FALSE, check_subtypes = FALSE)
+/datum/reagents/proc/has_reagent(
+	datum/reagent/target_reagent,
+	amount = -1,
+	needs_metabolizing = FALSE,
+	check_subtypes = FALSE,
+	chemical_flags = NONE
+)
+	if(!isnull(target_reagent) && !ispath(target_reagent))
+		stack_trace("invalid reagent path passed to has reagent [target_reagent]")
+		return FALSE
+
 	var/list/cached_reagents = reagent_list
 	for(var/datum/reagent/holder_reagent as anything in cached_reagents)
-		if (check_subtypes ? ispath(holder_reagent.type, reagent) : holder_reagent.type == reagent)
-			if(!amount)
-				if(needs_metabolizing && !holder_reagent.metabolizing)
-					if(check_subtypes)
-						continue
-					return FALSE
-				return holder_reagent
-			else
-				if(round(holder_reagent.volume, CHEMICAL_QUANTISATION_LEVEL) >= amount)
-					if(needs_metabolizing && !holder_reagent.metabolizing)
-						if(check_subtypes)
-							continue
-						return FALSE
-					return holder_reagent
-				else if(!check_subtypes)
-					return FALSE
+		//finding for a specific reagent
+		if(!isnull(target_reagent))
+			//first find for specific type or subtype
+			if(!check_subtypes)
+				if(holder_reagent.type != target_reagent)
+					continue
+			else if(!istype(holder_reagent, target_reagent))
+				continue
+
+		//next check if we have the requested amount
+		if(amount > 0 && holder_reagent.volume < amount)
+			continue
+
+		//next check for metabolization
+		if(needs_metabolizing && !holder_reagent.metabolizing)
+			continue
+
+		//next check if it has the specified flag
+		// if(chemical_flags && !(holder_reagent.chemical_flags & chemical_flags))
+		// 	continue
+
+		//after all that if we get here then we have found our reagent
+		return holder_reagent
+
 	return FALSE
 
 /datum/reagents/proc/get_reagent_amount(reagent, strict = TRUE)
@@ -832,10 +997,6 @@
 	var/list/trans_data = current_reagent.data.Copy()
 	return trans_data
 
-/datum/reagents/proc/get_reagent(type)
-	var/list/cached_reagents = reagent_list
-	. = locate(type) in cached_reagents
-
 /datum/reagents/proc/generate_scent_message(minimum_percent=15)
 	// the lower the minimum percent, the more sensitive the message is.
 	var/list/out = list()
@@ -883,31 +1044,21 @@
 					out += "[scent_desc]"
 	return english_list(out, "something")
 
-/datum/reagents/proc/generate_taste_message(minimum_percent=15)
+/datum/reagents/proc/generate_taste_message(mob/living/taster, minimum_percent=15)
 	// the lower the minimum percent, the more sensitive the message is.
 	var/list/out = list()
 	var/list/tastes = list() //descriptor = strength
 	if(minimum_percent <= 100)
-		for(var/datum/reagent/R in reagent_list)
-			if(!R.taste_mult)
+		for(var/datum/reagent/reagent as anything in reagent_list)
+			if(!reagent.taste_mult)
 				continue
 
-			if(istype(R, /datum/reagent/consumable/nutriment))
-				var/list/taste_data = LAZYACCESS(R.data, "tastes")
-				for(var/taste in taste_data)
-					var/ratio = taste_data[taste]
-					var/amount = ratio * R.taste_mult * R.volume
-					if(taste in tastes)
-						tastes[taste] += amount
-					else
-						tastes[taste] = amount
-			else
-				var/taste_desc = R.taste_description
-				var/taste_amount = R.volume * R.taste_mult
-				if(taste_desc in tastes)
-					tastes[taste_desc] += taste_amount
+			var/list/taste_data = reagent.get_taste_description(taster)
+			for(var/taste in taste_data)
+				if(taste in tastes)
+					tastes[taste] += taste_data[taste] * reagent.volume * reagent.taste_mult
 				else
-					tastes[taste_desc] = taste_amount
+					tastes[taste] = taste_data[taste] * reagent.volume * reagent.taste_mult
 		//deal with percentages
 		// TODO it would be great if we could sort these from strong to weak
 		var/total_taste = counterlist_sum(tastes)
@@ -916,17 +1067,17 @@
 				var/percent = tastes[taste_desc]/total_taste * 100
 				if(percent < minimum_percent)
 					continue
-				var/intensity_desc = ""
+				var/intensity_desc = "a hint of"
 				if(percent > minimum_percent * 2 || percent == 100)
 					intensity_desc = ""
 				else if(percent > minimum_percent * 3)
-					intensity_desc = ""
+					intensity_desc = "the strong flavor of"
 				if(intensity_desc != "")
 					out += "[intensity_desc] [taste_desc]"
 				else
 					out += "[taste_desc]"
 
-	return english_list(out, "something")
+	return english_list(out, "something indescribable")
 
 /datum/reagents/proc/expose_temperature(temperature, coeff=0.02)
 	if(istype(my_atom,/obj/item/reagent_containers))
@@ -934,20 +1085,27 @@
 		if(RCs.reagent_flags & NO_REACT) //stasis holders IE cryobeaker
 			return
 	var/temp_delta = (temperature - chem_temp) * coeff
-	var/old_temp = chem_temp
 	if(temp_delta > 0)
 		chem_temp = min(chem_temp + max(temp_delta, 1), temperature)
 	else
 		chem_temp = max(chem_temp + min(temp_delta, -1), temperature)
-	chem_temp = round(chem_temp)
-
-	var/increased = FALSE
-	if(old_temp < chem_temp)
-		increased = TRUE
-	for(var/datum/reagent/R as anything in reagent_list)
-		R.on_temp_change(increased)
+	set_temperature(round(chem_temp))
 	handle_reactions()
-	SEND_SIGNAL(my_atom, COMSIG_REAGENTS_EXPOSE_TEMPERATURE, null, chem_temp)
+
+/** Sets the temperature of this reagent container to a new value.
+ *
+ * Handles setter signals.
+ *
+ * Arguments:
+ * - _temperature: The new temperature value.
+ */
+/datum/reagents/proc/set_temperature(_temperature)
+	if(_temperature == chem_temp)
+		return
+
+	. = chem_temp
+	chem_temp = clamp(_temperature, 0, CHEMICAL_MAXIMUM_TEMPERATURE)
+	SEND_SIGNAL(src, COMSIG_REAGENTS_TEMP_CHANGE, _temperature, .)
 
 /**
  * Multiplies reagents inside this holder by a specific amount
@@ -1013,7 +1171,18 @@
 /proc/get_chem_id(chem_name)
 	for(var/X in GLOB.chemical_reagents_list)
 		var/datum/reagent/R = GLOB.chemical_reagents_list[X]
-		if(ckey(chem_name) == ckey(lowertext(R.name)))
+		if(ckey(chem_name) == ckey(LOWER_TEXT(R.name)))
 			return X
 
-#undef CHEMICAL_QUANTISATION_LEVEL
+//===============================Logging==========================================
+/// Outputs a log-friendly list of reagents based on the internal reagent_list.
+/datum/reagents/proc/get_reagent_log_string()
+	if(!length(reagent_list))
+		return "no reagents"
+
+	var/list/data = list()
+
+	for(var/datum/reagent/reagent as anything in reagent_list)
+		data += "[reagent.type] [reagent.volume]u"
+
+	return english_list(data)

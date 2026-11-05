@@ -1,13 +1,12 @@
 //VANDERLIN TODO: Make taming AI better to allow for tame commands.
 /mob/living/simple_animal/hostile/retaliate/wolf/familiar
-	icon = 'icons/roguetown/mob/monster/vol.dmi'
 	name = "familiar"
 	desc = "A spectral volf familiar created by arcyne magicks."
 	icon_state = "spiritw"
 	icon_living = "spiritw"
 	icon_dead = null
 	base_intents = list(/datum/intent/simple/bite)
-	faction = list("summoned")
+	faction = list(FACTION_SUMMONED)
 	mob_biotypes = MOB_BEAST
 	health = 120
 	maxHealth = 120
@@ -22,7 +21,6 @@
 	retreat_health = 0.1
 	attack_sound = list('sound/vo/mobs/vw/attack (1).ogg','sound/vo/mobs/vw/attack (2).ogg','sound/vo/mobs/vw/attack (3).ogg','sound/vo/mobs/vw/attack (4).ogg')
 	dodgetime = 30
-	aggressive = 1
 	remains_type = null
 	botched_butcher_results = null
 	butcher_results = null

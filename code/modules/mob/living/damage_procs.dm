@@ -1,24 +1,7 @@
-
-/mob/living/proc/get_elemental_resistance(resistance_type = COLD_DAMAGE)
-	switch(resistance_type)
-		if(COLD_DAMAGE)
-			return min(cold_res, max_cold_res)
-		if(FIRE_DAMAGE)
-			return min(fire_res, max_fire_res)
-		if(LIGHTNING_DAMAGE)
-			return min(lightning_res, max_lightning_res)
-
 /mob/living/proc/get_status_mod(status_key)
 	if(!length(status_modifiers))
 		return 0
 	return LAZYACCESS(status_modifiers, status_key)
-
-/mob/living/proc/apply_elemental_damage(damage = 0, damage_type = COLD_DAMAGE, elemental_pen = 0)
-	var/elemental_resistance = get_elemental_resistance(damage_type)
-	elemental_resistance = max(0, elemental_resistance - elemental_pen)
-	damage *= (1 - (elemental_resistance * 0.01))
-	apply_damage(damage)
-
 /*
 	apply_damage(a,b,c)
 	args
@@ -29,8 +12,8 @@
 	standard 0 if fail
 */
 
-/mob/living/proc/apply_damage(damage = 0, damagetype = BRUTE, def_zone = null, blocked = 0, forced = FALSE, spread_damage = FALSE)
-	SEND_SIGNAL(src, COMSIG_MOB_APPLY_DAMGE, damage, damagetype, def_zone)
+/mob/living/proc/apply_damage(damage = 0, damagetype = BRUTE, def_zone = null, blocked = 0, forced = FALSE, spread_damage = FALSE, damage_type, skip_dtype, can_crit = TRUE)
+	SEND_SIGNAL(src, COMSIG_MOB_APPLY_DAMAGE, damage, damagetype, def_zone)
 	var/hit_percent = 1
 	damage = max(damage-blocked,0)
 	if(!damage || (!forced && hit_percent <= 0))
@@ -48,6 +31,10 @@
 			adjustOxyLoss(damage_amount, forced = forced)
 		if(CLONE)
 			adjustCloneLoss(damage_amount, forced = forced)
+		if(PAIN, SHOCK_PAIN)
+			adjustPainLoss(damage_amount, forced = forced)
+		if(SHOCK_STAGE)
+			adjustShockStage(damage_amount, forced = forced)
 	update_damage_overlays()
 	return 1
 
@@ -63,6 +50,10 @@
 			return adjustOxyLoss(damage)
 		if(CLONE)
 			return adjustCloneLoss(damage)
+		if(PAIN, SHOCK_PAIN)
+			return adjustPainLoss(damage)
+		if(SHOCK_STAGE)
+			return adjustShockStage(damage)
 
 /mob/living/proc/get_damage_amount(damagetype = BRUTE)
 	switch(damagetype)
@@ -77,7 +68,8 @@
 		if(CLONE)
 			return getCloneLoss()
 
-
+/mob/living/proc/custom_pain(message, power, forced, obj/item/bodypart/affecting, nopainloss)
+	return
 
 /mob/living/proc/apply_effect(effect = 0,effecttype = EFFECT_STUN, blocked = FALSE)
 	var/hit_percent = (100-blocked)/100
@@ -132,8 +124,8 @@
 /mob/living/proc/getBruteLoss()
 	return bruteloss
 
-/mob/living/proc/adjustBruteLoss(amount, updating_health = TRUE, forced = FALSE, required_status)
-	if(!forced && (status_flags & GODMODE))
+/mob/living/proc/adjustBruteLoss(amount, updating_health = TRUE, forced = FALSE, required_status, damage_type, can_crit = FALSE)
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return FALSE
 	bruteloss = CLAMP((bruteloss + (amount * CONFIG_GET(number/damage_multiplier))), 0, maxHealth * 2)
 	SEND_SIGNAL(src, COMSIG_LIVING_ADJUSTED, (amount * CONFIG_GET(number/damage_multiplier)), BRUTE)
@@ -142,7 +134,7 @@
 	return amount
 
 /mob/living/proc/setBruteLoss(amount, updating_health = TRUE, forced = FALSE, required_bodytype)
-	if(!forced && (status_flags & GODMODE))
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return
 	. = bruteloss
 	bruteloss = amount
@@ -153,7 +145,7 @@
 	return oxyloss
 
 /mob/living/proc/adjustOxyLoss(amount, updating_health = TRUE, forced = FALSE)
-	if(!forced && (status_flags & GODMODE))
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return
 	. = oxyloss
 	oxyloss = clamp((oxyloss + (amount * CONFIG_GET(number/damage_multiplier))), 0, maxHealth * 2)
@@ -162,7 +154,7 @@
 		updatehealth(amount)
 
 /mob/living/proc/setOxyLoss(amount, updating_health = TRUE, forced = FALSE)
-	if(!forced && status_flags & GODMODE)
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return
 	. = oxyloss
 	oxyloss = amount
@@ -173,7 +165,7 @@
 	return toxloss
 
 /mob/living/proc/adjustToxLoss(amount, updating_health = TRUE, forced = FALSE)
-	if(!forced && (status_flags & GODMODE))
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return
 	toxloss = clamp((toxloss + (amount * CONFIG_GET(number/damage_multiplier))), 0, maxHealth * 2)
 	SEND_SIGNAL(src, COMSIG_LIVING_ADJUSTED, (amount * CONFIG_GET(number/damage_multiplier)), TOX)
@@ -182,7 +174,7 @@
 	return amount
 
 /mob/living/proc/setToxLoss(amount, updating_health = TRUE, forced = FALSE)
-	if(!forced && (status_flags & GODMODE))
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return FALSE
 	toxloss = amount
 	if(updating_health)
@@ -192,8 +184,8 @@
 /mob/living/proc/getFireLoss()
 	return fireloss
 
-/mob/living/proc/adjustFireLoss(amount, updating_health = TRUE, forced = FALSE)
-	if(!forced && (status_flags & GODMODE))
+/mob/living/proc/adjustFireLoss(amount, updating_health = TRUE, forced = FALSE, intense = FALSE)
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return FALSE
 	fireloss = CLAMP((fireloss + (amount * CONFIG_GET(number/damage_multiplier))), 0, maxHealth * 2)
 	SEND_SIGNAL(src, COMSIG_LIVING_ADJUSTED, (amount * CONFIG_GET(number/damage_multiplier)), BURN)
@@ -202,7 +194,7 @@
 	return amount
 
 /mob/living/proc/setFireLoss(amount, updating_health = TRUE, forced = FALSE)
-	if(!forced && (status_flags & GODMODE))
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return
 	. = fireloss
 	fireloss = amount
@@ -213,7 +205,7 @@
 	return cloneloss
 
 /mob/living/proc/adjustCloneLoss(amount, updating_health = TRUE, forced = FALSE)
-	if(!forced && (status_flags & GODMODE))
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return FALSE
 	cloneloss = CLAMP((cloneloss + (amount * CONFIG_GET(number/damage_multiplier))), 0, maxHealth * 2)
 	SEND_SIGNAL(src, COMSIG_LIVING_ADJUSTED, (amount * CONFIG_GET(number/damage_multiplier)), CLONE)
@@ -222,7 +214,7 @@
 	return amount
 
 /mob/living/proc/setCloneLoss(amount, updating_health = TRUE, forced = FALSE)
-	if(!forced && (status_flags & GODMODE))
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return FALSE
 	cloneloss = amount
 	if(updating_health)
@@ -237,6 +229,55 @@
 
 /mob/living/proc/getOrganLoss(slot)
 	return
+
+/mob/living/proc/get_stamina_loss()
+	return stamina
+
+/mob/living/proc/getPainLoss()
+	return painloss
+
+/mob/living/proc/adjustPainLoss(amount, updating_health = TRUE, forced = FALSE)
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
+		return
+	. = painloss
+	painloss = clamp((painloss + (amount * CONFIG_GET(number/damage_multiplier))), 0, maxHealth * 2)
+	if(updating_health)
+		updatehealth()
+
+/mob/living/proc/setPainLoss(amount, updating_health = TRUE, forced = FALSE)
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
+		return
+	. = painloss
+	painloss = amount
+	if(updating_health)
+		updatehealth()
+
+/mob/living/proc/getShock(painkiller_included = TRUE)
+	return traumatic_shock
+
+/mob/living/proc/getShockStage()
+	return shock_stage
+
+/mob/living/proc/adjustShockStage(amount, updating_health = TRUE, forced = FALSE, deferred = FALSE)
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
+		return
+	var/old = shock_stage
+	shock_stage = clamp((shock_stage + (amount * CONFIG_GET(number/damage_multiplier))), 0, SHOCK_STAGE_MAX)
+	if(updating_health && old != shock_stage)
+		if(deferred)
+			. |= SHOCK_PROCESS_UPDATE_HEALTH
+		else
+			updatehealth()
+
+/mob/living/proc/setShockStage(amount, updating_health = TRUE, forced = FALSE, deferred = FALSE)
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
+		return
+	shock_stage = amount
+	if(updating_health)
+		if(deferred)
+			. |= SHOCK_PROCESS_UPDATE_HEALTH
+		else
+			updatehealth()
 
 // heal ONE external organ, organ gets randomly selected from damaged ones.
 /mob/living/proc/heal_bodypart_damage(brute = 0, burn = 0, updating_health = TRUE, required_status)
@@ -253,14 +294,14 @@
 		updatehealth(brute + burn)
 
 // heal MANY bodyparts, in random order
-/mob/living/proc/heal_overall_damage(brute = 0, burn = 0, required_status, updating_health = TRUE)
-	adjustBruteLoss(-brute, FALSE) //zero as argument for no instant health update
-	adjustFireLoss(-burn, FALSE)
+/mob/living/proc/heal_overall_damage(brute = 0, burn = 0, required_status, updating_health = TRUE, forced = FALSE)
+	adjustBruteLoss(-brute, FALSE, forced = forced) //zero as argument for no instant health update
+	adjustFireLoss(-burn, FALSE, forced = forced)
 	if(updating_health)
 		updatehealth(brute + burn)
 
 // damage MANY bodyparts, in random order
-/mob/living/proc/take_overall_damage(brute = 0, burn = 0, updating_health = TRUE, required_status = null)
+/mob/living/proc/take_overall_damage(brute = 0, burn = 0, updating_health = TRUE, required_status = null, damage_type)
 	adjustBruteLoss(brute, FALSE) //zero as argument for no instant health update
 	adjustFireLoss(burn, FALSE)
 	if(updating_health)
@@ -285,7 +326,14 @@
  * @return TRUE if defense successful, FALSE otherwise
  */
 /mob/living/proc/checkdefense(datum/intent/intenty, mob/living/user)
-	if(!cmode || stat || (!canparry && !candodge) || user == src || HAS_TRAIT(src, TRAIT_IMMOBILIZED))
+	// We check for a disruptable swingdelay first.
+	var/datum/status_effect/swingdelay/disrupt/SW = has_status_effect(/datum/status_effect/swingdelay/disrupt)
+	if(SW && !SW.is_disrupted())
+		SW.attacked()
+		swing_state = FALSE
+		return FALSE
+
+	if(!cmode || stat || (HAS_TRAIT(src, TRAIT_UNPARRYING) && HAS_TRAIT(src, TRAIT_UNDODGING)) || user == src || HAS_TRAIT(src, TRAIT_IMMOBILIZED))
 		return FALSE
 	if(client && used_intent && client.charging && used_intent.tranged && !used_intent.tshield)
 		return FALSE
@@ -307,12 +355,8 @@
 	// Handle defense based on intent
 	switch(d_intent)
 		if(INTENT_PARRY)
-			if(HAS_TRAIT(src, TRAIT_UNPARRYING))
-				return FALSE
 			return attempt_parry(intenty, user, prob2defend)
 		if(INTENT_DODGE)
-			if(HAS_TRAIT(src, TRAIT_UNDODGING))
-				return FALSE
 			return attempt_dodge(intenty, user, can_dodge_see)
 
 	return FALSE

@@ -75,9 +75,9 @@
 				pipe_turf = GET_TURF_BELOW(pipe_turf)
 		if(istype(pipe_turf, /turf/open/water))
 			var/turf/open/water/water = pipe_turf
-			if(water.mapped)
+			if(water.volume_status == WATER_VOLUME_INFINITE)
 				return
-			water.water_volume = min(water.water_volume + taking_pressure, water.water_maximum)
+			water.water_volume = min(water.water_volume + taking_pressure, water.water_volume_maximum)
 
 		for(var/mob/living/mob in pipe_turf.contents)
 			if(!splash_holder)
@@ -97,8 +97,6 @@
 				send_pressure *= 0.25
 				send_pressure = round(send_pressure, 1)
 			pipe_turf.add_liquid(add_reagent, send_pressure)
-
-
 
 /obj/structure/water_vent/return_rotation_chat()
 	var/datum/reagent/reagent = input.carrying_reagent

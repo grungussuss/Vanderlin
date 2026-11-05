@@ -22,7 +22,7 @@
 	response_harm_simple = "splat"
 	density = FALSE
 	ventcrawler = VENTCRAWLER_ALWAYS
-	faction = list("hostile")
+	faction = list(FACTION_NEUTRAL)
 	attack_sound = 'sound/blank.ogg'
 	pass_flags = PASSTABLE | PASSGRILLE | PASSMOB
 	mob_size = MOB_SIZE_TINY
@@ -42,6 +42,7 @@
 		icon_state = "rare_frog"
 		icon_living = "rare_frog"
 		icon_dead = "rare_frog_dead"
+	add_traits(list(TRAIT_NODROWN, TRAIT_SWIMMER), INNATE_TRAIT)
 
 /mob/living/simple_animal/hostile/retaliate/frog/Crossed(AM as mob|obj)
 	if(!stat && isliving(AM))

@@ -7,12 +7,12 @@
 	self_cast_possible = FALSE
 	spell_flags = SPELL_RITUOS
 	cast_range = 1
-	point_cost = 3
-	associated_skill = /datum/attribute/skill/magic/blood
-	attunements = list(
-		/datum/attunement/death = 0.3,
-		/datum/attunement/blood = 0.2,
-	)
+
+	required_form = FORM_DEATH
+	associated_skill = /datum/attribute/skill/magic/arcane/death
+	required_technique = TECHNIQUE_ALTERATION
+	heretical_spell = TRUE
+
 	invocation = "Return to rot."
 	invocation_type = INVOCATION_WHISPER
 
@@ -25,7 +25,7 @@
 	. = ..()
 	if(!.)
 		return FALSE
-	return isitem(cast_on) || isliving(target)
+	return isitem(cast_on) || isliving(cast_on)
 
 /datum/action/cooldown/spell/decompose/cast(atom/cast_on)
 	. = ..()
@@ -46,8 +46,12 @@
 	if(!ishuman(cast_on))
 		return
 	var/mob/living/carbon/human/target = cast_on
+	for(var/datum/injury/injury in target.all_injuries)
+		injury.adjust_germ_level(250)
+
 	if(target.stat == DEAD)
-		var/datum/antagonist/zombie/z_check = target.zombie_check() //why is this called zombie check when it makes you a zombie...
-		if(!z_check)
-			return
-		z_check.wake_zombie(TRUE)
+		var/datum/antagonist/zombie/zombie_datum = target.zombie_check()
+		if(!zombie_datum)
+			zombie_datum = new /datum/antagonist/zombie()
+		zombie_datum.transform_zombie(target)
+		zombie_datum.wake_zombie(target)

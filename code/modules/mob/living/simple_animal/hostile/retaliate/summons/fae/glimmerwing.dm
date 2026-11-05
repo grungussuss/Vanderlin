@@ -1,6 +1,6 @@
 /mob/living/simple_animal/hostile/retaliate/fae/glimmerwing
-	icon = 'icons/mob/summonable/32x32.dmi'
 	name = "glimmerwing"
+	icon = 'icons/mob/summonable/32x32.dmi'
 	icon_state = "glimmerwing"
 	icon_living = "glimmerwing"
 	icon_dead = "vvd"
@@ -14,7 +14,7 @@
 	move_to_delay = 6
 	base_intents = list(/datum/intent/simple/bite)
 	butcher_results = list()
-	faction = list("fae")
+	faction = list(FACTION_FAE)
 	mob_biotypes = MOB_ORGANIC|MOB_BEAST
 	health = 170
 	maxHealth = 170
@@ -42,7 +42,6 @@
 
 	attack_sound = list('sound/foley/plantcross1.ogg','sound/foley/plantcross2.ogg','sound/foley/plantcross3.ogg','sound/foley/plantcross4.ogg')
 	dodgetime = 40
-	aggressive = 1
 
 	ai_controller = /datum/ai_controller/glimmerwing
 

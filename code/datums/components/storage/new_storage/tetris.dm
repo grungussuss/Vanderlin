@@ -405,22 +405,23 @@
 /datum/component/storage/proc/should_block_user_take(obj/item/stored, mob/user, worn_check = FALSE, no_message = FALSE)
 	if(worn_check && !worn_check(parent, user, no_message))
 		return TRUE
-	var/atom/real_location = real_location()
-	var/atom/recursive_loc = real_location?.loc
-	var/depth = 0
-	while(isatom(recursive_loc) && !isturf(recursive_loc) && !isarea(recursive_loc))
-		var/datum/component/storage/biggerfish = recursive_loc.GetComponent(/datum/component/storage)
-		if(biggerfish)
-			depth++
-			if(!biggerfish.worn_check(biggerfish.parent, user, TRUE))
-				if(!no_message)
-					to_chat(user, span_warning("[recursive_loc] is in the way!"))
-				return TRUE
-			else if(biggerfish.maximum_depth <= depth)
-				if(!no_message)
-					to_chat(user, span_warning("[recursive_loc] is in the way!"))
-				return TRUE
-		recursive_loc = recursive_loc.loc
+	if(!istype(src, /datum/component/storage/concrete/organ))
+		var/atom/real_location = real_location()
+		var/atom/recursive_loc = real_location?.loc
+		var/depth = 0
+		while(isatom(recursive_loc) && !isturf(recursive_loc) && !isarea(recursive_loc))
+			var/datum/component/storage/biggerfish = recursive_loc.GetComponent(/datum/component/storage)
+			if(biggerfish && !istype(biggerfish, /datum/component/storage/concrete/organ))
+				depth++
+				if(!biggerfish.worn_check(biggerfish.parent, user, TRUE))
+					if(!no_message)
+						to_chat(user, span_warning("[recursive_loc] is in the way!"))
+					return TRUE
+				else if(biggerfish.maximum_depth < depth)
+					if(!no_message)
+						to_chat(user, span_warning("[recursive_loc] is in the way!"))
+					return TRUE
+			recursive_loc = recursive_loc.loc
 	return FALSE
 
 /datum/component/storage/proc/update_closer(rows = 0, cols = 0)
@@ -625,6 +626,9 @@
 			LAZYADD(item_to_grid_coordinates[storing], calculated_coordinates)
 	storing.item_flags |= SHRINK_ENCHANT
 	SEND_SIGNAL(parent, COMSIG_STORAGE_ADDED, storing)
+	var/turf/parent_turf = get_turf(parent)
+	if(parent_turf)
+		SEND_SIGNAL(parent_turf, COMSIG_STORAGE_TURF_INSERTED, storing, parent)
 	return TRUE
 
 /datum/component/storage/proc/grid_remove_item(obj/item/removed)
@@ -727,6 +731,8 @@
 			parent.add_fingerprint(user)
 			if(!prevent_warning)
 				mob_item_insertion_feedback(usr, user, storing)
+
+	storing.item_flags |= IN_STORAGE
 	if(grid)
 		var/coordinates = LAZYACCESS(modifiers, SCREEN_LOC)
 		var/grid_box_ratio = (world.icon_size/grid_box_size)
@@ -766,7 +772,6 @@
 		grid_add_item(storing, coordinates)
 
 	storing.on_enter_storage(master)
-	storing.item_flags |= IN_STORAGE
 	storing.mouse_opacity = MOUSE_OPACITY_OPAQUE //So you can click on the area around the item to equip it, instead of having to pixel hunt
 	if(ismovable(parent))
 		if(isliving(parent:loc))
@@ -804,9 +809,12 @@
 		//Being destroyed, just move to nullspace now (so it's not in contents for the icon update)
 		removed.moveToNullspace()
 	removed.update_appearance()
-	SEND_SIGNAL(parent, COMSIG_STORAGE_REMOVED, removed)
+	SEND_SIGNAL(parent, COMSIG_STORAGE_REMOVED, removed, new_location)
 	update_icon()
 	refresh_mob_views()
+	var/turf/parent_turf = get_turf(parent)
+	if(parent_turf)
+		SEND_SIGNAL(parent_turf, COMSIG_STORAGE_TURF_REMOVED, removed, master.parent)
 	return TRUE
 
 /atom/movable/screen/close
@@ -841,7 +849,7 @@
 	else
 		if(!istype(storage_master))
 			return
-		storage_master.hide_from(usr)
+		storage_master.close(usr)
 
 /atom/movable/screen/close/MouseDrop(atom/over, src_location, over_location, src_control, over_control, params)
 	. = ..()

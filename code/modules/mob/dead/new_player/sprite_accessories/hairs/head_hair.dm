@@ -29,6 +29,9 @@
 	if(!H)
 		H = bodypart.original_owner
 
+	if(!H)
+		return
+
 	if(H.head)
 		var/obj/item/I = H.head
 		if(isclothing(I))
@@ -66,6 +69,9 @@
 	var/mob/living/carbon/H = bodypart.owner
 	if(!H)
 		H = bodypart.original_owner
+
+	if(!H)
+		return
 
 	if(H.head)
 		var/obj/item/I = H.head
@@ -129,7 +135,7 @@
 	name = "Boss"
 	icon_state = "boss" // original name bodicker
 	gender = MALE
-	specuse = list(SPEC_ID_DWARF)
+	specuse = list(SPEC_ID_DWARF, , SPEC_ID_DWARF_ORC)
 	under_layer = TRUE
 
 /datum/sprite_accessory/hair/head/bowlcut
@@ -286,7 +292,7 @@
 	name = "Miner"
 	icon_state = "miner"
 	gender = MALE
-	specuse = list(SPEC_ID_DWARF)
+	specuse = list(SPEC_ID_DWARF, , SPEC_ID_DWARF_ORC)
 
 /datum/sprite_accessory/hair/head/nobility_human
 	name = "Nobility"
@@ -534,13 +540,13 @@
 	name = "Gnomish"
 	icon_state = "gnomish_f" // original name bun_grandma
 	gender = FEMALE
-	specuse = list(SPEC_ID_DWARF)
+	specuse = list(SPEC_ID_DWARF, , SPEC_ID_DWARF_ORC)
 
 /datum/sprite_accessory/hair/head/hearth_f
 	name = "Hearth"
 	icon_state = "hearth_f" // original name ponytail_fox
 	gender = FEMALE
-	specuse = list(SPEC_ID_DWARF)
+	specuse = list(SPEC_ID_DWARF, , SPEC_ID_DWARF_ORC)
 
 /datum/sprite_accessory/hair/head/homely
 	name = "Homely"
@@ -576,7 +582,7 @@
 	name = "Majestiq"
 	icon_state = "majestic_dwarf"
 	gender = FEMALE
-	specuse = list(SPEC_ID_DWARF)
+	specuse = list(SPEC_ID_DWARF, , SPEC_ID_DWARF_ORC)
 
 /datum/sprite_accessory/hair/head/majestic_f
 	name = "Majestic"
@@ -1474,6 +1480,126 @@
 	gender = NEUTER
 	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
 
+/datum/sprite_accessory/hair/head/wolfcut
+	name = "Wolfcut"
+	icon_state = "wolfcut"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/triplebuns
+	name = "Triple Buns"
+	icon_state = "triplebuns"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/nest
+	name = "Nest"
+	icon_state = "nest"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/strand
+	name = "Strand"
+	icon_state = "strand"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/sodden
+	name = "Sodden"
+	icon_state = "sodden"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/guildupdo
+	name = "Guild Up-do"
+	icon_state = "guildupdo"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/tapstersbun
+	name = "Tapster's Bun"
+	icon_state = "tapstersbun"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/thescientist
+	name = "The Scientist"
+	icon_state = "thescientist"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/sleek
+	name = "Sleek Up-do"
+	icon_state = "sleek"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/delver
+	name = "Delver"
+	icon_state = "delver"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/mean_girl
+	name = "Mean Girl"
+	icon_state = "mean_girl"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/muzzy
+	name = "Muzzy"
+	icon_state = "muzzy"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/baothan
+	name = "The Baothan"
+	icon_state = "baothan"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/scabbard
+	name = "Scabbard"
+	icon_state = "scabbard"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/dreamer
+	name = "Dreamer"
+	icon_state = "dreamer"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/fir
+	name = "Fir"
+	icon_state = "fir"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/shopkeep
+	name = "Shopkeep"
+	icon_state = "shopkeep"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/the_talker
+	name = "The Talker"
+	icon_state = "the_talker"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/lone_wolfcut
+	name = "Lone Wolfcut"
+	icon_state = "lone_wolfcut"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
+/datum/sprite_accessory/hair/head/innocent_curls
+	name = "Innocent Curls"
+	icon_state = "innocent_curls"
+	gender = NEUTER
+	specuse = list(SPEC_ID_HUMEN, SPEC_ID_DWARF, SPEC_ID_ELF, SPEC_ID_AASIMAR, SPEC_ID_TIEFLING, SPEC_ID_HALF_ORC)
+
 /datum/sprite_accessory/hair/head/triton
 	name = "Base Triton"
 	abstract_type = /datum/sprite_accessory/hair/head/triton
@@ -1520,6 +1646,10 @@
 	name = "Betta"
 	icon_state = "betta"
 
+/datum/sprite_accessory/hair/head/triton/susie
+	name = "Mean Girl"
+	icon_state = "susie"
+
 /datum/sprite_accessory/hair/head/medicator
 	name = "Base Medicator"
 	abstract_type = /datum/sprite_accessory/hair/head/medicator
@@ -1553,6 +1683,7 @@
 /datum/sprite_accessory/hair/head/medicator/crown
 	name = "Crown"
 	icon_state = "crown"
+
 
 /datum/sprite_accessory/hair/head/rakshari
 	name = "Base Rakshari"

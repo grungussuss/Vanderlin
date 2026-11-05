@@ -36,26 +36,19 @@
 	stamina = clamp(stamina, 0, maximum_stamina)
 
 /mob/living/carbon/proc/update_endurance_stamina_modifier()
-	var/endurance = GET_MOB_ATTRIBUTE_VALUE(src, STAT_ENDURANCE)
+	var/endurance = GET_MOB_ATTRIBUTE_VALUE(src, STAT_ENDURANCE) - ATTRIBUTE_MIDDLING
+	var/athletics = GET_MOB_SKILL_VALUE(src, /datum/attribute/skill/misc/athletics) / 10
 
-	var/athletics = 0
-	if(mind)
-		athletics = GET_MOB_SKILL_VALUE(src, /datum/attribute/skill/misc/athletics) / 10
+	var/endurance_factor = endurance * 5
+	var/athletics_factor = athletics * 5
 
-	var/base = endurance * 15
-	var/bonus = athletics * 5
+	var/stamina_modification = endurance_factor + athletics_factor
 
-	bonus = min(bonus, 50)
-
-	var/total_stamina = max(base + bonus, 10)
-
-	var/stamina_modification = total_stamina - base_max_stamina
-
-	var/desc = span_info("Stamina.")
-	if(total_stamina > base_max_stamina)
-		desc = span_green("High stamina.")
-	else if(total_stamina < base_max_stamina)
-		desc = span_alert("Low stamina.")
+	var/desc = span_info("No Stamina Change")
+	if(stamina_modification > 0)
+		desc = span_green("Improved Stamina")
+	else if(stamina_modification < 0)
+		desc = span_alert("Reduced Stamina")
 
 	add_or_update_variable_stamina_modifier(
 		/datum/stamina_modifier/endurance,
@@ -65,7 +58,7 @@
 	)
 
 /mob/living/proc/update_energy()
-	if(cmode && !HAS_TRAIT(src, TRAIT_BREADY))
+	if(cmode && !HAS_TRAIT(src, TRAIT_BATTLE_READY))
 		adjust_energy(-2)
 
 /mob/living/proc/update_energy_modifiers()
@@ -144,9 +137,13 @@
 	return TRUE
 
 /mob/living/check_energy(has_amount)
-	if(!has_amount || has_amount > max_energy)
-		return FALSE
-	if((max_energy - energy) < has_amount)
+	///this trait affects both stamina and energy since they are part of the same system.
+	if(HAS_TRAIT(src, TRAIT_NOSTAMINA))
+		return TRUE
+	///This trait specifically affect energy.
+	if(HAS_TRAIT(src, TRAIT_NOENERGY))
+		return TRUE
+	if(has_amount > max_energy || has_amount > energy)
 		return FALSE
 	return TRUE
 
@@ -157,6 +154,13 @@
 /mob/living/adjust_stamina(added as num, emote_override, force_emote = TRUE, internal_regen = TRUE) //call update_stamina here and set last_fatigued, return false when not enough fatigue left
 	if(HAS_TRAIT(src, TRAIT_NOSTAMINA))
 		return TRUE
+	var/energetic = get_chem_effect(CE_ENERGETIC) * 0.1
+	if(added <= 0)
+		energetic *= max(0.1, 1 - energetic)
+	else
+		energetic *= max(0.1, 1 + energetic)
+	added += energetic
+
 	stamina = CLAMP(stamina+added, 0, maximum_stamina)
 	SEND_SIGNAL(src, COMSIG_LIVING_ADJUSTED, -added, STAMINA)
 	if(internal_regen && added < 0)

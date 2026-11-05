@@ -13,19 +13,19 @@
 		/datum/attribute/skill/craft/crafting = 10,
 		/datum/attribute/skill/craft/tanning = 20,
 		/datum/attribute/skill/misc/swimming = 10,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/craft/cooking = 10,
 		/datum/attribute/skill/misc/climbing = 30,
 		/datum/attribute/skill/misc/sneaking = 30,
 		/datum/attribute/skill/misc/athletics = 30,
-		/datum/attribute/skill/combat/swords = 30,
-		/datum/attribute/skill/combat/bows = 30,
+		/datum/attribute/skill/combat/swords = 33,
+		/datum/attribute/skill/combat/bows = 33,
 		/datum/attribute/skill/labor/taming = 30,
 	)
 
 /datum/job/advclass/mercenary/steppesman
 	title = "Steppesman"
-	tutorial = "A mercenary hailing from the wild frontier steppes. There are three things you value most; saigas, freedom, and coin."
+	tutorial = "A mercenary hailing from the wild steppes of the Crimsonlands, well used to riding swiftly through and around orcish warring. There are three things you value most: saigas, freedom, and coin."
 	allowed_races = RACES_PLAYER_ALL
 	outfit = /datum/outfit/mercenary/steppesman
 	category_tags = list(CTAG_MERCENARY)

@@ -1,6 +1,6 @@
 /datum/attribute_holder/sheet/job/bogwalker
 	attribute_variance = list(
-		/datum/attribute/skill/misc/reading = list(0, 10),
+		/datum/attribute/skill/educated/reading = list(0, 10),
 	)
 	raw_attribute_list = list(
 		STAT_STRENGTH = 1,
@@ -16,7 +16,7 @@
 		/datum/attribute/skill/combat/unarmed = 30,
 		/datum/attribute/skill/craft/crafting = 10,
 		/datum/attribute/skill/craft/tanning = 10,
-		/datum/attribute/skill/combat/axesmaces = 30,
+		/datum/attribute/skill/combat/axesmaces = 37,
 		/datum/attribute/skill/craft/cooking = 10,
 		/datum/attribute/skill/misc/sewing = 20,
 		/datum/attribute/skill/labor/butchering = 20,

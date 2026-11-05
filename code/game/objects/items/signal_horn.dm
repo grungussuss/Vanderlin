@@ -9,6 +9,7 @@
 	grid_height = 32
 	grid_width = 64
 	COOLDOWN_DECLARE(sound_horn)
+	pickpocket_difficulty = SKILL_RANK_JOURNEYMAN
 
 /obj/item/signal_horn/attack_self(mob/living/user, list/modifiers)
 	. = ..()
@@ -135,7 +136,7 @@
 	. = ..()
 	if(.)
 		target = sound_source
-		RegisterSignal(target, COMSIG_PARENT_QDELETING, PROC_REF(qdel), src)
+		RegisterSignal(target, COMSIG_QDELETING, PROC_REF(qdel), src)
 		tick()
 
 /datum/status_effect/signal_horn/on_apply()

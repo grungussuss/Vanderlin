@@ -88,8 +88,8 @@
 	if(owner == new_owner)
 		return
 	if(owner)
-		UnregisterSignal(owner, list(COMSIG_PARENT_QDELETING, COMSIG_POWER_ACTIVATE))
-	RegisterSignal(new_owner, COMSIG_PARENT_QDELETING, PROC_REF(on_owner_qdel))
+		UnregisterSignal(owner, list(COMSIG_QDELETING, COMSIG_POWER_ACTIVATE))
+	RegisterSignal(new_owner, COMSIG_QDELETING, PROC_REF(on_owner_qdel))
 	owner = new_owner
 	if(power_group != COVEN_POWER_GROUP_NONE)
 		RegisterSignal(owner, COMSIG_POWER_ACTIVATE, PROC_REF(on_other_power_activate))
@@ -817,13 +817,13 @@
 
 	if (spend_resources())
 		if((vitae_cost > 0) && (duration_length > 10 SECONDS)) // No spam please
-			to_chat(owner, span_warning("[src] consumes your blood to stay active."))
+			to_chat(owner, span_warning("[src] consumes your vitae to stay active."))
 		grant_usage_xp(target, TRUE)
 		if (!duration_override)
 			do_duration(target)
 		on_refresh(target)
 	else
-		to_chat(owner, span_warning("You don't have enough blood to keep [src] active!"))
+		to_chat(owner, span_warning("You don't have enough vitae to keep [src] active!"))
 		try_deactivate(target)
 
 /**

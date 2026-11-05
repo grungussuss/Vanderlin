@@ -14,7 +14,7 @@
 	move_to_delay = 16
 	base_intents = list(/datum/intent/simple/elementalt2_unarmed)
 	butcher_results = list()
-	faction = list("elemental")
+	faction = list(FACTION_ELEMENTAL)
 	mob_biotypes = MOB_ORGANIC|MOB_BEAST
 	health = 1500
 	maxHealth = 1500
@@ -42,7 +42,6 @@
 	attack_sound = list('sound/combat/hits/onstone/wallhit.ogg')
 	SET_BASE_PIXEL(-32, 0)
 	dodgetime = 0
-	aggressive = 1
 
 	base_constitution = 20
 	base_endurance = 20

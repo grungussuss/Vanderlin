@@ -43,8 +43,6 @@
 
 	var/clothing_flags = NONE
 
-	var/misc_flags = NONE
-
 	var/toggle_icon_state = TRUE //appends _t to our icon state when toggled
 
 	//Var modification - PLEASE be careful with this I know who you are and where you live
@@ -113,13 +111,20 @@
 /obj/item/clothing/get_inspect_entries(list/inspect_list)
 	. = ..()
 
-	if(armor)
+	if(get_armor())
 		. += "\n<u><b>DEFENSE:</b></u>\n"
 		var/list/defense_strings = list()
-		for(var/damage_key in ARMOR_LIST_DAMAGE())
+		for(var/damage_key in ARMOR_LIST_DAMAGE)
 			var/rating = armor.get_rating(damage_key)
 			defense_strings += "<font color='[armor_to_color(rating)]'>[armor_to_protection_name(damage_key)] [armor_to_protection_class(rating)]</font>"
 		. += defense_strings.Join(" | ")
+
+		. += "\n<u><b>EDGE PROTECTION:</b></u>\n"
+		var/list/edge_strings = list()
+		for(var/damage_key in EDGE_PROTECTABLE_TYPES)
+			var/rating = armor.get_edge_protection(damage_key)
+			edge_strings += "<font color='[armor_to_color(rating)]'>[armor_to_protection_name(damage_key)] [rating]</font>"
+		. += edge_strings.Join(" | ")
 
 	if(length(prevent_crits))
 		. += "\n<u><b>PREVENT CRITS:</b></u>\n"
@@ -128,7 +133,7 @@
 	if(body_parts_covered)
 		. += "\n<u><b>COVERAGE:</b></u>\n"
 		var/list/parsed_zones = list()
-		for(var/zone in body_parts_covered2organ_names(body_parts_covered))
+		for(var/zone in cover_flags2body_zones(body_parts_covered))
 			parsed_zones += "[parse_zone(zone)]"
 		. += parsed_zones.Join(" | ")
 
@@ -147,16 +152,13 @@
 			. += span_notice("It has one torn sleeve.")
 		else
 			. += span_notice("Both its sleeves have been torn!")
+
 	if(wet)
-		var/list/t = wet.get_examine_text()
-		if(t)
-			for(var/line in t)
-				. += line
+		for(var/line in wet.get_examine_text())
+			. += line
+
 	if(proper_drying)
-		desc += span_notice("\n This was properly washed and dried off, it smells good!")
-
-
-
+		. += span_notice("This was properly washed and dried off, it smells good!")
 
 /obj/item/clothing/MiddleClick(mob/living/user, list/modifiers)
 	..()
@@ -312,17 +314,19 @@
 	return FALSE
 
 /obj/item/clothing/attack(mob/living/M, mob/living/user, list/modifiers)
-	if(M.on_fire)
-		if(user == M)
-			return
-		user.changeNext_move(CLICK_CD_MELEE)
-		M.visible_message(span_warning("[user] pats out the flames on [M] with [src]!"))
-		M.adjust_divine_fire_stacks(-2)
-		if(M.fire_stacks > 0)
-			M.adjust_fire_stacks(-2)
-		take_damage(10, BURN, "fire")
-	else
+	if(!M.on_fire)
 		return ..()
+
+	if(user == M)
+		return
+
+	user.changeNext_move(CLICK_CD_MELEE)
+	M.visible_message(span_warning("[user] pats out the flames on [M] with [src]!"))
+	M.adjust_divine_fire_stacks(-2)
+	if(M.fire_stacks > 0)
+		M.adjust_fire_stacks(-2)
+
+	take_damage(10, BURN, "fire")
 
 /obj/item/clothing/dropped(mob/user)
 	..()
@@ -389,7 +393,7 @@
 	if(!damaged_clothes)
 		update_clothes_damaged_state(TRUE)
 	var/brokemessage = FALSE
-	var/list/armorlist = armor?.getList()
+	var/list/armorlist = get_armor().get_rating_list()
 	for(var/x in armorlist)
 		if(armorlist[x] > 0)
 			brokemessage = TRUE
@@ -432,7 +436,7 @@ BLIND     // can't see anything
 
 /proc/generate_female_clothing(index,t_color,icon,type)
 	var/icon/female_clothing_icon = icon("icon"=icon, "icon_state"=t_color)
-	var/icon/female_s = icon("icon"='icons/mob/clothing/under/masking_helpers.dmi', "icon_state"="[(type == FEMALE_UNIFORM_FULL) ? "female_full" : "female_top"]")
+	var/icon/female_s = icon("icon"='icons/mob/clothing/masking_helpers.dmi', "icon_state"="[(type == FEMALE_UNIFORM_FULL) ? "female_full" : "female_top"]")
 	female_clothing_icon.Blend(female_s, ICON_MULTIPLY)
 	female_clothing_icon = fcopy_rsc(female_clothing_icon)
 	GLOB.female_clothing_icons[index] = female_clothing_icon
@@ -503,7 +507,6 @@ BLIND     // can't see anything
 	flags_cover = initial(flags_cover)
 	block2add = initial(block2add)
 	body_parts_covered = initial(body_parts_covered)
-	prevent_crits = initial(prevent_crits)
 	gas_transfer_coefficient = initial(gas_transfer_coefficient)
 
 /obj/item/clothing/equipped(mob/living/carbon/user, slot)
@@ -569,14 +572,14 @@ BLIND     // can't see anything
 	if(proper_drying && !C.has_stress_type(/datum/stress_event/washed_cloth))
 		C.add_stress(/datum/stress_event/washed_cloth)
 		proper_drying = FALSE
-		var/datum/component/particle_spewer = GetComponent(/datum/component/particle_spewer/sparkle)
-		if(particle_spewer)
-			particle_spewer.RemoveComponent()
+		qdel(GetComponent(/datum/component/particle_spewer/sparkle))
 
 	if(wet.use_water(0.7))
 		if(HAS_TRAIT(C, TRAIT_NOBLE_BLOOD) && wet.water_stacks == 0)
 			C.add_stress(/datum/stress_event/noble_tarnished_cloth)
 
+		if(wet.dirty_water)
+			C.adjust_germ_level_directed(0.5 * wet.water_stacks, body_zone = slot2body_zone(slot_flags))
 		if(C.mind?.assigned_role == /datum/job/farmer || C.mind?.assigned_role == /datum/job/soilchild || HAS_TRAIT(C, TRAIT_LEECHIMMUNE) || istriton(C))
 			return
 

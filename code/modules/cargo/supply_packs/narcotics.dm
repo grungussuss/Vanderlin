@@ -3,6 +3,7 @@
 	crate_name = "merchant guild's crate"
 	crate_type = /obj/structure/closet/crate/chest/merchant
 	contraband = TRUE
+	abstract_type = /datum/supply_pack/narcotics
 
 /datum/supply_pack/narcotics/sigs
 	name = "Pipe Weed Zig"
@@ -28,6 +29,11 @@
 	name = "Ozium"
 	cost = 12
 	contains = /obj/item/reagent_containers/powder/ozium
+
+/datum/supply_pack/narcotics/spider
+	name = "Venom Gland"
+	cost = 50
+	contains = /obj/item/reagent_containers/spidervenom_inert
 
 /datum/supply_pack/narcotics/moondust
 	name = "Moon Dust"

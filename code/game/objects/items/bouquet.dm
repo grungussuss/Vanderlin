@@ -10,6 +10,10 @@
 	grid_width = 32
 	grid_height = 64
 	item_weight = 27 GRAMS
+	salvage_result = /obj/item/alch/herb/rosa
+	sewrepair = /datum/attribute/skill/misc/sewing/mending
+	salvage_amount = 3
+	fiber_salvage = TRUE
 
 /obj/item/bouquet/rosa
 	name = "rosa bouquet"
@@ -20,16 +24,19 @@
 	name = "salvia bouquet"
 	desc = "A bouquet of sweet smelling salvia, a beautiful and royal purple flower."
 	icon_state = "bouquet_salvia"
+	salvage_result = /obj/item/alch/herb/salvia
 
 /obj/item/bouquet/matricaria
 	name = "matricaria bouquet"
 	desc = "A bouquet of maricaria."
 	icon_state = "bouquet_matricaria"
+	salvage_result = /obj/item/alch/herb/matricaria
 
 /obj/item/bouquet/calendula
 	name = "calendula bouquet"
 	desc = "A bouquet of calendula, a flower used in herbal medicine due to its supposed healing properties."
 	icon_state = "bouquet_calendula"
+	salvage_result = /obj/item/alch/herb/calendula
 
 /obj/item/clothing/head/flowercrown
 	name = ""
@@ -59,9 +66,27 @@
 	desc = ""
 	item_state = "cursedrosa_crown"
 	icon_state = "cursedrosa_crown"
+	examine_highlight_type = /datum/examine_highlight/blackbriar
 
 /obj/item/clothing/head/flowercrown/salvia
 	name = "salvia crown"
 	desc = "A crown of salvia, often worn by consorts and princesses of particularly joyful royal courts"
 	item_state = "salvia_crown"
 	icon_state = "salvia_crown"
+
+/obj/item/clothing/head/flowercrown/matricaria
+	name = "crown of matricaria"
+	item_state = "matricaria_crown"
+	icon_state = "matricaria_crown"
+
+/obj/item/clothing/head/flowercrown/calendula
+	name = "crown of calendula"
+	item_state = "calendula_crown"
+	icon_state = "calendula_crown"
+
+/obj/item/clothing/head/flowercrown/manabloom
+	name = "crown of manabloom"
+	desc = "A crown formed of manabloom flowers. Often worn by those who find themselves in need of a \
+	deeper attunement to the arcyne; a favourite of young apprentices and faltering old masters both."
+	item_state = "manabloom_crown"
+	icon_state = "manabloom_crown"

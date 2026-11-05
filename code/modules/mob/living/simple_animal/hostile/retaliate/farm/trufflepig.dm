@@ -65,8 +65,8 @@
 			. += span_notice("This truffle looks safe to eat.")
 
 /obj/item/reagent_containers/food/snacks/truffles/toxic
-	list_reagents = list(/datum/reagent/berrypoison/shroom = 4)
-	grind_results = list(/datum/reagent/berrypoison/shroom = 8)
+	list_reagents = list(/datum/reagent/poison/berry/shroom = 4)
+	grind_results = list(/datum/reagent/poison/berry/shroom = 8)
 	poisonous = TRUE
 
 /obj/item/reagent_containers/food/snacks/cooked/truffle
@@ -110,7 +110,7 @@
 	icon_gib = "piggie_dead"
 
 	animal_species = /mob/living/simple_animal/hostile/retaliate/trufflepig
-	faction = list("goats")
+	faction = list(FACTION_NEUTRAL)
 	footstep_type = FOOTSTEP_MOB_SHOE
 	emote_see = list("eyes the surroundings.", "flicks its ears.")
 	deathsound = 'sound/vo/mobs/pig/hangry.ogg'
@@ -139,7 +139,7 @@
 		)
 	pooptype = /obj/item/natural/poo/horse
 	remains_type = /obj/effect/decal/remains/pig
-	tame = TRUE
+	start_tamed = TRUE
 
 	base_intents = list(/datum/intent/simple/headbutt)
 	attack_verb_continuous = "bites"
@@ -154,10 +154,10 @@
 	buckle_lying = FALSE
 	can_saddle = TRUE
 
+	living_flags = MOVES_ON_ITS_OWN|CAN_BE_FIREMANNED
+
 	ai_controller = /datum/ai_controller/pig
 	indexed = TRUE
-
-
 
 	var/static/list/pet_commands = list(
 			/datum/pet_command/idle,
@@ -216,24 +216,12 @@
 	icon = 'icons/roguetown/mob/monster/cow.dmi'
 
 /mob/living/simple_animal/hostile/retaliate/trufflepig/tamed(mob/user)
-	..()
-	deaggroprob = 20
-	if(can_buckle)
-		AddComponent(/datum/component/riding/pig)
-
-
-/mob/living/simple_animal/hostile/retaliate/trufflepig/Life()
 	. = ..()
-	if((src.loc) && isturf(src.loc))
-		for(var/obj/item/reagent_containers/food/snacks/truffles/M in view(1,src))
-			if(Adjacent(M))
-				walk_towards(src, M, 1)
-				sleep(3)
-				visible_message("<span class='notice'>The pig devours the vulnerable truffles!</span>")
-				hangry_meter = 0
-				playsound(src,'sound/misc/eat.ogg', rand(30,60), TRUE)
-				qdel(M)
-				break
+	deaggroprob = 20
+	if(.) // was already tamed
+		return
+	if(can_buckle)
+		AddElement(/datum/element/ridable, /datum/component/riding/creature/pig)
 
 /mob/living/simple_animal/hostile/retaliate/trufflepig/attack_hand(mob/living/carbon/human/M)
 	. = ..()

@@ -60,18 +60,22 @@
 
 /obj/item/clothing/armor/regenerating/skin
 	name = "regenerating skin"
+	icon = 'icons/effects/effects.dmi'
+	icon_state = "barriershimmer"
+	color = "#ada588"
 	break_sound = 'sound/foley/cloth_rip.ogg'
 	drop_sound = 'sound/foley/dropsound/cloth_drop.ogg'
 
 	resistance_flags = FIRE_PROOF
 	body_parts_covered = COVERAGE_FULL
+	body_parts_access_allowed = COVERAGE_FULL
 	flags_inv = null //Exposes the chest and-or breasts.
 	r_sleeve_status = SLEEVE_NORMAL
 	l_sleeve_status = SLEEVE_NORMAL
 	armor_class = AC_LIGHT
 	blocksound = SOFTUNDERHIT
 	blade_dulling = DULLING_BASHCHOP
-	armor = ARMOR_PADDED
+	armor_type = /datum/armor/padded
 	surgery_cover = FALSE
 	clothing_flags = NONE
 
@@ -94,7 +98,16 @@
 /obj/item/clothing/armor/regenerating/skin/disciple
 	name = "disciple's skin"
 	desc = "It's far more than just an oath. Mercurial circles of silver are etched into the skin of this person, engraved with fanatic zeal and faithful reverence. May it ward the darkness. It seems to be written in red ink."
-	armor = list("blunt" = 30, "slash" = 50, "stab" = 50, "piercing" = 20, "fire" = 0, "acid" = 0) //Custom value; padded gambeson's slash- and stab- armor.
+	armor_type = /datum/armor/skin/disciple
+	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT)
+	max_integrity = 300
+	repair_time = 20 SECONDS
+
+/obj/item/clothing/armor/regenerating/skin/easttats
+	name = "bouhoi bujeog tattoos"
+	desc = "A mystic style of tattoos used to honor the kin that fell generations ago, a sign of companionship and secretive brotherhood. These are styled into the shape of clouds, created by a mystical ink which shifts and moves in ripples like a pond to harden where your skin is struck. Its movement causes you to shudder."
+	color = "#383837"
+	armor_type = /datum/armor/skin/easttats
 	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT)
 	max_integrity = 300
 	repair_time = 20 SECONDS
@@ -102,3 +115,22 @@
 /obj/item/clothing/armor/regenerating/skin/disciple/sunlord
 	name = "The golden tan"
 	desc = "The sun's powerful light has infused my skin with an armor-like denseness."
+	color = "#e4c145"
+
+/obj/item/clothing/armor/regenerating/skin/easttats/tribal
+	name = "Tribal Tattoos"
+	desc = "Detailed tribal tattoos carved upon half-orc warriors to inspire courage within those who bear them, always on proud display to the world."
+	color = "#3d583d"
+
+/obj/item/clothing/armor/regenerating/skin/infernal
+	name = "Infernal Sigils"
+	desc = "Sigils of the infernal, drawn in cursed blood. Only the greatest servants of the Archdevils bear such marks."
+	color = COLOR_BLOOD_MAGIC
+	armor_type = /datum/armor/skin/infernal
+	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT)
+	max_integrity = 300
+	repair_time = 20 SECONDS
+
+/obj/item/clothing/armor/regenerating/skin/infernal/greater
+	name = "Greater Infernal Sigils"
+	armor_type = /datum/armor/skin/infernal/greater

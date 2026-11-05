@@ -113,6 +113,10 @@
 	background_track_night = null
 	threat_region = THREAT_REGION_MOUNT_DECAP
 
+/area/outdoors/open_sky
+	name = "Open Sky"
+	icon_state = "sky"
+
 /area/outdoors/basin
 	name = "town basin"
 	icon_state = "basin"
@@ -230,6 +234,7 @@
 	background_track_night = null
 	ambush_times = list(NIGHT,DAWN,DUSK,DAY)
 	ambush_types = list(
+		/turf/open/floor/naturalstone,
 		/turf/open/floor/dirt,
 		/turf/open/water,)
 	ambush_mobs = list(
@@ -362,13 +367,13 @@
 	. = ..()
 	if(!iscarbon(arrived))
 		return
-	RegisterSignal(arrived, COMSIG_CARBON_PRAY, PROC_REF(on_underworld_prayer))
+	RegisterSignal(arrived, COMSIG_EMOTE_PRAY, PROC_REF(on_underworld_prayer))
 
-/area/underworld/Exited(atom/movable/gone, atom/new_loc)
+/area/underworld/Exited(atom/movable/gone, direction)
 	. = ..()
 	if(!iscarbon(gone))
 		return
-	UnregisterSignal(gone, COMSIG_CARBON_PRAY)
+	UnregisterSignal(gone, COMSIG_EMOTE_PRAY)
 
 /area/underworld/proc/on_underworld_prayer(mob/living/carbon/damned, message)
 	// Who do the underworld spirits pray to? Good question
@@ -423,32 +428,6 @@
 	background_track = 'sound/music/area/townstreets.ogg'
 	background_track_dusk = 'sound/music/area/septimus.ogg'
 	background_track_night = 'sound/music/area/sleeping.ogg'
-
-
-///// ANTAGONIST AREAS //////  - used on centcom so you can teleport there easily. Each antag area just gets one unique type, if its outdoor use generic indoors, vice versa, to avoid clutter in area list
-
-/area/indoors/bandit_lair
-	name = "lair (Bandits)"
-
-/area/indoors/vampire_manor
-	name = "lair (Vampire Lord)"
-
-/area/outdoors/bog/inhumen_camp
-	name = "lair (Inhumen)"
-	background_track = 'sound/music/area/decap.ogg'
-	first_time_text = "THE DEEP BOG"
-
-/area/indoors/shelter/bog/inhumen_camp
-	name = "lair (Inhumen) (Indoors)"
-	background_track = 'sound/music/area/decap.ogg'
-
-/area/indoors/lich
-	name = "lair (Lich)"
-	background_track = 'sound/music/area/churchnight.ogg'
-
-/area/delver
-	delver_restrictions = TRUE
-	converted_type = /area/delver
 
 /area/ship/topdeck
 	name = "upperdeck"

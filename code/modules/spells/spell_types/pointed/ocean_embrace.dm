@@ -6,8 +6,9 @@
 	charge_sound = 'sound/magic/holycharging.ogg'
 
 	cast_range = 6
-	spell_type = SPELL_MIRACLE
+	spell_type = SPELL_DIVINE_MIRACLE
 	antimagic_flags = MAGIC_RESISTANCE_HOLY
+	spell_flags = SPELL_DEVIL_BLOCKED
 	associated_skill = /datum/attribute/skill/magic/holy
 	required_items = list(/obj/item/clothing/neck/psycross/silver/divine/abyssor)
 
@@ -54,4 +55,4 @@
 			situational_bonus = min(situational_bonus + 0.1, 2)
 	if(situational_bonus > 1)
 		to_chat(owner, span_greentext("Channeling Abyssor's power is easier in these conditions!"))
-	cast_on.blood_volume = max(cast_on.blood_volume, min(cast_on.blood_volume + BLOOD_VOLUME_OKAY * situational_bonus, BLOOD_VOLUME_NORMAL))
+	cast_on.adjust_blood_volume(BLOOD_VOLUME_OKAY * situational_bonus, maximum = BLOOD_VOLUME_NORMAL)

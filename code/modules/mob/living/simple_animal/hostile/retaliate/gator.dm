@@ -1,22 +1,12 @@
-/datum/component/riding/gator/Initialize()
-	. = ..()
-	set_riding_offsets(RIDING_OFFSET_ALL, list(TEXT_NORTH = list(0, 25), TEXT_SOUTH = list(2, 25), TEXT_EAST = list(8, 20), TEXT_WEST = list(0, 20)))
-	set_vehicle_dir_layer(SOUTH, OBJ_LAYER)
-	set_vehicle_dir_layer(NORTH, OBJ_LAYER)
-	set_vehicle_dir_layer(EAST, OBJ_LAYER)
-	set_vehicle_dir_layer(WEST, OBJ_LAYER)
-
-
 /mob/living/simple_animal/hostile/retaliate/gator
-	icon = 'icons/mob/gator.dmi'
 	name = "gator"
 	desc = "Vicious and patient creachers; tales have been told of passersby being grabbed and dragged underwater, never to be seen again."
+	icon = 'icons/mob/gator.dmi'
 	icon_state = "gator"
 	icon_living = "gator"
 	icon_dead = "gator-dead"
 	SET_BASE_PIXEL(-32, 1)
 
-	faction = list("gators")
 	move_to_delay = 12
 	vision_range = 5
 	aggro_vision_range = 5
@@ -53,7 +43,6 @@
 	defdrain = 5
 	retreat_health = 0.2
 
-	aggressive = TRUE
 	stat_attack = UNCONSCIOUS
 	body_eater = TRUE
 	can_buckle = TRUE
@@ -82,11 +71,14 @@
 	if(prob(33))
 		gender = FEMALE
 	update_appearance(UPDATE_OVERLAYS)
+	add_traits(list(TRAIT_NODROWN, TRAIT_SWIMMER), INNATE_TRAIT)
 
 /mob/living/simple_animal/hostile/retaliate/gator/tamed(mob/user)
 	. = ..()
+	if(.) // was already tamed
+		return
 	if(can_buckle)
-		AddComponent(/datum/component/riding/gator)
+		AddElement(/datum/element/ridable, /datum/component/riding/creature/gator)
 
 /mob/living/simple_animal/hostile/retaliate/gator/death(gibbed)
 	..()

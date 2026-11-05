@@ -16,6 +16,7 @@
 	open_sound_volume = 35
 	close_sound_volume = 50
 	drag_slowdown = 0
+	sellprice = CARGO_CRATE_VALUE
 
 /obj/structure/closet/crate/CanAllowThrough(atom/movable/mover, turf/target)
 	. = ..()
@@ -84,7 +85,6 @@
 		if(!do_after(user, 5 SECONDS, src))
 			return
 		if(pacify_coffin(src, user))
-			add_overlay("graveconsecrated")
 			user.visible_message(span_rose("[user] seals and consecrates [src]."), span_rose("I seal the coffin, consecrating it. I may bury it to protect it's inhabitant further."))
 			SEND_SIGNAL(user, COMSIG_GRAVE_CONSECRATED, src)
 			record_round_statistic(STATS_GRAVES_CONSECRATED)
@@ -92,6 +92,8 @@
 		else
 			to_chat(user, span_warning("The consecration failed, but you did seal the coffin."))
 		sealed = TRUE
+		for(var/mob/living/living in contents)
+			ADD_TRAIT(living, TRAIT_STASIS, "[src]")
 		icon_state = "casketconsecrated"
 		pot.remaining = max(pot.remaining - 150, 0) // take only 150 since each process tick removes 20 from the tallow pot, and sometimes people wait.
 		return
@@ -112,10 +114,15 @@
 						to_chat(user, "<span class='warning'>Necra turns a blind eye to my deeds.</span>")
 					else
 						to_chat(user, "<span class='warning'>Necra shuns my blasphemous deeds, I am cursed!</span>")
-						L.apply_status_effect(/datum/status_effect/debuff/cursed)
+						L.remove_status_effect(/datum/status_effect/debuff/cursed_t1)
+						if(!(L.has_status_effect(/datum/status_effect/debuff/cursed_t3)) || !(L.has_status_effect(/datum/status_effect/debuff/cursed_t4)))
+							L.apply_status_effect(/datum/status_effect/debuff/cursed_t2)
 				SEND_SIGNAL(user, COMSIG_GRAVE_ROBBED, user)
 				sealed = FALSE
+				for(var/mob/living/living in contents)
+					REMOVE_TRAIT(living, TRAIT_STASIS, "[src]")
 				consecrated = FALSE
+
 				icon_state = "casket"
 				return
 		. = ..()

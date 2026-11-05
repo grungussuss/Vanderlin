@@ -40,7 +40,10 @@
 		. += "[icon_state]_uncorked"
 
 /obj/item/reagent_containers/glass/bottle/waterskin/milk // Filled subtype used by the cheesemaker
-	list_reagents = list(/datum/reagent/consumable/milk = 64)
+	list_reagents = list(/datum/reagent/consumable/milk = 60)
+
+/obj/item/reagent_containers/glass/bottle/waterskin/water
+	list_reagents = list(/datum/reagent/water = 60)
 
 /obj/item/reagent_containers/glass/bottle/waterskin/purifier
 	name = "purifying waterskin"
@@ -53,9 +56,9 @@
 	. = ..()
 	filtered_reagents = typecacheof(filtered_reagents)
 
-/obj/item/reagent_containers/glass/bottle/waterskin/purifier/on_reagent_change(changetype)
-	. = ..()
-	cleanwater()
+// Still uses COMSIG_REAGENTS_HOLDER_UPDATED signal but it's good enough
+/obj/item/reagent_containers/glass/bottle/waterskin/purifier/on_reagent_change(datum/reagents/holder, ...)
+	INVOKE_ASYNC(src, PROC_REF(cleanwater))
 
 /obj/item/reagent_containers/glass/bottle/waterskin/purifier/proc/cleanwater()
 	// If there is dirty water inside the device, clean it!

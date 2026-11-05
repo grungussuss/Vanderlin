@@ -8,6 +8,10 @@
 /datum/sprite_accessory/ears/is_visible(obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
 	return is_human_part_visible(owner, HIDEEARS)
 
+/datum/sprite_accessory/ears/get_icon_state(obj/item/organ/eyes/eyes, ...)
+	return (eyes.side == RIGHT_SIDE) ? "[icon_state]_right" : "[icon_state]_left"
+
+
 /datum/sprite_accessory/ears/adjust_appearance_list(list/appearance_list, obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
 	generic_gender_feature_adjust(appearance_list, organ, bodypart, owner, OFFSET_FACE)
 
@@ -294,8 +298,20 @@
 
 /datum/sprite_accessory/ears/goblin
 	name = "Goblin"
-	icon = 'icons/mob/sprite_accessory/halforc.dmi'
+	icon = 'icons/mob/sprite_accessory/ears/goblin/ears_goblin.dmi'
 	icon_state = "goblin"
+	color_key_defaults = list(KEY_SKIN_COLOR)
+
+/datum/sprite_accessory/ears/goblin_alt
+	name = "Goblin Alt"
+	icon = 'icons/mob/sprite_accessory/ears/goblin/ears_goblinalt.dmi'
+	icon_state = "goblinalt"
+	color_key_defaults = list(KEY_SKIN_COLOR)
+
+/datum/sprite_accessory/ears/goblin_small
+	name = "Goblin Small"
+	icon = 'icons/mob/sprite_accessory/ears/goblin/ears_goblinsmall.dmi'
+	icon_state = "goblinsmall"
 	color_key_defaults = list(KEY_SKIN_COLOR)
 
 /datum/sprite_accessory/ears/big
@@ -337,6 +353,34 @@
 	icon = 'icons/roguetown/mob/bodies/attachments.dmi'
 	name = "ElfW"
 	icon_state = "elfw"
+	specuse = list(SPEC_ID_ELF, SPEC_ID_TIEFLING) //tiebs use these
+	color_key_defaults = list(KEY_SKIN_COLOR)
+
+/datum/sprite_accessory/ears/elftw
+	icon = 'icons/roguetown/mob/bodies/attachments.dmi'
+	name = "ElfTW"
+	icon_state = "elftw"
+	specuse = list(SPEC_ID_ELF, SPEC_ID_TIEFLING) //tiebs use these
+	color_key_defaults = list(KEY_SKIN_COLOR)
+
+/datum/sprite_accessory/ears/elfww
+	icon = 'icons/roguetown/mob/bodies/attachments.dmi'
+	name = "ElfWW"
+	icon_state = "elfww"
+	specuse = list(SPEC_ID_ELF, SPEC_ID_TIEFLING) //tiebs use these
+	color_key_defaults = list(KEY_SKIN_COLOR)
+
+/datum/sprite_accessory/ears/elfwww
+	icon = 'icons/roguetown/mob/bodies/attachments.dmi'
+	name = "ElfWWW"
+	icon_state = "elfwww"
+	specuse = list(SPEC_ID_ELF, SPEC_ID_TIEFLING) //tiebs use these
+	color_key_defaults = list(KEY_SKIN_COLOR)
+
+/datum/sprite_accessory/ears/elfttw
+	icon = 'icons/roguetown/mob/bodies/attachments.dmi'
+	name = "ElfTTW"
+	icon_state = "elfttw"
 	specuse = list(SPEC_ID_ELF, SPEC_ID_TIEFLING) //tiebs use these
 	color_key_defaults = list(KEY_SKIN_COLOR)
 

@@ -13,7 +13,7 @@
 		/datum/attribute/skill/misc/swimming = 20,
 		/datum/attribute/skill/misc/climbing = 20,
 		/datum/attribute/skill/misc/athletics = 30,
-		/datum/attribute/skill/misc/reading = 10,
+		/datum/attribute/skill/educated/reading = 10,
 		/datum/attribute/skill/combat/firearms = 10,
 		/datum/attribute/skill/misc/medicine = 10
 	)
@@ -49,7 +49,6 @@
 	name = "Brutal Zealot (Adept)"
 	belt = /obj/item/storage/belt/leather
 	head = /obj/item/clothing/head/adeptcowl
-	neck = /obj/item/clothing/neck/gorget/explosive
 	armor = /obj/item/clothing/armor/chainmail
 	cloak = /obj/item/clothing/cloak/tabard/adept
 	beltl = /obj/item/weapon/mace/spiked

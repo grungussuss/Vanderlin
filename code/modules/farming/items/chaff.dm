@@ -18,6 +18,7 @@
 								span_notice("I shuck [src]."))
 			var/obj/item/G = new foodextracted(get_turf(src))
 			G.set_quality(recipe_quality)
+			G.AddElement(/datum/element/visual_quality, recipe_quality)
 			user.put_in_active_hand(G)
 			new /obj/item/natural/fibers(get_turf(src))
 			qdel(src)
@@ -27,6 +28,7 @@
 	if(foodextracted && canthresh)
 		var/obj/item/extracted = new foodextracted(loc)
 		extracted.set_quality(recipe_quality)
+		extracted.AddElement(/datum/element/visual_quality, recipe_quality)
 		new /obj/item/natural/fibers(loc)
 		qdel(src)
 
@@ -86,9 +88,8 @@
 	foodextracted = /obj/item/reagent_containers/food/snacks/produce/grain/sunreed
 	item_weight = 150 GRAMS
 
-/*
 /obj/item/natural/chaff/rice
 	name = "rice stalks"
 	icon_state = "ricechaff"
-	foodextracted = /obj/item/reagent_containers/food/snacks/produce/rice
-*/
+	foodextracted = /obj/item/reagent_containers/food/snacks/produce/grain/rice
+

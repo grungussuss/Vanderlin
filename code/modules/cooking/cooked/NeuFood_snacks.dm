@@ -60,39 +60,42 @@
 	foodtype = MEAT | VEGETABLES
 	item_weight = 400 GRAMS
 
-/obj/item/reagent_containers/food/snacks/cooked/frysteak/attackby(obj/item/I, mob/living/user, list/modifiers)
-	if(user.mind)
-		short_cooktime = (50 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking))*8))
-	if(modified)
-		return TRUE
-	if(bitecount >0)
+/obj/item/reagent_containers/food/snacks/cooked/frysteak/item_interaction(mob/living/user, obj/item/tool, list/modifiers)
+	if(modified || !istype(tool, /obj/item/reagent_containers/peppermill))
+		return ..()
+
+	if(bitecount < initial(bitecount))
 		to_chat(user, span_warning("Leftovers aren't suitable for this."))
-		return TRUE
-	var/obj/item/reagent_containers/peppermill/mill = I
-	if(istype(mill) && (!modified))
-		if(!mill.reagents.has_reagent(/datum/reagent/consumable/blackpepper, 1))
-			to_chat(user, "There's not enough black pepper to make anything with.")
-			return TRUE
-		mill.icon_state = "peppermill_grind"
-		to_chat(user, "You start rubbing the steak with black pepper.")
-		playsound(user, 'sound/foley/peppermill.ogg', 100, TRUE, -1)
-		if(do_after(user, 3 SECONDS, src))
-			if(!mill.reagents.has_reagent(/datum/reagent/consumable/blackpepper, 1))
-				to_chat(user, "There's not enough black pepper to make anything with.")
-				return TRUE
-			mill.reagents.remove_reagent(/datum/reagent/consumable/blackpepper, 1)
-			name = "peppersteak"
-			desc = "Roasted flesh flanked with a generous coating of ground pepper for intense flavor."
-			faretype = FARE_FINE
-			portable = FALSE
-			var/mutable_appearance/spice = mutable_appearance('icons/roguetown/items/food.dmi', "frysteak_spice")
-			overlays += spice
-			tastes = list("spicy red meat" = 2)
-			meal_properties()
-			bitesize = initial(bitesize)
-			user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking/fine_cuisine, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE)*0.5))
-			user.nobles_seen_servant_work()
-	return ..()
+		return ITEM_INTERACT_BLOCKING
+
+	short_cooktime = (50 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking)) * 8))
+
+	if(!tool.reagents?.has_reagent(/datum/reagent/consumable/blackpepper, 1))
+		to_chat(user, span_notice("There's not enough black pepper to make anything with."))
+		return ITEM_INTERACT_BLOCKING
+
+	to_chat(user, "You start rubbing the steak with black pepper.")
+	playsound(user, 'sound/foley/peppermill.ogg', 100, TRUE, -1)
+	if(do_after(user, 3 SECONDS, src))
+		if(!tool.reagents.has_reagent(/datum/reagent/consumable/blackpepper, 1))
+			to_chat(user, span_notice("There's not enough black pepper to make anything with."))
+			return ITEM_INTERACT_BLOCKING
+
+		tool.reagents.remove_reagent(/datum/reagent/consumable/blackpepper, 1)
+
+		name = "peppersteak"
+		desc = "Roasted flesh flanked with a generous coating of ground pepper for intense flavor."
+		faretype = FARE_FINE
+		portable = FALSE
+		var/mutable_appearance/spice = mutable_appearance('icons/roguetown/items/food.dmi', "frysteak_spice")
+		overlays += spice
+		tastes = list("spicy red meat" = 2)
+		meal_properties()
+		bitesize = initial(bitesize)
+		user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking/fine_cuisine, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE)*0.5))
+		user.nobles_seen_servant_work()
+
+	return ITEM_INTERACT_SUCCESS
 
 /obj/item/reagent_containers/food/snacks/cooked/herbsteak
 	name = "herbsteak"
@@ -128,7 +131,7 @@
 	nutrition = COOKED_MEAT_NUTRITION + COOKED_VEGGIE_NUTRITION
 	rotprocess = SHELFLIFE_DECENT
 	faretype = FARE_NEUTRAL
-	list_reagents = list(/datum/reagent/drowsbane = 10)
+	list_reagents = list(/datum/reagent/poison/drowsbane = 10)
 	item_weight = 300 GRAMS
 
 /*	.............   Ribs   ................ */
@@ -201,6 +204,10 @@
 	nutrition = EGG_NUTRITION*COOK_MOD
 	foodtype = EGG
 	item_weight = 50 GRAMS
+
+/obj/item/reagent_containers/food/snacks/cooked/egg/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/food_topping, "egged", null, 10, topping_name = "a cooked egg")
 
 /obj/item/reagent_containers/food/snacks/cooked/twin_egg
 	tastes = list("fried egg" = 1)
@@ -352,6 +359,20 @@
 	nutrition = COOKED_MEAT_NUTRITION
 	foodtype = MEAT
 	item_weight = 250 GRAMS
+
+
+/obj/item/reagent_containers/food/snacks/cooked/frybird/fried
+	name = "tender frybird"
+	desc = "A deep-fried frybird, coated in toastcrumbs and ready to eat."
+	icon = 'icons/obj/food/cooked/cooked_deep_fried.dmi'
+	icon_state = "chickentender"
+	faretype = FARE_LAVISH
+	foodtype = MEAT | GRAIN
+	list_reagents = list(/datum/reagent/consumable/nutriment = SNACK_CHUNKY * 2)
+	bitesize = 5 // If you go through all of the efforts to make this it should have big portion
+	tastes = list("crunchy toastcrumbs" = 1, "tender chicken" = 1)
+	eat_effect = /datum/status_effect/buff/foodbuff/tier2
+	rotprocess = SHELFLIFE_DECENT
 
 /obj/item/reagent_containers/food/snacks/cooked/frybird_tatos
 	name = "frybird and tatos"
@@ -597,6 +618,7 @@
 	rotprocess = SHELFLIFE_LONG
 	faretype = FARE_POOR
 	item_weight = 150 GRAMS
+	given_ingredient_buff = null
 
 /*	.............   Fried onions   ................ */
 /obj/item/reagent_containers/food/snacks/onion_fried
@@ -612,6 +634,10 @@
 	faretype = FARE_POOR
 	portable = FALSE
 	item_weight = 100 GRAMS
+
+/obj/item/reagent_containers/food/snacks/onion_fried/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/food_topping, "onion_fried", null, 10, topping_name = "some fried onions")
 
 /*	.............   Fried potato   ................ */
 /obj/item/reagent_containers/food/snacks/produce/vegetable/potato/fried
@@ -629,6 +655,7 @@
 	faretype = FARE_NEUTRAL
 	portable = FALSE
 	item_weight = 150 GRAMS
+	given_ingredient_buff = null
 
 /*	.............   Grilled Sunreed   ................ */
 /obj/item/reagent_containers/food/snacks/produce/vegetable/sunreed_cooked
@@ -643,27 +670,32 @@
 	rotprocess = SHELFLIFE_LONG
 	faretype = FARE_NEUTRAL
 	item_weight = 150 GRAMS
+	given_ingredient_buff = null
 
-/obj/item/reagent_containers/food/snacks/produce/vegetable/sunreed_cooked/attackby(obj/item/I, mob/living/user, list/modifiers)
-	if(modified || !is_type_in_list(I, list(
-		/obj/item/reagent_containers/food/snacks/butterslice)))
+/obj/item/reagent_containers/food/snacks/produce/vegetable/sunreed_cooked/item_interaction(mob/living/user, obj/item/tool, list/modifiers)
+	if(modified || !istype(tool, /obj/item/reagent_containers/food/snacks/butterslice))
 		return ..()
-	var/obj/item/reagent_containers/food/snacks/S = I
-	short_cooktime = (50 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking))*8))
+
+	short_cooktime = (50 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking)) * 8))
 	playsound(user, 'sound/foley/dropsound/food_drop.ogg', 50, TRUE, -1)
 	if(!do_after(user, short_cooktime, src, display_over_user=TRUE))
-		return FALSE
+		return ITEM_INTERACT_BLOCKING
+
+	var/obj/item/reagent_containers/food/snacks/S = tool
+
 	modified = TRUE
+	merge_ingredient_buffs(list(tool))
 	user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE)*0.2))
 	user.nobles_seen_servant_work()
 	S.reagents?.trans_to(src, S.reagents.total_volume)
-	LAZYADDASSOC(bonus_reagents, /datum/reagent/consumable/nutriment, S.nutrition)
+	LAZYADDASSOC(bonus_reagents, /datum/reagent/consumable/nutriment, S.nutrition * 0.75)
+	LAZYADDASSOC(bonus_reagents, /datum/reagent/consumable/nutriment/vitamin, S.nutrition * 0.25)
 	tastes |= S.tastes
 	desc = "[desc] Butter melts over the top."
 	name = "buttered [name]"
 	add_overlay("maize_buttered")
-	qdel(I)
-	return ..()
+	qdel(tool)
+	return ITEM_INTERACT_SUCCESS
 
 /*	.............   Cocaumole   ................ */
 
@@ -683,6 +715,10 @@
 	faretype = FARE_NEUTRAL
 	portable = FALSE
 	item_weight = 300 GRAMS
+
+/obj/item/reagent_containers/food/snacks/cocaumole/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/food_topping, "cocaumole", null, 10, topping_name = "cocaumole")
 
 /obj/item/reagent_containers/food/snacks/cocaumole/slice
 	name = "cocaumole slice"
@@ -711,7 +747,7 @@
 	rotprocess = SHELFLIFE_DECENT
 	faretype = FARE_NEUTRAL
 	portable = FALSE
-	list_reagents = list(/datum/reagent/drowsbane = 10)
+	list_reagents = list(/datum/reagent/poison/drowsbane = 10)
 	item_weight = 200 GRAMS
 
 /obj/item/reagent_containers/food/snacks/drowsbanejam/slice
@@ -722,6 +758,10 @@
 	slice_batch = FALSE
 	nutrition = COOKED_VEGGIE_NUTRITION/3
 	item_weight = 70 GRAMS
+
+/obj/item/reagent_containers/food/snacks/drowsbanejam/slice/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/food_topping, "drowsbanejam", null, 3, topping_name = "drowsbane jam")
 
 /*	.............   Baked Pompkaun  ................ */
 /obj/item/reagent_containers/food/snacks/fruit/pompkaun_goo/cooked
@@ -758,46 +798,51 @@
 	portable = FALSE
 	item_weight = 250 GRAMS
 
-/obj/item/reagent_containers/food/snacks/salad/attackby(obj/item/I, mob/living/user, list/modifiers)
-	if(modified || !is_type_in_list(I, list(
+/obj/item/reagent_containers/food/snacks/salad/item_interaction(mob/living/user, obj/item/tool, list/modifiers)
+	if(modified || !is_type_in_list(tool, list(
 		/obj/item/reagent_containers/food/snacks/onion_fried,
 		/obj/item/reagent_containers/food/snacks/produce/vegetable/potato/fried,
 		/obj/item/reagent_containers/food/snacks/cooked/frysteak,
 		/obj/item/reagent_containers/food/snacks/produce/grain/sunreed,
 		/obj/item/reagent_containers/food/snacks/fruit/tamto_slice)))
 		return ..()
-	var/obj/item/reagent_containers/food/snacks/S = I
-	short_cooktime = (50 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking))*8))
+
+	short_cooktime = (50 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking)) * 8))
 	playsound(user, 'sound/foley/chopping_block.ogg', 40, TRUE, -1)
 	if(!do_after(user, short_cooktime, src, display_over_user=TRUE))
-		return FALSE
+		return ITEM_INTERACT_BLOCKING
+
+	var/obj/item/reagent_containers/food/snacks/S = tool
+
 	modified = TRUE
-	user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE)*0.5))
+	merge_ingredient_buffs(list(tool))
+	user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE) * 0.5))
 	user.nobles_seen_servant_work()
 	S.reagents?.trans_to(src, S.reagents.total_volume)
-	LAZYADDASSOC(bonus_reagents, /datum/reagent/consumable/nutriment, S.nutrition)
+	LAZYADDASSOC(bonus_reagents, /datum/reagent/consumable/nutriment, S.nutrition * 0.75)
+	LAZYADDASSOC(bonus_reagents, /datum/reagent/consumable/nutriment/vitamin, S.nutrition * 0.25)
 	tastes |= S.tastes
 	foodtype |= S.foodtype
 	faretype++
 
-	if(istype(I, /obj/item/reagent_containers/food/snacks/onion_fried))
+	if(istype(tool, /obj/item/reagent_containers/food/snacks/onion_fried))
 		name = "[name] with onions"
 		desc = "[desc] Fried onions have been minced overtop."
 		add_overlay("onion_salad")
-	else if(istype(I, /obj/item/reagent_containers/food/snacks/produce/vegetable/potato/fried))
+	else if(istype(tool, /obj/item/reagent_containers/food/snacks/produce/vegetable/potato/fried))
 		name = "[name] with potatoes"
 		desc = "[desc] Fried potato wedges have been placed overtop."
 		add_overlay("potato_salad")
-	else if(istype(I, /obj/item/reagent_containers/food/snacks/cooked/frysteak))
+	else if(istype(tool, /obj/item/reagent_containers/food/snacks/cooked/frysteak))
 		name = "[name] with meat"
 		desc = "[desc] Perhaps counterintuitively, frysteak has been chopped overtop."
 		add_overlay("meat_salad")
-	else if(istype(I, /obj/item/reagent_containers/food/snacks/produce/grain/sunreed)) //Of note, in cooking.dmi I have stored overlays for greyscaled fruit and dressing. I've been coding this food so long, that I can't be bothered to add them. But YOU can. Credit for 7erracotta for the sprites.
+	else if(istype(tool, /obj/item/reagent_containers/food/snacks/produce/grain/sunreed)) //Of note, in cooking.dmi I have stored overlays for greyscaled fruit and dressing. I've been coding this food so long, that I can't be bothered to add them. But YOU can. Credit for 7erracotta for the sprites.
 		name = "[name] with sunreed"
 		desc = "[desc] Crunchy sunreed has been scatered overtop."
 		add_overlay("corn_salad")
-	qdel(I)
-	return ..()
+	qdel(tool)
+	return ITEM_INTERACT_SUCCESS
 
 /*---------------\
 | Chicken meals |
@@ -819,35 +864,36 @@
 	foodtype = MEAT
 	item_weight = 600 GRAMS
 
-/obj/item/reagent_containers/food/snacks/cooked/roastchicken/attackby(obj/item/I, mob/living/user, list/modifiers)
-	var/obj/item/reagent_containers/peppermill/mill = I
-	if(user.mind)
-		short_cooktime = (50 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking))*8))
-	if(modified)
-		return TRUE
-	if(bitecount >0)
+/obj/item/reagent_containers/food/snacks/cooked/roastchicken/item_interaction(mob/living/user, obj/item/tool, list/modifiers)
+	if(modified || !istype(tool, /obj/item/reagent_containers/peppermill))
+		return ..()
+
+	if(bitecount < initial(bitecount))
 		to_chat(user, span_warning("Leftovers aren't suitable for this."))
-		return TRUE
-	else if(istype(mill))
-		if(!mill.reagents.has_reagent(/datum/reagent/consumable/blackpepper, 1))
-			to_chat(user, "There's not enough black pepper to make anything with.")
-			return TRUE
-		mill.icon_state = "peppermill_grind"
-		to_chat(user, "You start rubbing the bird roast with black pepper.")
-		playsound(user, 'sound/foley/peppermill.ogg', 100, TRUE, -1)
-		if(do_after(user,3 SECONDS, src))
-			if(!mill.reagents.has_reagent(/datum/reagent/consumable/blackpepper, 1))
-				to_chat(user, "There's not enough black pepper to make anything with.")
-				return TRUE
-			mill.reagents.remove_reagent(/datum/reagent/consumable/blackpepper, 1)
-			name = "spiced [name]"
-			desc = "A plump bird, roasted to perfection, spiced to taste divine."
-			faretype = FARE_LAVISH
-			portable = FALSE
-			var/mutable_appearance/spice = mutable_appearance('icons/roguetown/items/food.dmi', "roast_spice")
-			overlays += spice
-			tastes = list("spicy birdmeat" = 2)
-			modified = TRUE
-			user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking/fine_cuisine, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE)*0.5))
-			user.nobles_seen_servant_work()
-	return ..()
+		return ITEM_INTERACT_BLOCKING
+
+	short_cooktime = (50 - ((GET_MOB_SKILL_VALUE_OLD(user, /datum/attribute/skill/craft/cooking)) * 8))
+
+	if(!tool.reagents.has_reagent(/datum/reagent/consumable/blackpepper, 1))
+		to_chat(user, span_warning("There's not enough black pepper to make anything with."))
+		return ITEM_INTERACT_BLOCKING
+
+	to_chat(user, "You start rubbing the bird roast with black pepper.")
+
+	playsound(user, 'sound/foley/peppermill.ogg', 100, TRUE, -1)
+	if(do_after(user, 3 SECONDS, src))
+		if(!tool.reagents.has_reagent(/datum/reagent/consumable/blackpepper, 1))
+			to_chat(user, span_notice("There's not enough black pepper to make anything with."))
+			return ITEM_INTERACT_BLOCKING
+		tool.reagents.remove_reagent(/datum/reagent/consumable/blackpepper, 1)
+		name = "spiced [name]"
+		desc = "A plump bird, roasted to perfection, spiced to taste divine."
+		faretype = FARE_LAVISH
+		portable = FALSE
+		var/mutable_appearance/spice = mutable_appearance('icons/roguetown/items/food.dmi', "roast_spice")
+		overlays += spice
+		tastes = list("spicy birdmeat" = 2)
+		modified = TRUE
+		user.mind.add_sleep_experience(/datum/attribute/skill/craft/cooking/fine_cuisine, (GET_MOB_ATTRIBUTE_VALUE(user, STAT_INTELLIGENCE)*0.5))
+		user.nobles_seen_servant_work()
+	return ITEM_INTERACT_SUCCESS

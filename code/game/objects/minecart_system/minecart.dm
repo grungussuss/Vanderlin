@@ -95,7 +95,7 @@
  */
 /obj/structure/closet/crate/miningcar/proc/smack(mob/living/smacked, damage_mod = 8, momentum_mod = 1.5)
 	ASSERT(momentum_mod >= 1)
-	if(!smacked.apply_damage(damage_mod * momentum, BRUTE, BODY_ZONE_CHEST))
+	if(!smacked.apply_damage(damage_mod * momentum, BRUTE, BODY_ZONE_CHEST, damage_type = BCLASS_BLUNT))
 		return
 	if(atom_integrity <= max_integrity * 0.05)
 		smacked.visible_message(
@@ -277,6 +277,7 @@
 	if(momentum <= 0)
 		return
 
+	AddElement(/datum/element/give_turf_traits, string_list(list(TRAIT_IMMERSE_STOPPED, TRAIT_CHASM_STOPPED)))
 	setDir(movedir)
 	var/datum/move_loop/loop = SSmove_manager.move(src, dir, delay = calculate_delay(), subsystem = SSminecarts, flags = MOVEMENT_LOOP_START_FAST|MOVEMENT_LOOP_IGNORE_PRIORITY, move_loop_type = /datum/move_loop/minecart)
 	RegisterSignal(loop, COMSIG_MOVELOOP_PREPROCESS_CHECK, PROC_REF(check_rail))
@@ -289,6 +290,7 @@
 		stack_trace("Mine cart moving on 0 momentum!")
 		SSmove_manager.stop_looping(src, SSminecarts)
 		obj_flags &= ~BLOCK_Z_OUT_DOWN
+		RemoveElement(/datum/element/give_turf_traits, string_list(list(TRAIT_IMMERSE_STOPPED, TRAIT_CHASM_STOPPED)))
 		momentum = 0
 		return MOVELOOP_SKIP_STEP
 	// Forced to not move
@@ -343,6 +345,7 @@
 	// Can't go straight and cant turn = STOP
 	SSmove_manager.stop_looping(src, SSminecarts)
 	obj_flags &= ~BLOCK_Z_OUT_DOWN
+	RemoveElement(/datum/element/give_turf_traits, string_list(list(TRAIT_IMMERSE_STOPPED, TRAIT_CHASM_STOPPED)))
 	if(momentum >= 12)
 		visible_message(span_warning("[src] comes to a violent halt!"))
 		throw_contents()
@@ -364,6 +367,7 @@
 				visible_message(span_notice("[src] comes to a stop."))
 			SSmove_manager.stop_looping(src, SSminecarts)
 			obj_flags &= ~BLOCK_Z_OUT_DOWN
+			RemoveElement(/datum/element/give_turf_traits, string_list(list(TRAIT_IMMERSE_STOPPED, TRAIT_CHASM_STOPPED)))
 			momentum = 0
 			return
 		check_powered()
@@ -373,6 +377,7 @@
 	if(momentum <= 0)
 		SSmove_manager.stop_looping(src, SSminecarts)
 		obj_flags &= ~BLOCK_Z_OUT_DOWN
+		RemoveElement(/datum/element/give_turf_traits, string_list(list(TRAIT_IMMERSE_STOPPED, TRAIT_CHASM_STOPPED)))
 		momentum = 0
 		visible_message(span_notice("[src] comes to a slow stop."))
 		return
@@ -389,6 +394,10 @@
 /obj/structure/closet/crate/miningcar/proc/can_travel_on_turf(turf/next_turf, dir_to_check = dir)
 
 	var/obj/structure/minecart_rail/located_rail = locate(/obj/structure/minecart_rail) in get_turf(src)
+
+	// A locked rail holds the cart in place until it receives redstone power
+	if(located_rail?.has_lock_module && located_rail.locked)
+		return FALSE
 
 	// If our current turf does NOT have a rail, only check the next rail. Otherwise, check our current rail then check the next rail.
 	for(var/obj/structure/minecart_rail/rail in next_turf)
@@ -443,9 +452,33 @@
 	var/obj/structure/minecart_rail/potential_power = locate() in loc
 	if(!potential_power)
 		return
+	if(potential_power.has_lock_module && potential_power.locked)
+		return
 	update_rail_state(TRUE)
 	if(potential_power.rotations_per_minute)
 		momentum += round(potential_power.rotations_per_minute / 3)
+
+/// Starts the cart moving because a powered rail under it just unlocked.
+/obj/structure/closet/crate/miningcar/proc/launch_from_rail(obj/structure/minecart_rail/rail)
+	if(!on_rails || momentum > 0)
+		return
+	if(!rail.rotations_per_minute)
+		return
+
+	var/movedir = dir
+	var/turf/next_turf = get_step(src, movedir)
+	if(!can_travel_on_turf(next_turf, movedir))
+		return
+
+	momentum += round(rail.rotations_per_minute / 3)
+	if(momentum <= 0)
+		return
+
+	obj_flags |= BLOCK_Z_OUT_DOWN
+	AddElement(/datum/element/give_turf_traits, string_list(list(TRAIT_IMMERSE_STOPPED, TRAIT_CHASM_STOPPED)))
+	var/datum/move_loop/loop = SSmove_manager.move(src, dir, delay = calculate_delay(), subsystem = SSminecarts, flags = MOVEMENT_LOOP_START_FAST|MOVEMENT_LOOP_IGNORE_PRIORITY, move_loop_type = /datum/move_loop/minecart)
+	RegisterSignal(loop, COMSIG_MOVELOOP_PREPROCESS_CHECK, PROC_REF(check_rail))
+	RegisterSignal(loop, COMSIG_MOVELOOP_POSTPROCESS, PROC_REF(decay_momentum))
 
 /// Throws all the contents of the cart out ahead
 /obj/structure/closet/crate/miningcar/proc/throw_contents()

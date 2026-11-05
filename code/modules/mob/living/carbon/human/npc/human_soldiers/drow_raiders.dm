@@ -2,7 +2,7 @@ GLOBAL_LIST_INIT(drowraider_aggro, file2list("strings/rt/drowaggrolines.txt"))
 
 /mob/living/carbon/human/species/elf/dark/drowraider
 	ai_controller = /datum/ai_controller/human_npc
-	faction = list("drow")
+	faction = list(FACTION_HOSTILE)
 	ambushable = FALSE
 	dodgetime = 30
 	flee_in_pain = TRUE
@@ -16,7 +16,6 @@ GLOBAL_LIST_INIT(drowraider_aggro, file2list("strings/rt/drowaggrolines.txt"))
 /mob/living/carbon/human/species/elf/dark/drowraider/Initialize()
 	. = ..()
 	AddComponent(/datum/component/ai_aggro_system)
-	set_species(/datum/species/elf/dark)
 	addtimer(CALLBACK(src, PROC_REF(after_creation)), 1 SECONDS)
 	is_silent = TRUE
 
@@ -27,7 +26,7 @@ GLOBAL_LIST_INIT(drowraider_aggro, file2list("strings/rt/drowaggrolines.txt"))
 	ADD_TRAIT(src, TRAIT_NOMOOD, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_NOHUNGER, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_LEECHIMMUNE, INNATE_TRAIT)
-	ADD_TRAIT(src, TRAIT_BREADY, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_BATTLE_READY, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_DODGEEXPERT, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_DUALWIELDER, TRAIT_GENERIC)
@@ -80,7 +79,7 @@ GLOBAL_LIST_INIT(drowraider_aggro, file2list("strings/rt/drowaggrolines.txt"))
 	else
 		real_name = pick(file2list("strings/rt/names/elf/elfdm.txt"))
 
-	faction += "spider_lowers"
+	add_faction(FACTION_SPIDERS)
 
 	update_body()
 

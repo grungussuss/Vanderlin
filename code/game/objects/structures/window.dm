@@ -18,6 +18,7 @@
 	attacked_sound = 'sound/combat/hits/onglass/glasshit.ogg'
 	break_sound = "glassbreak"
 	destroy_sound = 'sound/combat/hits/onwood/destroywalldoor.ogg'
+	clawable = FALSE
 
 	var/lockdir = 0
 
@@ -162,6 +163,7 @@
 	climbable = TRUE
 	update_appearance(UPDATE_ICON_STATE)
 	air_update_turf(TRUE)
+	pass_flags_self |= LETPASSTHROW
 
 /obj/structure/window/proc/close_up(mob/user)
 	if(user)
@@ -170,6 +172,7 @@
 	climbable = FALSE
 	update_appearance(UPDATE_ICON_STATE)
 	air_update_turf(TRUE)
+	pass_flags_self &= ~LETPASSTHROW
 
 /obj/structure/window/CanAllowThrough(atom/movable/mover, turf/target)
 	. = ..()
@@ -183,7 +186,7 @@
 		else if(isitem(mover) && mover.throwforce > 10)
 			take_damage(mover.throwforce)
 
-	if(climbable && (mover.throwing || mover.movement_type & (FLYING|FLOATING)))
+	if(climbable && (mover.throwing || mover.movement_type & FLYING)) // DO NOT MAKE THIS FLYING|FLOATING
 		if(ishuman(mover))
 			var/mob/living/carbon/human/dude = mover
 			if(prob(100 - clamp((GET_MOB_SKILL_VALUE_OLD(dude, /datum/attribute/skill/misc/athletics) + GET_MOB_SKILL_VALUE_OLD(dude, /datum/attribute/skill/misc/climbing)) * 10 - (!dude.IsOffBalanced() * 30), 10, 100)))
@@ -217,7 +220,7 @@
 		return
 	if(obj_broken)
 		return
-	if( user.used_intent.type == /datum/intent/unarmed/claw )
+	if( user.used_intent.type == /datum/intent/unarmed/claw)
 		to_chat(user, "<span class='warning'>[user] smashes the window!!</span>")
 		atom_break()
 		return

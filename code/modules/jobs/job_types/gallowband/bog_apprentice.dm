@@ -3,12 +3,15 @@
 		STAT_INTELLIGENCE = 1,
 		STAT_CONSTITUTION = 1,
 		STAT_ENDURANCE = 1,
+		STAT_SPEED = 1,
 		/datum/attribute/skill/misc/athletics = 10,
+		/datum/attribute/skill/misc/swimming = 30,
+		/datum/attribute/skill/misc/climbing = 20,
 		/datum/attribute/skill/craft/alchemy = 20,
 		/datum/attribute/skill/craft/crafting = 30,
 		/datum/attribute/skill/labor/farming = 20,
 		/datum/attribute/skill/misc/medicine = 20,
-		/datum/attribute/skill/misc/reading = 30,
+		/datum/attribute/skill/educated/reading = 30,
 		/datum/attribute/skill/combat/unarmed = 10,
 		/datum/attribute/skill/combat/wrestling = 10
 	)
@@ -17,13 +20,12 @@
 /datum/job/bog_apprentice
 	title = JOB_BOGWITCH_APP
 	tutorial = "You were dragged out of the mud by the Bog Witch on one of their expeditions- shivering, hungry, and alone. They taught you the ways of the Great Hunt, and in the eclectic methods of the their practice. You work yourself to the bone to tend the crops, stir the cauldrons, and run messages between the Witch and the Gallowband. When the Witch dies, you alone will carry the tradition forward."
-	department_flag = OUTSIDERS
+	department_flag = GALLOWBAND
 	job_flags = (JOB_ANNOUNCE_ARRIVAL | JOB_SHOW_IN_CREDITS | JOB_EQUIP_RANK | JOB_NEW_PLAYER_JOINABLE)
 	display_order = JDO_BOGWITCH_APP
-	faction = FACTION_TOWN
+	factions = list(FACTION_GALLOWBAND, FACTION_TOWN)
 	total_positions = 0
 	spawn_positions = 0
-	bypass_lastclass = TRUE
 	allowed_races = RACES_PLAYER_ALL
 	blacklisted_species = list(SPEC_ID_HALFLING)
 	allowed_ages = list(AGE_CHILD, AGE_ADULT)
@@ -46,9 +48,10 @@
 
 	traits = list(
 		TRAIT_FORAGER,
-		TRAIT_STEELHEARTED
+		TRAIT_STEELHEARTED,
+		TRAIT_GALLOWBAND
 	)
-	selection_color = "#a33096"
+	mind_traits = list(TRAIT_GALLOWBAND_SECRETS)
 	languages = list(/datum/language/gronnic)
 
 /datum/job/bog_apprentice/after_spawn(mob/living/carbon/human/spawned, client/player_client)

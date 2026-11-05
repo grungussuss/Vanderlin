@@ -21,7 +21,7 @@
 /datum/status_effect/debuff/addiction/pyromaniac
 /datum/status_effect/debuff/addiction/kleptomaniac
 /datum/status_effect/debuff/addiction/godfearing
-/datum/status_effect/debuff/addiction/maniac
+/datum/status_effect/debuff/addiction/sadist
 /datum/status_effect/debuff/addiction/greedy
 
 /atom/movable/screen/alert/status_effect/debuff/addiction
@@ -47,6 +47,7 @@
 /datum/quirk/vice/greedy/on_spawn()
 	next_mammon_increase = world.time + rand(15 MINUTES, 25 MINUTES)
 	last_passed_check = world.time
+	return ..()
 
 /datum/quirk/vice/greedy/on_life(mob/living/user)
 	if(!ishuman(user))
@@ -220,6 +221,7 @@
 	name = "Narcoleptic"
 	desc = "I get drowsy during the day and tend to fall asleep suddenly, but I can sleep easier if I want to, and moon dust can help me stay awake."
 	point_value = 4
+	traits_to_add = list(TRAIT_FASTSLEEP)
 	var/last_unconsciousness = 0
 	var/next_sleep = 0
 	var/concious_timer = (10 MINUTES)
@@ -232,10 +234,10 @@
 		LAZYADDASSOCLIST(examine_contents, EXAMINE_SECT_PREGEAR, SPAN_GOD_BAOTHA("Sleepy..."))
 
 /datum/quirk/vice/narcoleptic/on_spawn()
-	ADD_TRAIT(owner, TRAIT_FASTSLEEP, "[type]")
 	last_unconsciousness = world.time
 	concious_timer = rand(7 MINUTES, 15 MINUTES)
 	pain_pity_charges = rand(2, 4)
+	return ..()
 
 /datum/quirk/vice/narcoleptic/on_life(mob/living/user)
 	if(!ishuman(user))
@@ -251,8 +253,8 @@
 
 	if(do_sleep)
 		if(next_sleep <= world.time)
-			var/pain = H.get_complex_pain()
-			if(pain >= 40 && pain_pity_charges > 0)
+			var/pain = H.getShockStage()
+			if(pain >= SHOCK_STAGE_2 && pain_pity_charges > 0)
 				pain_pity_charges--
 				concious_timer = rand(1 MINUTES, 2 MINUTES)
 				to_chat(H, span_warning("The pain keeps me awake..."))
@@ -276,45 +278,119 @@
 			next_sleep = world.time + rand(7 SECONDS, 11 SECONDS)
 			do_sleep = TRUE
 
-/datum/quirk/vice/narcoleptic/on_remove()
-	if(owner)
-		REMOVE_TRAIT(owner, TRAIT_FASTSLEEP, "[type]")
-
 /proc/narcolepsy_drug_up(mob/living/living)
 	var/datum/quirk/vice/narcoleptic/narco = living.get_quirk(/datum/quirk/vice/narcoleptic)
 	if(!narco)
 		return
 	narco.drugged_up = TRUE
 
+/// How often (deciseconds) we re-check the threshold while craving, to catch
+/// changes that don't fire the shock signal (blood loss, Endurance buffs expiring).
+#define MASO_RECHECK_INTERVAL (10 SECONDS)
+/// If the holder is dead when a craving would start, retry after this long.
+#define MASO_DEAD_RETRY_DELAY (1 MINUTES)
+/// Time between the craving starting and the stress/debuff kicking in. Getting
+/// enough pain inside this window satisfies the craving with no penalty at all.
+#define MASO_GRACE_PERIOD (3 MINUTES)
+
 /datum/quirk/vice/masochist
 	name = "Masochist"
 	desc = "I love the feeling of pain, so much I can't get enough of it."
 	point_value = 4
-	var/next_paincrave = 0
+	/// Timer that starts the next craving
+	var/craving_timer
+	/// Timer that periodically re-evaluates pain while craving
+	var/recheck_timer
+	/// Are we currently craving pain?
+	var/craving = FALSE
+	/// Timer that applies the penalties if the grace period runs out
+	var/grace_timer
+	/// Have the stress and debuff been applied for this craving?
+	var/penalties_active = FALSE
+	/// Last threshold we messaged the holder about
 	var/last_pain_threshold = NONE
+	/// Absolute world.time of the next craving, kept for anything that reads it
+	var/next_paincrave = 0
+
+/datum/quirk/vice/masochist/Destroy()
+	cleanup_craving()
+	if(craving_timer)
+		deltimer(craving_timer)
+		craving_timer = null
+	return ..()
 
 /datum/quirk/vice/masochist/on_examined(mob/user, list/P, list/examine_contents)
 	if(HAS_TRAIT(user, TRAIT_RECOGNIZE_ADDICTS))
 		LAZYADDASSOCLIST(examine_contents, EXAMINE_SECT_PREGEAR, SPAN_GOD_BAOTHA("Masochist!"))
 
 /datum/quirk/vice/masochist/on_spawn()
-	next_paincrave = world.time + rand(15 MINUTES, 25 MINUTES)
+	schedule_craving(rand(1 MINUTES, 1 MINUTES))
+	return ..()
 
-/datum/quirk/vice/masochist/on_life(mob/living/user)
-	if(!ishuman(user))
+/// Schedules the next craving to start in `delay` deciseconds
+/datum/quirk/vice/masochist/proc/schedule_craving(delay)
+	if(craving_timer)
+		deltimer(craving_timer)
+	next_paincrave = world.time + delay
+	craving_timer = addtimer(CALLBACK(src, PROC_REF(start_craving)), delay, TIMER_STOPPABLE)
+
+/// The craving begins: apply penalties once and start listening for pain changes
+/datum/quirk/vice/masochist/proc/start_craving()
+	craving_timer = null
+
+	var/mob/living/carbon/human/H = owner
+	if(!H)
 		return
-	var/mob/living/carbon/human/H = user
-
-	if(next_paincrave > world.time)
-		last_pain_threshold = NONE
+	// No point craving on a corpse, try again later
+	if(H.stat == DEAD)
+		schedule_craving(MASO_DEAD_RETRY_DELAY)
 		return
 
-	H.add_stress(/datum/stress_event/vice)
-	H.apply_status_effect(/datum/status_effect/debuff/addiction)
+	craving = TRUE
+	last_pain_threshold = NONE
 
-	var/current_pain = H.get_complex_pain()
-	var/bloodloss_factor = clamp(1.0 - (H.blood_volume / BLOOD_VOLUME_NORMAL), 0.0, 0.5)
-	var/new_pain_threshold = get_pain_threshold(current_pain * (1.0 + (bloodloss_factor * 1.4)) * clamp(2 - (GET_MOB_ATTRIBUTE_VALUE(H, STAT_ENDURANCE) / 10), 0.5, 1.5))
+	// Penalties are delayed: the holder gets a window to satisfy the craving first
+	grace_timer = addtimer(CALLBACK(src, PROC_REF(apply_penalties)), MASO_GRACE_PERIOD, TIMER_STOPPABLE)
+
+	RegisterSignal(H, COMSIG_CARBON_SHOCK_UPDATED, PROC_REF(on_shock_updated))
+	recheck_timer = addtimer(CALLBACK(src, PROC_REF(recheck)), MASO_RECHECK_INTERVAL, TIMER_STOPPABLE)
+
+	evaluate_pain(H)
+
+/// Pain changed on the holder
+/datum/quirk/vice/masochist/proc/on_shock_updated(datum/source, traumatic_shock)
+	SIGNAL_HANDLER
+
+	if(!craving)
+		return
+	evaluate_pain(source)
+
+/// Slow fallback re-check for blood volume and Endurance drift
+/datum/quirk/vice/masochist/proc/recheck()
+	recheck_timer = null
+	if(!craving)
+		return
+
+	var/mob/living/carbon/human/H = owner
+	if(!H)
+		return
+
+	evaluate_pain(H)
+	// evaluate_pain() may have satisfied the craving, in which case we must not re-arm
+	if(craving)
+		recheck_timer = addtimer(CALLBACK(src, PROC_REF(recheck)), MASO_RECHECK_INTERVAL, TIMER_STOPPABLE)
+
+/// Works out the current threshold, messages on changes, and satisfies the craving if high enough
+/datum/quirk/vice/masochist/proc/evaluate_pain(mob/living/carbon/human/H)
+	if(!craving || !istype(H) || H.stat == DEAD)
+		return
+
+	var/current_pain = H.getShock()
+	var/bloodloss_factor = 1
+	if(CAN_HAVE_BLOOD(H))
+		bloodloss_factor = clamp(1.0 - (H.get_blood_volume() / BLOOD_VOLUME_NORMAL), 0.0, 0.5)
+	var/endurance_factor = clamp(2 - (GET_MOB_ATTRIBUTE_VALUE(H, STAT_ENDURANCE) / 10), 0.5, 1.5)
+	var/new_pain_threshold = get_pain_threshold(current_pain * (1.0 + (bloodloss_factor * 1.4)) * endurance_factor)
 
 	if(last_pain_threshold == NONE)
 		to_chat(H, span_boldwarning("I could really use some pain right now..."))
@@ -332,22 +408,69 @@
 				to_chat(H, span_blue("More, I love it!"))
 
 	last_pain_threshold = new_pain_threshold
+
 	if(new_pain_threshold == MASO_THRESHOLD_FOUR)
 		to_chat(H, span_blue("<b>That's more like it...</b>"))
-		next_paincrave = world.time + rand(35 MINUTES, 45 MINUTES)
-		H.remove_stress(/datum/stress_event/vice)
-		H.remove_status_effect(/datum/status_effect/debuff/addiction)
+		satisfy(H)
+
+/// Craving fulfilled: remove penalties, stop listening, schedule the next one
+/datum/quirk/vice/masochist/proc/satisfy(mob/living/carbon/human/H)
+	cleanup_craving() // also removes the penalties if they were applied
+	schedule_craving(rand(35 MINUTES, 45 MINUTES))
+
+/// The grace period ran out without the craving being satisfied
+/datum/quirk/vice/masochist/proc/apply_penalties()
+	grace_timer = null
+	if(!craving || penalties_active)
+		return
+
+	var/mob/living/carbon/human/H = owner
+	if(!H)
+		return
+
+	penalties_active = TRUE
+	H.add_stress(/datum/stress_event/vice)
+	H.apply_status_effect(/datum/status_effect/debuff/addiction)
+	to_chat(H, span_warning("The craving gnaws at me..."))
+
+/// Tears down everything the craving set up (signals, recheck timer, flags)
+/datum/quirk/vice/masochist/proc/cleanup_craving()
+	craving = FALSE
+	last_pain_threshold = NONE
+	if(recheck_timer)
+		deltimer(recheck_timer)
+		recheck_timer = null
+	if(grace_timer)
+		deltimer(grace_timer)
+		grace_timer = null
+	var/mob/living/carbon/human/H = owner
+	if(istype(H) && !QDELETED(H))
+		UnregisterSignal(H, COMSIG_CARBON_SHOCK_UPDATED)
+		if(penalties_active)
+			H.remove_stress(/datum/stress_event/vice)
+			H.remove_status_effect(/datum/status_effect/debuff/addiction)
+	penalties_active = FALSE
 
 /datum/quirk/vice/masochist/proc/get_pain_threshold(pain_amt)
 	switch(pain_amt)
-		if(-INFINITY to 25)
+		if(-INFINITY to SHOCK_STAGE_1)
 			return MASO_THRESHOLD_ONE
-		if(25 to 50)
+		if(SHOCK_STAGE_1 + 1 to SHOCK_STAGE_2)
 			return MASO_THRESHOLD_TWO
-		if(50 to 95)
+		if(SHOCK_STAGE_2 + 1 to SHOCK_STAGE_3)
 			return MASO_THRESHOLD_THREE
-		if(95 to INFINITY)
+		if(SHOCK_STAGE_3 + 1 to INFINITY)
 			return MASO_THRESHOLD_FOUR
+
+#undef MASO_RECHECK_INTERVAL
+#undef MASO_DEAD_RETRY_DELAY
+#undef MASO_GRACE_PERIOD
+
+/datum/quirk/vice/hallucinations
+	name = "Hallucinations"
+	desc = "You suffer from chronic hallucinations that can make reality difficult to discern."
+	point_value = 4
+	traits_to_add = list(TRAIT_SCHIZO_FLAW)
 
 // Chronic Pain Vices
 /datum/quirk/vice/chronic_arthritis
@@ -368,37 +491,11 @@
 		var/affected_parts = min(rand(1, 3), joint_parts.len)
 		for(var/i = 1 to affected_parts)
 			var/obj/item/bodypart/BP = pick_n_take(joint_parts)
-			BP.chronic_pain = rand(10, 20)
-			BP.chronic_pain_type = CHRONIC_ARTHRITIS
+			BP.limb_flags |= BODYPART_CHRONIC_ARTHRITIS
+			BP.update_chronic()
 
 	to_chat(H, span_warning("Your joints feel stiff and painful - a reminder of your chronic arthritis."))
-
-/datum/quirk/vice/chronic_arthritis/on_life(mob/living/user)
-	if(!ishuman(user))
-		return
-	var/mob/living/carbon/human/H = user
-
-	if(prob(2))
-		var/list/arthritic_parts = list()
-		for(var/obj/item/bodypart/BP in H.bodyparts)
-			if(BP.chronic_pain_type == CHRONIC_ARTHRITIS)
-				arthritic_parts += BP
-
-		if(arthritic_parts.len)
-			var/obj/item/bodypart/affected = pick(arthritic_parts)
-			affected.lingering_pain += rand(7.5, 12.5)
-			var/pain_msg = pick("Your [affected.name] throbs with arthritic pain!",
-							   "A sharp ache shoots through your [affected.name]!",
-							   "Your [affected.name] feels stiff and painful!")
-			to_chat(H, span_warning(pain_msg))
-
-	if(prob(1) && H.loc)
-		if(SSParticleWeather.runningWeather && SSParticleWeather.runningWeather.can_weather(H))
-			for(var/obj/item/bodypart/BP in H.bodyparts)
-				if(BP.chronic_pain_type == CHRONIC_ARTHRITIS && prob(30))
-					BP.lingering_pain += rand(5, 10)
-					to_chat(H, span_warning("The weather makes your arthritis act up."))
-					break
+	return ..()
 
 /datum/quirk/vice/chronic_back_pain
 	name = "Chronic Back Pain"
@@ -409,37 +506,11 @@
 	if(!ishuman(owner))
 		return
 	var/mob/living/carbon/human/H = owner
-	for(var/obj/item/bodypart/BP in H.bodyparts)
-		if(BP.body_zone == BODY_ZONE_CHEST)
-			BP.chronic_pain = rand(20, 32.5)
-			BP.chronic_pain_type = pick(CHRONIC_OLD_FRACTURE, CHRONIC_SCAR_TISSUE)
-			break
+	var/obj/item/bodypart/BP = H.get_bodypart(BODY_ZONE_CHEST)
+	BP?.limb_flags |= pick(BODYPART_CHRONIC_FRACTURE, BODYPART_CHRONIC_SCAR)
+	BP?.update_chronic()
 	to_chat(H, span_warning("Your lower back aches with familiar, persistent pain."))
-
-/datum/quirk/vice/chronic_back_pain/on_life(mob/living/user)
-	if(!ishuman(user))
-		return
-	var/mob/living/carbon/human/H = user
-
-	if(H.m_intent == MOVE_INTENT_RUN && prob(5))
-		for(var/obj/item/bodypart/BP in H.bodyparts)
-			if(BP.body_zone == BODY_ZONE_CHEST)
-				BP.lingering_pain += rand(3, 5)
-				to_chat(H, span_warning("Running aggravates your chronic back pain!"))
-				break
-
-	if(prob(2))
-		if(H.encumbrance >= ENCUMBRANCE_MEDIUM)
-			for(var/obj/item/bodypart/BP in H.bodyparts)
-				if(BP.body_zone == BODY_ZONE_CHEST)
-					var/pain_amount = rand(8, 15)
-					if(H.encumbrance >= ENCUMBRANCE_HEAVY)
-						pain_amount = rand(15, 25)
-						to_chat(H, span_warning("Your heavy gear puts severe strain on your already painful back!"))
-					else
-						to_chat(H, span_warning("The weight of your equipment aggravates your chronic back pain!"))
-					BP.lingering_pain += pain_amount
-					break
+	return ..()
 
 /datum/quirk/vice/old_war_wound
 	name = "Old War Wound"
@@ -455,35 +526,15 @@
 		if(BP.body_zone in list(BODY_ZONE_CHEST, BODY_ZONE_L_ARM, BODY_ZONE_R_ARM, BODY_ZONE_L_LEG, BODY_ZONE_R_LEG))
 			major_parts += BP
 
-	if(major_parts.len)
-		var/obj/item/bodypart/wounded = pick(major_parts)
-		wounded.chronic_pain = rand(10, 17.5)
-		wounded.chronic_pain_type = pick(CHRONIC_OLD_FRACTURE, CHRONIC_SCAR_TISSUE, CHRONIC_NERVE_DAMAGE)
-		wounded.brute_dam += rand(3, 8)
-		var/wound_location = wounded.name
-		var/wound_desc = pick("shrapnel wound", "arrow wound", "deep scar", "poorly healed fracture")
-		to_chat(H, span_warning("You feel the familiar ache of your old [wound_desc] in your [wound_location]."))
-
-/datum/quirk/vice/old_war_wound/on_life(mob/living/user)
-	if(!ishuman(user))
-		return
-
-	var/mob/living/carbon/human/H = user
-
-	// Stress-triggered pain flares
-	if(H.health < (H.maxHealth * 0.7) || H.get_stress_amount() > 10)
-		if(prob(3))
-			for(var/obj/item/bodypart/BP in H.bodyparts)
-				if(BP.chronic_pain > 30)
-					BP.lingering_pain += rand(5, 6)
-					to_chat(H, span_warning("Your old war wound flares up from the stress!"))
-					break
-
-	// Random phantom pain
-	if(prob(1.5))
-		for(var/obj/item/bodypart/BP in H.bodyparts)
-			if(BP.chronic_pain > 0)
-				BP.lingering_pain += rand(5, 10)
-				var/pain_type = pick("sharp", "throbbing", "burning", "aching")
-				to_chat(H, span_warning("A [pain_type] pain shoots through your old wound."))
-				break
+	if(length(major_parts))
+		for(var/rand in 1 to rand(1, 2))
+			var/obj/item/bodypart/wounded = pick(major_parts)
+			var/list/remove_one = list(BODYPART_CHRONIC_FRACTURE, BODYPART_CHRONIC_SCAR, BODYPART_CHRONIC_NERVE_DAMAGE)
+			pick_n_take(remove_one)
+			for(var/i in remove_one)
+				wounded.limb_flags |= i
+			wounded.update_chronic()
+			var/wound_location = wounded.name
+			var/wound_desc = pick("shrapnel wound", "arrow wound", "deep scar", "poorly healed fracture")
+			to_chat(H, span_warning("You feel the familiar ache of your old [wound_desc] in your [wound_location]."))
+	return ..()

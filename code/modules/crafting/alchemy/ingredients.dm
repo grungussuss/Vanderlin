@@ -93,6 +93,8 @@
 		/datum/attunement/life = -0.1,
 		/datum/attunement/light = -0.1,
 	)
+	grind_results = list(/datum/reagent/consumable/nutriment/bone_marrow = 20)
+	indexed = TRUE
 
 /obj/item/alch/horn
 	name = "troll horn"
@@ -138,10 +140,16 @@
 	alternate_worn_layer  = 8.9 //On top of helmet
 	body_parts_covered = NONE
 	item_weight = 9 GRAMS
+	var/datum/ingredient_buff_modifier/modifier
+
+/obj/item/alch/herb/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/food_topping, icon_state, modifier, 10, topping_name = name)
 
 /obj/item/alch/herb/atropa
 	name = "atropa"
 	icon_state = "atropa"
+	modifier = /datum/ingredient_buff_modifier/atropa
 
 /obj/item/alch/herb/matricaria
 	name = "matricaria"
@@ -215,6 +223,13 @@
 /obj/item/alch/herb/lavender // Not obtainable currently, will correct later
 	name = "lavender"
 	icon_state = "lavender"
+
+/obj/item/alch/herb/necralily
+	name = "necran lily"
+	desc = "The un-initiated are forbidden from picking this holy flower, which is said to watch over the graves near where it blooms. A sign that the deceased are now in a better place..."
+	dropshrink = 0.75
+	icon_state = "necralily"
+	modifier = /datum/ingredient_buff_modifier/necran_lily
 
 /obj/item/alch/thaumicdust
 	name = "thaumic iron dust"

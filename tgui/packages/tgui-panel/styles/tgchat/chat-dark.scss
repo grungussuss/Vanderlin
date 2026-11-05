@@ -304,6 +304,10 @@ em {
   color: hsl(0, 0%, 77.25%);
 }
 
+.looc {
+  color: hsl(210, 50%, 60%)
+}
+
 .adminobserverooc {
   color: hsl(48, 100%, 40%);
 }
@@ -680,6 +684,10 @@ em {
   font-family: Arabolical, Pterra;
 }
 
+.kobold {
+  font-family: SyneTactile, Pterra;
+}
+
 .hellspeak {
   font-family: Yataghan, Pterra;
   font-size: 0.85em;
@@ -822,6 +830,57 @@ em {
   color: hsl(272, 60%, 69%);
 }
 
+
+.animatedpain {
+  color: #BA55D3;
+  text-shadow: 0 0 6px #c75be2;
+  font-size: 110%;
+  animation: pain 750ms infinite;
+}
+
+@keyframes pain {
+  0% {
+    color: #BA55D3;
+    text-shadow: 0 0 4px #c75be2;
+  }
+
+  50% {
+    color: #cc00ff;
+    text-shadow: 0 0 8px #ad37ca;
+  }
+
+  100% {
+    color: #BA55D3;
+    text-shadow: 0 0 4px #c75be2;
+  }
+}
+
+.lowpain {
+  color: #a4a562;
+  text-shadow: 0 0 0px #a4a562;
+}
+
+.lowestpain {
+  color: #a4a562;
+  font-size: 85%;
+  text-shadow: 0 0 0px #a4a562;
+}
+
+.artery {
+  color: #9B5455;
+  text-shadow: 0 0 3px #9B5455;
+}
+
+.infection {
+  color: #77c72b;
+  text-shadow: 0 0 3px #68af26;
+}
+
+.necrosis {
+  color: #558d20;
+  text-shadow: 0 0 6px #497a1a;
+}
+
 .bloody {
   color: hsl(0, 86%, 43%);
 }
@@ -844,6 +903,10 @@ em {
 
 .silver{
   color: hsl(0, 0%, 75%);
+}
+
+.yellow{
+  color: hsl(48, 100%, 70%);
 }
 
 .briar{
@@ -1601,6 +1664,32 @@ $border-width-px: $border-width * 1px;
 }
 /* ##### END ##### */
 
+/* ##### GRAGGAZO ##### */
+.god_graggazo {
+  color: hsl(125.9, 49.1%, 32.4%);
+  font-weight: bold;
+  animation: graggazo_flicker 1s infinite;
+}
+
+@keyframes graggazo_flicker {
+	25% {
+		color: hsl(125.9, 49.1%, 32.4%);
+	}
+
+	50% {
+		color: hsl(125.9, 52.9%, 34.1%);
+	}
+
+	75% {
+		color: hsl(339.2, 61%, 24.1%);
+	}
+
+	100% {
+		color: hsl(338.8, 52.2%, 32%);
+	}
+}
+/* ##### END ##### */
+
 /* ##### PSYDON ##### */
 .god_psydon {
   color: hsl(190.9, 36.3%, 82.2%);
@@ -1685,6 +1774,37 @@ $border-width-px: $border-width * 1px;
 		color: hsl(345, 36%, 37%);
 	}
 }
+/* ##### END ##### */
+
+/* ##### THE ARCHDEVILS ##### */
+.god_archdevil {
+	color: hsl(0, 97%, 24%);
+  font-weight: bold;
+  animation: archdevil_flicker 1s infinite;
+}
+
+@keyframes archdevil_flicker {
+	25% {
+		color: hsl(0, 97%, 24%);
+    transform: translate(-2px, -1px);
+	}
+
+	50% {
+		color: hsl(0, 66%, 39%);
+    transform: translate(1px, -2px);
+	}
+
+	75% {
+		color: hsl(22, 78%, 37%);
+    transform: translate(-1px, 2px);
+	}
+
+  100% {
+		color: hsl(0, 66%, 39%);
+    transform: translate(1px, 1px);
+	}
+}
+
 /* ##### END ##### */
 
 .highlight-bounce {

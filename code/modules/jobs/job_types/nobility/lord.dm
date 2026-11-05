@@ -9,19 +9,22 @@ GLOBAL_LIST_EMPTY(lord_titles)
 		STAT_SPEED = 1,
 		STAT_PERCEPTION = 2,
 		STAT_FORTUNE = 5,
-		/datum/attribute/skill/combat/polearms = 20,
-		/datum/attribute/skill/combat/axesmaces = 20,
+		/datum/attribute/skill/combat/swords = 40,
 		/datum/attribute/skill/combat/crossbows = 30,
 		/datum/attribute/skill/combat/wrestling = 30,
-		/datum/attribute/skill/combat/unarmed = 10,
-		/datum/attribute/skill/combat/swords = 40,
 		/datum/attribute/skill/combat/knives = 30,
-		/datum/attribute/skill/misc/swimming = 10,
-		/datum/attribute/skill/misc/climbing = 10,
+		/datum/attribute/skill/combat/polearms = 20,
+		/datum/attribute/skill/combat/axesmaces = 20,
+		/datum/attribute/skill/combat/unarmed = 20,
+		/datum/attribute/skill/combat/bows = 20,
+		/datum/attribute/skill/educated/reading = 40,
 		/datum/attribute/skill/misc/athletics = 30,
-		/datum/attribute/skill/misc/reading = 40,
 		/datum/attribute/skill/misc/riding = 30,
-		/datum/attribute/skill/labor/mathematics = 30
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/sewing = 10,
+		/datum/attribute/skill/craft/cooking = 10,
+		/datum/attribute/skill/educated/mathematics = 30
 	)
 
 /datum/attribute_holder/sheet/job/lord/old
@@ -32,19 +35,22 @@ GLOBAL_LIST_EMPTY(lord_titles)
 		STAT_SPEED = 1,
 		STAT_PERCEPTION = 2,
 		STAT_FORTUNE = 5,
-		/datum/attribute/skill/combat/polearms = 20,
-		/datum/attribute/skill/combat/axesmaces = 20,
+		/datum/attribute/skill/combat/swords = 50,
 		/datum/attribute/skill/combat/crossbows = 30,
 		/datum/attribute/skill/combat/wrestling = 30,
-		/datum/attribute/skill/combat/unarmed = 10,
-		/datum/attribute/skill/combat/swords = 50,
 		/datum/attribute/skill/combat/knives = 30,
-		/datum/attribute/skill/misc/swimming = 10,
-		/datum/attribute/skill/misc/climbing = 10,
+		/datum/attribute/skill/combat/polearms = 20,
+		/datum/attribute/skill/combat/axesmaces = 20,
+		/datum/attribute/skill/combat/unarmed = 20,
+		/datum/attribute/skill/combat/bows = 20,
+		/datum/attribute/skill/educated/reading = 40,
 		/datum/attribute/skill/misc/athletics = 30,
-		/datum/attribute/skill/misc/reading = 40,
 		/datum/attribute/skill/misc/riding = 30,
-		/datum/attribute/skill/labor/mathematics = 30
+		/datum/attribute/skill/misc/swimming = 20,
+		/datum/attribute/skill/misc/climbing = 20,
+		/datum/attribute/skill/misc/sewing = 10,
+		/datum/attribute/skill/craft/cooking = 10,
+		/datum/attribute/skill/educated/mathematics = 30
 	)
 
 /datum/job/lord
@@ -58,17 +64,21 @@ GLOBAL_LIST_EMPTY(lord_titles)
 	department_flag = NOBLEMEN
 	job_flags = (JOB_ANNOUNCE_ARRIVAL | JOB_SHOW_IN_CREDITS | JOB_EQUIP_RANK | JOB_NEW_PLAYER_JOINABLE)
 	display_order = JDO_LORD
-	faction = FACTION_TOWN
+	factions = list(FACTION_TOWN, SUB_FACTION_KEEP, SUB_FACTION_COURT, SUB_FACTION_ROYAL)
 	total_positions = 0
 	spawn_positions = 1
 	spells = list(
 		/datum/action/cooldown/spell/undirected/list_target/grant_title,
 		/datum/action/cooldown/spell/undirected/list_target/grant_nobility,
 	)
-	allowed_races = RACES_PLAYER_ROYALTY
+	allowed_races = RACES_PLAYER_MONARCH
 	outfit = /datum/outfit/lord
-	bypass_lastclass = TRUE
 	give_bank_account = 500
+
+	knows_the_town = TRUE
+	known_by_the_town = TRUE
+	jobs_i_always_know = KNOW_COURT_AGENT_LIST
+
 	selection_color = "#7851A9"
 	cmode_music = 'sound/music/cmode/nobility/combat_noble.ogg'
 	can_have_apprentices = FALSE
@@ -87,9 +97,11 @@ GLOBAL_LIST_EMPTY(lord_titles)
 	//These change on map load
 	honorary = "Lord"
 	honorary_f = "Lady"
+	tennite_triumph_exclusive = TRUE
 
 	mind_traits = list(
-		TRAIT_KNOW_KEEP_DOORS
+		TRAIT_KNOW_KEEP_DOORS,
+		TRAIT_KNOWCOURTAGENTS
 	)
 	traits = list(
 		TRAIT_NOBLE_BLOOD,
@@ -138,6 +150,24 @@ GLOBAL_LIST_EMPTY(lord_titles)
 	if(spawned.dna?.species?.id == SPEC_ID_HUMEN && spawned.gender == MALE)
 		spawned.dna.species.soundpack_m = new /datum/voicepack/male/evil()
 
+	if(player_client?.prefs)
+		var/datum/preferences/prefs = player_client.prefs
+
+		var/list/laws = prefs.read_preference(/datum/preference/list_type/role_setting/monarch_law)
+		if(length(laws))
+			GLOB.laws_of_the_land = list()
+		for(var/law in laws)
+			law = trim(law)
+			GLOB.laws_of_the_land += trim(law)
+
+
+		var/list/decrees = prefs.read_preference(/datum/preference/list_type/role_setting/monarch_decree)
+		if(length(decrees))
+			GLOB.lord_decrees = list()
+		for(var/decree in decrees)
+			decree = trim(decree)
+			GLOB.lord_decrees += trim(decree)
+
 /datum/outfit/lord
 	name = JOB_MONARCH
 	head = /obj/item/clothing/head/crown/serpcrown
@@ -145,9 +175,14 @@ GLOBAL_LIST_EMPTY(lord_titles)
 	belt = /obj/item/storage/belt/leather/plaquegold
 	beltl = /obj/item/weapon/knife/dagger/steel/royal
 	beltr = /obj/item/weapon/sword/rapier
+	shoes = /obj/item/clothing/shoes/nobleboot
 	scabbards = list(/obj/item/weapon/scabbard/knife/royal, /obj/item/weapon/scabbard/sword/royal)
 	ring = /obj/item/clothing/ring/active/nomag
 	l_hand = /obj/item/weapon/lordscepter
+
+	backpack_contents = list(
+		/obj/item/storage/keyring/monarch = 1,
+	)
 
 /datum/outfit/lord/map_override(mob/living/carbon/human/H)
 	if(SSmapping.config.map_name != "Voyage")
@@ -158,7 +193,7 @@ GLOBAL_LIST_EMPTY(lord_titles)
 	armor = /obj/item/clothing/armor/leather/jacket/silk_coat
 	shirt = /obj/item/clothing/shirt/undershirt/puritan
 	wrists = null
-	shoes = /obj/item/clothing/shoes/boots
+	shoes = /obj/item/clothing/shoes/boots/darkboots
 
 /datum/outfit/lord/pre_equip(mob/living/carbon/human/equipped_human, visuals_only)
 	. = ..()
@@ -167,12 +202,10 @@ GLOBAL_LIST_EMPTY(lord_titles)
 		pants = /obj/item/clothing/pants/trou/formal
 		shirt = /obj/item/clothing/shirt/undershirt/fancy
 		armor = /obj/item/clothing/armor/gambeson/arming
-		shoes = /obj/item/clothing/shoes/nobleboot
 		cloak = /obj/item/clothing/cloak/lordcloak
 	else
 		pants = /obj/item/clothing/pants/tights/colored/random
 		armor = /obj/item/clothing/shirt/dress/royal
-		shoes = /obj/item/clothing/shoes/nobleboot
 		cloak = /obj/item/clothing/cloak/lordcloak/ladycloak
 		wrists = /obj/item/clothing/wrists/royalsleeves
 
@@ -187,7 +220,7 @@ GLOBAL_LIST_EMPTY(lord_titles)
 /datum/job/exlord //just used to change the lords title
 	title = "Ex-Monarch"
 	department_flag = NOBLEMEN
-	faction = FACTION_TOWN
+	factions = list(FACTION_TOWN, SUB_FACTION_KEEP, SUB_FACTION_COURT, SUB_FACTION_ROYAL)
 	total_positions = 0
 	spawn_positions = 0
 	display_order = JDO_LORD

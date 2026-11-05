@@ -17,15 +17,26 @@
 	var/latched = FALSE
 	var/base_icon = "pillory_single"
 
-/obj/structure/pillory/church
-	desc = "To keep the heretics locked!"
-	lock = /datum/lock/key/pillory/church
-
 /obj/structure/pillory/double
 	icon_state = "pillory_double"
 	base_icon = "pillory_double"
 
 /obj/structure/pillory/reinforced
+	icon_state = "pillory_reinforced"
+	base_icon = "pillory_reinforced"
+
+/obj/structure/pillory/church
+	desc = "To keep the heretics locked!"
+	lock = /datum/lock/key/pillory/church
+
+/obj/structure/pillory/gallowband
+	lock = /datum/lock/key/pillory/gallowband
+
+/obj/structure/pillory/gallowband/double
+	icon_state = "pillory_double"
+	base_icon = "pillory_double"
+
+/obj/structure/pillory/gallowband/reinforced
 	icon_state = "pillory_reinforced"
 	base_icon = "pillory_reinforced"
 
@@ -98,7 +109,7 @@
 			return ..(carbon, force, FALSE)
 
 	for(var/obj/item/grabbing/G in M.grabbedby)
-		if(G.grab_state == GRAB_AGGRESSIVE)
+		if(G.grab_state >= GRAB_AGGRESSIVE)
 			return ..(M, force, FALSE)
 
 	to_chat(usr, span_warning("I must grab them more forcefully to put them in [src]."))
@@ -119,7 +130,7 @@
 				density = FALSE
 				switch(H.dna.species.id)
 					if (SPEC_ID_DWARF, SPEC_ID_GOBLIN)
-						H.set_mob_offsets("bed_buckle", _x = 0, _y = PILLORY_HEAD_OFFSET)
+						H.add_offsets(type, x_add = 0, y_add = PILLORY_HEAD_OFFSET)
 				icon_state = "[base_icon]-over"
 			else
 				unbuckle_all_mobs()
@@ -132,7 +143,7 @@
 
 /obj/structure/pillory/post_unbuckle_mob(mob/living/M)
 	M.regenerate_icons()
-	M.reset_offsets("bed_buckle")
+	M.remove_offsets(type)
 	icon_state = "[base_icon]"
 	..()
 

@@ -3,8 +3,9 @@
 	desc = "Call upon your patron to heal the wounds of yourself or others by sacrificing an item's value as healing."
 	button_icon_state = "transact"
 
-	spell_type = SPELL_MIRACLE
-	antimagic_flags = MAGIC_RESISTANCE_HOLY
+	spell_type = SPELL_UNHOLY_MIRACLE
+	antimagic_flags = MAGIC_RESISTANCE_UNHOLY
+	spell_flags = SPELL_DEVIL_BLOCKED
 	associated_skill = /datum/attribute/skill/magic/holy
 
 	cast_range = 4
@@ -51,7 +52,7 @@
 	to_chat(owner, "<font color='yellow'>[held_item] burns into the air suddenly, my Transaction is accepted.</font>")
 	if(iscarbon(cast_on))
 		var/mob/living/carbon/C = cast_on
-		var/datum/status_effect/buff/matthioshealing/heal_effect = C.apply_status_effect(/datum/status_effect/buff/matthioshealing)
+		var/datum/status_effect/buff/healing/matthioshealing/heal_effect = C.apply_status_effect(/datum/status_effect/buff/healing/matthioshealing)
 		heal_effect.healing_on_tick = helditemvalue/2
 	else
 		cast_on.adjustBruteLoss(helditemvalue / 2)
@@ -59,3 +60,20 @@
 	playsound(owner, 'sound/combat/hits/burn (2).ogg', 100, TRUE)
 	if(!QDELETED(held_item))
 		qdel(held_item) // we might already be qdeleting from mob holder
+
+/datum/status_effect/buff/healing/matthioshealing
+	id = "healing"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/matthioshealing
+	examine_text = "SUBJECTPRONOUN is bathed in a restorative aura!"
+	duration = 10 SECONDS
+	healing_on_tick = 1
+	outline_colour = "#c42424"
+
+/datum/status_effect/buff/healing/matthioshealing/tick()
+	. = ..()
+	owner.adjust_blood_volume(10, maximum = BLOOD_VOLUME_NORMAL)
+
+/atom/movable/screen/alert/status_effect/buff/matthioshealing
+	name = "Healing Miracle"
+	desc = "Strange Divine intervention relieves me of my ailments."
+	icon_state = "buff"

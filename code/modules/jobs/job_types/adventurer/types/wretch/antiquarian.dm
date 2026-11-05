@@ -10,7 +10,7 @@
 		/datum/attribute/skill/misc/climbing = 50,
 		/datum/attribute/skill/craft/crafting = 30,
 		/datum/attribute/skill/misc/athletics = 40,
-		/datum/attribute/skill/misc/reading = 30,
+		/datum/attribute/skill/educated/reading = 30,
 		/datum/attribute/skill/misc/sneaking = 60,
 		/datum/attribute/skill/misc/stealing = 60,
 		/datum/attribute/skill/misc/lockpicking = 50,
@@ -31,7 +31,6 @@
 
 // The idea is that they're a slippery bastard. Cantrip focused, stealth-focused. They rely on their spells.
 	languages = list(/datum/language/thievescant)
-	allowed_patrons = list(/datum/patron/godless/defiant) // This one has seen too much. Matthiosans are not compatible with Heartfelt.
 
 	traits = list(
 		TRAIT_DEADNOSE,
@@ -109,6 +108,9 @@
 	backpack_contents = list(
 		/obj/item/lockpick = 1,
 		/obj/item/grapplinghook = 1,
-		/obj/item/reagent_containers/glass/bottle/stronghealthpot = 1,
+		/obj/item/reagent_containers/glass/bottle/stronghealthpot/labelled = 1,
 	)
 
+/datum/job/advclass/wretch/antiquarian/after_spawn(mob/living/carbon/human/spawned, client/player_client)
+	. = ..()
+	spawned.set_patron(/datum/patron/godless/defiant)

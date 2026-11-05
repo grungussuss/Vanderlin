@@ -10,7 +10,6 @@
 	roundstart = TRUE
 	antag_flag = ROLE_ASPIRANT
 	shared_occurence_type = SHARED_MINOR_THREAT
-	minor_roleset = TRUE
 
 	needed_job = list(
 		/datum/job/consort,
@@ -38,7 +37,6 @@
 	weight = 8
 
 	secondary_events = list(
-		/datum/round_event_control/antagonist/solo/rebel = 2, // paint the town red baby
 		/datum/round_event_control/antagonist/solo/wretch = 1,
 	)
 	secondary_prob = 40
@@ -82,6 +80,8 @@
 		if(!helper.client || !helper.mind)
 			continue
 		if(is_antag_banned(helper.client.ckey, ROLE_ASPIRANT))
+			continue
+		if(!(ROLE_ASPIRANT in helper.client.prefs?.be_special))
 			continue
 		if(!is_type_in_list(helper.mind.assigned_role, helping))
 			continue

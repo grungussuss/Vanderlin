@@ -13,7 +13,7 @@
 	move_to_delay = 8
 	base_intents = list(/datum/intent/simple/elemental_unarmed)
 	butcher_results = list()
-	faction = list("elemental")
+	faction = list(FACTION_ELEMENTAL)
 	mob_biotypes = MOB_ORGANIC|MOB_BEAST
 	health = 120
 	maxHealth = 120
@@ -39,7 +39,6 @@
 	attack_verb_continuous = "pounds"
 	attack_verb_simple = "pounds"
 	dodgetime = 0
-	aggressive = 1
 
 	base_constitution = 13
 	base_endurance = 13

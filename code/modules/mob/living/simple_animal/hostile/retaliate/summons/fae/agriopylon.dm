@@ -22,13 +22,12 @@
 	base_constitution = 2
 	base_strength = 1
 	base_speed = 10
-	faction = list("fae", "FACTION_PLANTS")
+	faction = list(FACTION_FAE, FACTION_PLANTS)
 	attack_sound = list(
 		'sound/foley/plantcross1.ogg',
 		'sound/foley/plantcross2.ogg'
 	)
 
-	aggressive = 0
 	ai_controller = /datum/ai_controller/agriopylon
 	dendor_taming_chance = DENDOR_TAME_PROB_NONE
 	del_on_death = TRUE

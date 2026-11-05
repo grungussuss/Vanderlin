@@ -3,8 +3,7 @@
 	return area.coven_protected
 
 /mob/living
-	var/cached_island_id = null
-	var/last_island_check = 0
+	var/last_scale_number = 1
 
 	var/mob/living/walk_to_target
 	var/walk_to_duration = 0
@@ -122,7 +121,7 @@
 		return
 	if(clan)
 		return
-	if(mind.has_antag_datum(/datum/antagonist/vampire) || mind.has_antag_datum(/datum/antagonist/zombie) || mind.has_antag_datum(/datum/antagonist/werewolf))
+	if(mind.has_antag_datum(/datum/antagonist/vampire) || IS_DEADITE(src) || mind.has_antag_datum(/datum/antagonist/werewolf))
 		return
 	if((FACTION_UNDEAD in faction) || (MOB_UNDEAD in mob_biotypes))
 		return
@@ -165,7 +164,7 @@
 /mob/living/proc/vampire_detected(value, forced = FALSE)
 	if(value <= 0)
 		return
-	if(!clan || istype(clan, /datum/clan/daewalker))
+	if(!clan || istype(clan, /datum/clan/daewalker) || istype(clan, /datum/clan/niteguard))
 		return
 	if(CheckZoneCoven(src))
 		return
@@ -321,17 +320,22 @@
 	// Coffin regeneration
 	var/obj/structure/closet/crate/coffin/coffin = loc
 	if(istype(coffin) && (src in coffin.contents))
-		if(InCritical() && !HAS_TRAIT(src, TRAIT_DEATHCOMA))
+		if(HAS_TRAIT(src, TRAIT_CRITICAL_CONDITION) && !HAS_TRAIT(src, TRAIT_DEATHCOMA))
 			to_chat(src, span_notice("You enter the horrible slumber of deathless Torpor. You will heal until you are renewed."))
 			ADD_TRAIT(src, TRAIT_DEATHCOMA, VAMPIRE_TRAIT)
 		heal_overall_damage(5, 5)
 		adjustToxLoss(-5)
 		heal_wounds(25)
+		for(var/obj/item/organ/artery/artery in getorganslotlist(ORGAN_SLOT_ARTERY))
+			artery.applyOrganDamage(-5)
 		if(prob(3))
 			regenerate_limb(silent=FALSE)
-		blood_volume = max(blood_volume, min(BLOOD_VOLUME_SAFE, blood_volume + 10))
+		if(get_blood_volume() <= BLOOD_VOLUME_NORMAL)
+			if(get_blood_volume() < BLOOD_VOLUME_SAFE)
+				set_blood_volume(BLOOD_VOLUME_SAFE)
+			adjust_blood_volume(10)
 		set_bloodpool(max(bloodpool, min(maxbloodpool * 0.25, bloodpool + 5)))
-	else if(HAS_TRAIT(src, TRAIT_DEATHCOMA) && (!InCritical() || (!istype(coffin) || !(src in coffin.contents))))
+	else if(HAS_TRAIT(src, TRAIT_DEATHCOMA) && (!HAS_TRAIT(src, TRAIT_CRITICAL_CONDITION) || (!istype(coffin) || !(src in coffin.contents))))
 		REMOVE_TRAIT(src, TRAIT_DEATHCOMA, VAMPIRE_TRAIT)
 		to_chat(src, span_warning("You have recovered from Torpor."))
 
@@ -339,17 +343,17 @@
 	// Apply thirst effects based on bloodpool levels
 	switch(bloodpool)
 		if(VITAE_LEVEL_HUNGRY to VITAE_LEVEL_FED)
-			apply_status_effect(/datum/status_effect/debuff/thirstyt1)
-			remove_status_effect(/datum/status_effect/debuff/thirstyt2)
-			remove_status_effect(/datum/status_effect/debuff/thirstyt3)
+			apply_status_effect(/datum/status_effect/debuff/thirsty/t1)
+			remove_status_effect(/datum/status_effect/debuff/thirsty/t2)
+			remove_status_effect(/datum/status_effect/debuff/thirsty/t3)
 		if(VITAE_LEVEL_STARVING to VITAE_LEVEL_HUNGRY)
-			apply_status_effect(/datum/status_effect/debuff/thirstyt2)
-			remove_status_effect(/datum/status_effect/debuff/thirstyt1)
-			remove_status_effect(/datum/status_effect/debuff/thirstyt3)
+			apply_status_effect(/datum/status_effect/debuff/thirsty/t2)
+			remove_status_effect(/datum/status_effect/debuff/thirsty/t1)
+			remove_status_effect(/datum/status_effect/debuff/thirsty/t3)
 		if(-INFINITY to VITAE_LEVEL_STARVING)
-			apply_status_effect(/datum/status_effect/debuff/thirstyt3)
-			remove_status_effect(/datum/status_effect/debuff/thirstyt1)
-			remove_status_effect(/datum/status_effect/debuff/thirstyt2)
+			apply_status_effect(/datum/status_effect/debuff/thirsty/t3)
+			remove_status_effect(/datum/status_effect/debuff/thirsty/t1)
+			remove_status_effect(/datum/status_effect/debuff/thirsty/t2)
 			if(prob(3))
 				playsound(src, pick('sound/vo/hungry1.ogg','sound/vo/hungry2.ogg','sound/vo/hungry3.ogg'), 100, TRUE, -1)
 

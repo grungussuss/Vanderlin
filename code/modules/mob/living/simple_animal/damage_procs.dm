@@ -1,19 +1,19 @@
 
 /mob/living/simple_animal/proc/adjustHealth(amount, updating_health = TRUE, forced = FALSE)
-	if(!forced && (status_flags & GODMODE))
+	if(!forced && HAS_TRAIT(src, TRAIT_GODMODE))
 		return FALSE
 	bruteloss = round(CLAMP(bruteloss + amount, 0, maxHealth),DAMAGE_PRECISION)
 	if(updating_health)
 		updatehealth(amount)
 	return amount
 
-/mob/living/simple_animal/adjustBruteLoss(amount, updating_health = TRUE, forced = FALSE)
+/mob/living/simple_animal/adjustBruteLoss(amount, updating_health = TRUE, forced = FALSE, damage_type, can_crit = FALSE)
 	if(forced)
 		. = adjustHealth(amount * CONFIG_GET(number/damage_multiplier), updating_health, forced)
 	else if(damage_coeff[BRUTE])
 		. = adjustHealth(amount * damage_coeff[BRUTE] * CONFIG_GET(number/damage_multiplier), updating_health, forced)
 
-/mob/living/simple_animal/adjustFireLoss(amount, updating_health = TRUE, forced = FALSE)
+/mob/living/simple_animal/adjustFireLoss(amount, updating_health = TRUE, forced = FALSE, intense)
 	if(forced)
 		. = adjustHealth(amount * CONFIG_GET(number/damage_multiplier), updating_health, forced)
 	else if(damage_coeff[BURN])

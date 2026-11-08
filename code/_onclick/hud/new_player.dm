@@ -25,6 +25,19 @@
 
 	. = ..()
 
+/datum/hud/new_player/proc/everybody_shakes()
+	SIGNAL_HANDLER
+	//var/list/hud_elements = subtypesof(/atom/movable/screen/lobby)
+
+	for(var/atom/movable/screen/element in static_inventory)
+		animate(element, element.transform = element.transform.Translate(x = -2 - rand(2, 4), y = 2 + rand(1, 3)), time = 6, easing = ELASTIC_EASING, flags = ANIMATION_PARALLEL)
+		animate(element, element.transform = element.transform.Translate(x = -1 - rand(2, 4), y = 2 + rand(1, 3)), time = 3, easing = ELASTIC_EASING)
+		animate(element, element.transform = matrix(), time = 3, easing = ELASTIC_EASING)
+
+	shake_camera(mymob, 4, 3)
+
+	playsound(mymob, 'sound/lead_pipe_hit.ogg', 50, TRUE)
+
 //copypaste begin
 
 INITIALIZE_IMMEDIATE(/atom/movable/screen/lobby)
@@ -59,7 +72,31 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen/lobby)
 	plane = LOBBY_MENU_PLANE
 	layer = LOBBY_BACKGROUND_LAYER
 	screen_loc = "WEST:10,TOP:10"
-	alpha = 150
+
+/atom/movable/screen/lobby/actors_list
+	icon = 'icons/hud/lobby/actors_list.dmi'
+	icon_state = "actors_list"
+	plane = LOBBY_MENU_PLANE
+	layer = LOBBY_BACKGROUND_LAYER + 0.1 // it goes above the thingie to the left.
+	screen_loc = "WEST:130,TOP:10"
+	var/collapsed = FALSE
+
+/atom/movable/screen/lobby/actors_list/Initialize(mapload, datum/hud/hud_owner)
+	. = ..()
+	RegisterSignal(hud, COMSIG_HUD_ACTORS_LIST_TOGGLED, TYPE_PROC_REF(/atom/movable/screen/lobby/actors_list, toggle_actors_list))
+
+/atom/movable/screen/lobby/actors_list/proc/toggle_actors_list()
+	SIGNAL_HANDLER
+	if(collapsed)
+		animate(src, transform = matrix(), time = 0.5 SECONDS, easing = CUBIC_EASING|EASE_IN, flags = ANIMATION_PARALLEL)
+		addtimer(CALLBACK(hud, TYPE_PROC_REF(/datum/hud/new_player, everybody_shakes)), 0.5 SECONDS)
+	else
+		animate(src, transform = transform.Translate(x = 450, y = 0), time = 0.4 SECONDS, easing = CUBIC_EASING|EASE_IN, flags = ANIMATION_PARALLEL)
+	collapsed = !collapsed
+
+/atom/movable/screen/lobby/actors_list/proc/signal_shake()
+	SIGNAL_HANDLER
+	SEND_SIGNAL(hud, COMSIG_HUD_EVERYBODY_SHAKE)
 
 /atom/movable/screen/lobby/button
 	mouse_over_pointer = MOUSE_HAND_POINTER
@@ -310,7 +347,9 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen/lobby)
 	if(!.)
 		return
 
-	hud.mymob.client?.view_actors_manifest()
+	SEND_SIGNAL(hud, COMSIG_HUD_ACTORS_LIST_TOGGLED)
+
+	//hud.mymob.client?.view_actors_manifest()
 
 /atom/movable/screen/lobby/button/collapse
 	name = "Collapse Lobby Menu"

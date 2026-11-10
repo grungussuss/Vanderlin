@@ -50,7 +50,6 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen/lobby)
 	var/always_shown = FALSE
 	/// If true we will create this button every time the HUD is generated
 	var/always_available = TRUE
-	alpha = 210
 
 ///Run sleeping actions after initialize
 /atom/movable/screen/lobby/proc/SlowInit()
@@ -65,6 +64,15 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen/lobby)
 /atom/movable/screen/lobby/proc/expand_button()
 	SIGNAL_HANDLER
 	animate(src, transform = matrix(), time = LOBBY_SCREEN_SLIDE_DURATION, easing = CUBIC_EASING|EASE_IN|EASE_OUT)
+
+/atom/movable/screen/lobby/background
+	icon = 'icons/hud/lobby/lobby_try.dmi'
+	icon_state = "lobby"
+	plane = LOBBY_MENU_PLANE
+	layer = LOBBY_BACKGROUND_LAYER
+	screen_loc = "WEST:10,TOP:10"
+
+/*
 
 /atom/movable/screen/lobby/background
 	icon = 'icons/hud/lobby/background.dmi'
@@ -400,3 +408,5 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen/lobby)
 
 #undef LOBBY_SCREEN_SLIDE_DURATION
 #undef MOVE_AMOUNT
+
+*/

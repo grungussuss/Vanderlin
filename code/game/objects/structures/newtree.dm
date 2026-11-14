@@ -407,14 +407,14 @@
 	do_after_time *= GET_MOB_SKILL_SPEED_MOD(user, /datum/attribute/skill/misc/climbing)
 
 	if(user.m_intent != MOVE_INTENT_SNEAK)
-		user.visible_message(span_danger("[user] starts climbing to the [src]!"), span_warning("I start climbing to the [src]."))
+		user.visible_message(span_danger("[user] starts climbing to [src]!"), span_warning("I start climbing to [src]."))
 
 	if(do_after(user, do_after_time, src, display_over_user = TRUE))
 
 		if(do_after_time >= 3 SECONDS)
 			var/roll = rand(20, 60) // you have to be really good at climbing if you use heavy armor.
 			if(GET_MOB_SKILL_VALUE(user, /datum/attribute/skill/misc/climbing) + rand(1, GET_MOB_ATTRIBUTE_VALUE(user, STAT_FORTUNE)) < roll)
-				user.visible_message(span_danger("[user] fails to climb to the [src]!"), span_danger("I fail to climb to the [src]."))
+				user.visible_message(span_danger("[user] fails to climb to [src]!"), span_danger("I fail to climb to [src]."))
 				return
 
 		if(user.m_intent != MOVE_INTENT_SNEAK)
